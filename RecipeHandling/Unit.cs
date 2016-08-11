@@ -29,15 +29,10 @@ namespace RecipeHandling
             this.UnitType = UnitType;
         }
 
-        public  bool Equals(Unit obj)
+        public  bool Equals(Unit unitToCompare)
         {
             //return (UnitName ==(((Unit)obj).UnitName));
-            return UnitSymbol.Equals(((Unit)obj).UnitSymbol);
-        }
-
-        public override int GetHashCode()
-        {
-            return unitID * 17;
+            return UnitSymbol.Equals(unitToCompare.UnitSymbol);
         }
 
         public override string ToString()
