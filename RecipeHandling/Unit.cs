@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -7,14 +8,13 @@ namespace RecipeHandling
 {
     public class Unit : IEquatable<Unit>
     {
-        private static int maxUnitID=0;
+        public string UnitName { get; set; }
+        public string UnitSymbol { get; set; }
+        public string UnitType { get; set; }
+
+        private static int maxUnitID = 0;
         private int unitID;
         private int parentUnit;
-
-        internal string UnitName { get; set; }
-        internal string UnitSymbol { get; set; }
-        internal string UnitType { get; set; }
-     
 
         internal Unit()
         {
@@ -31,7 +31,6 @@ namespace RecipeHandling
 
         public  bool Equals(Unit unitToCompare)
         {
-            //return (UnitName ==(((Unit)obj).UnitName));
             return UnitSymbol.Equals(unitToCompare.UnitSymbol);
         }
 
@@ -40,7 +39,49 @@ namespace RecipeHandling
             return String.Format("Unit {3,5} Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType, unitID);
         }
 
-        
+
+    }
+    public class UnitList
+    {
+        public List<Unit> Units;
+        private static string filename = "Units.txt";
+
+        internal UnitList()
+        {
+            /*          Units = new List<Unit> (30);
+                        Units.Add(new Unit("Kilogramm", "kg", "Masse"));
+                        Units.Add(new Unit("Liter", "l", "Volumen"));
+                        Units.Add(new Unit("Stück", "st", "Anzahl"));
+                        Units.Add(new Unit("Milliliter", "ml", "Volumen"));
+                        Units.Add(new Unit("Meter", "m", "Länge"));
+
+                        SaveList();
+            */
+
+            Units = new List<Unit>(30);
+            OpenList();
+            
+        }
+
+        public void SaveList()
+        {
+            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
+                x.Serialize(fs, Units);
+            }
+
+        }
+
+        public void OpenList()
+        {
+            Stream fs = new FileStream(filename, FileMode.Open);
+            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
+            Units = (List<Unit>) x.Deserialize(fs);
+        }
     }
 
 }
+
+
+

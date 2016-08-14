@@ -2,9 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 
 
@@ -15,35 +17,20 @@ namespace RecipeHandling
         static void Main(string[] args)
         {
 
-            List<Unit> UnitList = new List<Unit> (30);
-
-            UnitList.Add(new Unit("Kilogramm", "kg", "Masse"));
-            UnitList.Add(new Unit("Liter", "l", "Volumen"));
-            UnitList.Add(new Unit("Stück", "st", "Anzahl"));
-            UnitList.Add(new Unit("Milliliter", "ml", "Volumen"));
-            UnitList.Add(new Unit("Meter", "m", "Länge"));
-
-            UnitList.Remove((Unit) UnitList[4]);
-
-            UnitList.Add(new Unit("Milliliter", "ml", "Volumen"));
-
+            UnitList UL = new UnitList();
 
             Console.WriteLine("UnitList");
             Console.WriteLine();
-            foreach (Unit ListItem in UnitList)
+            foreach (Unit ListItem in UL.Units)
                 Console.WriteLine(ListItem);
 
-            UnitList.Remove(new Unit("", "st", ""));
-
-
-            Console.WriteLine("UnitList");
-            Console.WriteLine();
-            foreach (Unit ListItem in UnitList)
-                Console.WriteLine(ListItem);
-
-
+            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(UL.GetType());
+            x.Serialize(Console.Out, UL);
+            ;
 
             Console.ReadLine();
+
         }
     }
 }
+
