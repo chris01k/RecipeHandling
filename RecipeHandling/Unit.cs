@@ -79,6 +79,23 @@ namespace RecipeHandling
             System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
             Units = (List<Unit>) x.Deserialize(fs);
         }
+
+        public void ShowList()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Ausgabe der Liste:");
+            foreach (Unit ListItem in this.Units)
+                Console.WriteLine(ListItem);
+        }
+
+        public void ViewXML()
+        {
+            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
+            x.Serialize(Console.Out, Units);
+
+        }
+
+
     }
 
 }

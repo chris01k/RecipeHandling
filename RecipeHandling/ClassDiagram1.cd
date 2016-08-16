@@ -24,9 +24,10 @@
   <Class Name="RecipeHandling.Unit">
     <Position X="6.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAaAAAAAAAAAEAAAAAAAAAAAABIQAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAaAAAAAAAAAEgAAAAAAAAAAABIQAAAAAAAAAAAA=</HashCode>
       <FileName>Unit.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="RecipeHandling.ShoppingList">
     <Position X="0.5" Y="3" Width="1.5" />
@@ -43,7 +44,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="RecipeHandling.UnitType">
-    <Position X="10" Y="3.25" Width="1.5" />
+    <Position X="8" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAQAAAAAABAAAAAAAA=</HashCode>
       <FileName>UnitType.cs</FileName>
