@@ -9,7 +9,7 @@ namespace RecipeHandling
     {
         private static int maxUnitTypeID = 0;
         private int unitTypeID;
-        private int parentUnitType;
+        //private int parentUnitType;
 
         internal UnitType()
         {

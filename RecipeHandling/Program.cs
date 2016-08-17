@@ -1,4 +1,12 @@
-﻿using RecipeHandling;
+﻿/* RecipeHandling: Testprogramm zur Vorarbeit im Projekt "Jamie". Erste Version ist eine
+ * Kommandozeilen-Anwendung mit rudimentärem Menü zum Test der Unit-Listen-Funktionen und
+ * möglicher Algoritmen zur Umrechnung von Units
+ * Autor: Klaus Christochowitz  08-2016
+ * Version 0.1 - 2016-08-17: Menü ist implementiert - UnitList Methoden (CleaList,  
+ *                           OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
+ *              
+ */
+using RecipeHandling;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +38,7 @@ namespace RecipeHandling
 
                 Console.WriteLine("A Add Unit");
                 Console.WriteLine("C Clear Unit List");
-                Console.WriteLine("O Read Unit List");
+                Console.WriteLine("O Open Unit List");
                 Console.WriteLine("S Save Unit List");
                 Console.WriteLine("V View Unit List");
                 Console.WriteLine("X View XML File");
@@ -39,10 +47,13 @@ namespace RecipeHandling
 
                 Console.WriteLine();
                 Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine();
+                MenuInput = Console.ReadLine().ToUpper();
 
                 switch (MenuInput)
                 {
+                    case "C":
+                        UL.ClearList();
+                        break;
                     case "O":
                         UL.OpenList();
                         break;

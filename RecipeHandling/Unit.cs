@@ -14,7 +14,7 @@ namespace RecipeHandling
 
         private static int maxUnitID = 0;
         private int unitID;
-        private int parentUnit;
+        //private int parentUnit;
 
         internal Unit()
         {
@@ -63,6 +63,20 @@ namespace RecipeHandling
             
         }
 
+        public void ClearList()
+        {
+            Console.WriteLine(Units.Count);
+            Console.WriteLine(Units.RemoveAll(ValidForAllUnits));
+
+            Console.WriteLine(this);
+
+        }
+
+        private static bool ValidForAllUnits(Unit u)
+        {
+            return true;
+        }
+
         public void SaveList()
         {
             using (FileStream fs = new FileStream(filename, FileMode.Create))
@@ -73,19 +87,36 @@ namespace RecipeHandling
 
         }
 
+        public override string ToString()
+        {
+            string Returnstring = "";
+            foreach (Unit ListItem in Units)
+                Returnstring = Returnstring + ListItem.ToString() + "\n";
+
+            return Returnstring;
+
+        }
+
         public void OpenList()
         {
-            Stream fs = new FileStream(filename, FileMode.Open);
-            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-            Units = (List<Unit>) x.Deserialize(fs);
+            using (Stream fs = new FileStream(filename, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
+                Units = (List<Unit>)x.Deserialize(fs);
+            }
         }
 
         public void ShowList()
         {
             Console.WriteLine();
             Console.WriteLine("Ausgabe der Liste:");
-            foreach (Unit ListItem in this.Units)
-                Console.WriteLine(ListItem);
+            if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
+            else
+            {
+                foreach (Unit ListItem in this.Units)
+                    Console.WriteLine(ListItem);
+            }
+
         }
 
         public void ViewXML()
