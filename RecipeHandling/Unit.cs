@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RecipeHandling
 {
-    public class Unit : IEquatable<Unit>
+    public class Unit:IEquatable <Unit>
     {
         public string UnitName { get; set; }
         public string UnitSymbol { get; set; }
@@ -21,6 +21,12 @@ namespace RecipeHandling
             unitID = ++maxUnitID;
         }
 
+        internal Unit(bool ToBePopulated)
+        {
+            unitID = ++maxUnitID;
+            if (ToBePopulated) PopulateData();
+        }
+
         internal Unit(string UnitName, string UnitSymbol, string UnitType)
         {
             unitID = ++maxUnitID;
@@ -29,101 +35,29 @@ namespace RecipeHandling
             this.UnitType = UnitType;
         }
 
-        public  bool Equals(Unit unitToCompare)
+        
+
+        public bool Equals(Unit unitToCompare)
         {
             return UnitSymbol.Equals(unitToCompare.UnitSymbol);
         }
 
-        public override string ToString()
+
+        public void PopulateData()
         {
-            return String.Format("Unit {3,5} Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType, unitID);
-        }
-
-
-    }
-    public class UnitList
-    {
-        public List<Unit> Units;
-        private static string filename = "Units.txt";
-
-        internal UnitList()
-        {
-            /*          Units = new List<Unit> (30);
-                        Units.Add(new Unit("Kilogramm", "kg", "Masse"));
-                        Units.Add(new Unit("Liter", "l", "Volumen"));
-                        Units.Add(new Unit("Stück", "st", "Anzahl"));
-                        Units.Add(new Unit("Milliliter", "ml", "Volumen"));
-                        Units.Add(new Unit("Meter", "m", "Länge"));
-
-                        SaveList();
-            */
-
-            Units = new List<Unit>(30);
-            OpenList();
-            
-        }
-
-        public void ClearList()
-        {
-            Console.WriteLine(Units.Count);
-            Console.WriteLine(Units.RemoveAll(ValidForAllUnits));
-
-            Console.WriteLine(this);
-
-        }
-
-        private static bool ValidForAllUnits(Unit u)
-        {
-            return true;
-        }
-
-        public void SaveList()
-        {
-            using (FileStream fs = new FileStream(filename, FileMode.Create))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-                x.Serialize(fs, Units);
-            }
-
-        }
-
-        public override string ToString()
-        {
-            string Returnstring = "";
-            foreach (Unit ListItem in Units)
-                Returnstring = Returnstring + ListItem.ToString() + "\n";
-
-            return Returnstring;
-
-        }
-
-        public void OpenList()
-        {
-            using (Stream fs = new FileStream(filename, FileMode.Open))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-                Units = (List<Unit>)x.Deserialize(fs);
-            }
-        }
-
-        public void ShowList()
-        {
+            Console.WriteLine("Eingabe neue Einheit: {0,3}", unitID);
+            Console.WriteLine("-------------------------");
             Console.WriteLine();
-            Console.WriteLine("Ausgabe der Liste:");
-            if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
-            else
-            {
-                foreach (Unit ListItem in this.Units)
-                    Console.WriteLine(ListItem);
-            }
-
+            Console.Write("UnitName  : "); UnitName = Console.ReadLine();
+            Console.Write("UnitSymbol: "); UnitSymbol = Console.ReadLine();
+            Console.Write("UnitType  : "); UnitType = Console.ReadLine();
         }
+        
 
-        public void ViewXML()
+
+        public override string ToString()
         {
-            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-            x.Serialize(Console.Out, Units);
-
+            return String.Format("Unit {0,5} Name: {1,10}  Symbol: {2,5} Type: {3,10}", unitID, UnitName, UnitSymbol, UnitType);
         }
 
 

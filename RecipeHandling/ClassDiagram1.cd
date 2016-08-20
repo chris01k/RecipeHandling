@@ -24,7 +24,7 @@
   <Class Name="RecipeHandling.Unit">
     <Position X="6.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAaAAAAAAAAAEgAAAAAAAAAAABIQAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAYAAAAAAAAAEgAAAAAAAAAAABIQAAABAAAAAAAA=</HashCode>
       <FileName>Unit.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -46,8 +46,15 @@
   <Class Name="RecipeHandling.UnitType">
     <Position X="8" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAQAAAAAABAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UnitType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RecipeHandling.UnitList">
+    <Position X="8.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABSAAAAAAAEAAAAASAEAAAAAAAAEBAAAAAAAAA=</HashCode>
+      <FileName>UnitList.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

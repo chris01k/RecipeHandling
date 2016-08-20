@@ -2,9 +2,10 @@
  * Kommandozeilen-Anwendung mit rudimentärem Menü zum Test der Unit-Listen-Funktionen und
  * möglicher Algoritmen zur Umrechnung von Units
  * Autor: Klaus Christochowitz  08-2016
- * Version 0.1 - 2016-08-17: Menü ist implementiert - UnitList Methoden (CleaList,  
- *                           OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
- *              
+ * Version 0.1  - 2016-08-17: Menü ist implementiert - UnitList Methoden (ClearList,  
+ *                            OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
+ * Version 0.11 - 2016-08-20: UnitList umgebaut auf ObservableCollection - UnitList Methoden hinzu
+ *                            (AddUnit, RemoveUnit, SaveList )
  */
 using RecipeHandling;
 using System;
@@ -39,6 +40,7 @@ namespace RecipeHandling
                 Console.WriteLine("A Add Unit");
                 Console.WriteLine("C Clear Unit List");
                 Console.WriteLine("O Open Unit List");
+                Console.WriteLine("R Remove Unit");
                 Console.WriteLine("S Save Unit List");
                 Console.WriteLine("V View Unit List");
                 Console.WriteLine("X View XML File");
@@ -51,11 +53,17 @@ namespace RecipeHandling
 
                 switch (MenuInput)
                 {
+                    case "A":
+                        UL.AddUnit();
+                        break;
                     case "C":
-                        UL.ClearList();
+                        UL.Units.Clear();
                         break;
                     case "O":
                         UL.OpenList();
+                        break;
+                    case "R":
+                        UL.RemoveUnit();
                         break;
                     case "S":
                         UL.SaveList();

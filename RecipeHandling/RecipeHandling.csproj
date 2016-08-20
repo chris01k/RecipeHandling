@@ -50,6 +50,8 @@
     <Compile Include="Recipe.cs" />
     <Compile Include="ShoppingList.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="UnitComparer.cs" />
+    <Compile Include="UnitList.cs" />
     <Compile Include="UnitType.cs" />
   </ItemGroup>
   <ItemGroup>
