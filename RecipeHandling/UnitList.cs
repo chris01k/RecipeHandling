@@ -10,24 +10,24 @@ namespace RecipeHandling
     public class UnitList
     {
         public ObservableCollection<Unit> Units;
-        private static string filename = "ObservedUnits.txt";
+        public ObservableCollection<UnitTranslation> UnitTranslations;
 
         internal UnitList()
         {
             Units = new ObservableCollection<Unit>();
-/*            Units.Add(new Unit("Kilogramm", "kg", "Masse"));
-            Units.Add(new Unit("Liter", "l", "Volumen"));
-            Units.Add(new Unit("Stück", "st", "Anzahl"));
-            Units.Add(new Unit("Milliliter", "ml", "Volumen"));
-            Units.Add(new Unit("Meter", "m", "Länge"));
-
-            SaveList();
-
-            Units.Clear(); 
-*/
-            OpenList();
+            UnitTranslations = new ObservableCollection<UnitTranslation>();
 
         }
+
+        internal UnitList(bool ToBePopulatedWithDefaults)
+        {
+            Units = new ObservableCollection<Unit>();
+            UnitTranslations = new ObservableCollection<UnitTranslation>();
+
+            if (ToBePopulatedWithDefaults) PopulateListsWithDefaults();
+
+        }
+
 
         public void AddUnit()
         {
@@ -41,13 +41,28 @@ namespace RecipeHandling
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", UnitToBeAdded);
         }
 
-        public void OpenList()
+        public void ClearLists()
         {
-            using (Stream fs = new FileStream(filename, FileMode.Open))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-                Units = (ObservableCollection<Unit>)x.Deserialize(fs);
-            }
+            Units.Clear();
+            UnitTranslations.Clear();
+
+        }
+
+        private void PopulateListsWithDefaults()
+        {
+            Units.Add(new Unit("Kilogramm", "kg", "Masse"));
+            Units.Add(new Unit("Gramm", "g", "Masse"));
+            Units.Add(new Unit("Unze", "oz", "Masse"));
+            Units.Add(new Unit("Liter", "l", "Volumen"));
+            Units.Add(new Unit("Stück", "st", "Anzahl"));
+            Units.Add(new Unit("Milliliter", "ml", "Volumen"));
+            Units.Add(new Unit("Meter", "m", "Länge"));
+
+            UnitTranslations.Add(new UnitTranslation("kg", "g", 1000.0, false));
+            UnitTranslations.Add(new UnitTranslation("g", "mg", 1000.0, false));
+            UnitTranslations.Add(new UnitTranslation("l", "ml", 1000.0, false));
+            UnitTranslations.Add(new UnitTranslation("oz", "g",28.3495, false));
+
         }
 
         public void RemoveUnit()
@@ -63,7 +78,6 @@ namespace RecipeHandling
 
         }
 
-
         public void RemoveUnit(string UnitSymbolToBeRemoved)
         {
 
@@ -76,24 +90,51 @@ namespace RecipeHandling
 
         }
 
-        public void SaveList()
+
+        public Unit SelectUnit()
         {
-            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            string LocalUnitSymbol = "";
+
+            Console.WriteLine("Unit suchen:");
+            Console.WriteLine("------------");
+            Console.WriteLine();
+            Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
+
+            return SelectUnit(LocalUnitSymbol);
+
+        }
+
+        public Unit SelectUnit(string UnitSymbolToBeSelected)
+        {
+            int IndexOfSelectedUnit = Units.IndexOf(new Unit("", UnitSymbolToBeSelected, ""));
+
+            if (IndexOfSelectedUnit == -1)
             {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-                x.Serialize(fs, Units);
+                Console.WriteLine();
+                Console.WriteLine("---------------> UnitSymbol {0} nicht bekannt <---------------", UnitSymbolToBeSelected);
+                return null;
             }
+            else return Units[IndexOfSelectedUnit];
 
         }
 
         public void ShowList()
         {
-            Console.WriteLine();
-            Console.WriteLine("Ausgabe der Liste: {0}",filename);
+            Console.WriteLine(); Console.WriteLine();
+            Console.WriteLine("Ausgabe der Listen: ");
+            Console.WriteLine("Liste der Units:");
             if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
             else
             {
-                foreach (Unit ListItem in this.Units)
+                foreach (Unit ListItem in Units)
+                    Console.WriteLine(ListItem);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Liste der Translations:");
+            if (UnitTranslations.Count == 0) Console.WriteLine("-------> leer <-------");
+            else
+            {
+                foreach (UnitTranslation ListItem in UnitTranslations)
                     Console.WriteLine(ListItem);
             }
 
@@ -112,7 +153,7 @@ namespace RecipeHandling
         public void ViewXML()
         {
             Console.WriteLine();
-            Console.WriteLine("Ausgabe der Liste: {0}", filename);
+            Console.WriteLine("Ausgabe der Liste:");
             if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
             else
             {

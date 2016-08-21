@@ -4,8 +4,12 @@
  * Autor: Klaus Christochowitz  08-2016
  * Version 0.1  - 2016-08-17: Menü ist implementiert - UnitList Methoden (ClearList,  
  *                            OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
- * Version 0.11 - 2016-08-20: UnitList umgebaut auf ObservableCollection - UnitList Methoden hinzu
- *                            (AddUnit, RemoveUnit, SaveList )
+ * Version 0.11 - 2016-08-20: UnitList.Units umgebaut auf ObservableCollection. 
+ *                            UnitList Methoden hinzu: AddUnit, RemoveUnit
+ * Version 0.12 - 2016-08-20: Unit.maxUnitID enfernt, UnitList.UnitTranslation hinzu
+ *                            UnitList Methoden hinzu: SelectUnit , ClearLists
+ *                            UnitListHandler hinzu: Methoden OpenList, SaveList 
+ *                            
  */
 using RecipeHandling;
 using System;
@@ -22,13 +26,13 @@ using System.Threading.Tasks;
 namespace RecipeHandling
 {
     class Program
-    {
+    {   
         static void Main(string[] args)
         {
 
 
             string MenuInput = "";
-            UnitList UL = new UnitList();
+            UnitListHandler ULH = new UnitListHandler();
 
 
             while (MenuInput!="Q")
@@ -37,15 +41,16 @@ namespace RecipeHandling
                 Console.WriteLine("\nMenü");
                 Console.WriteLine("----");
 
-                Console.WriteLine("A Add Unit");
-                Console.WriteLine("C Clear Unit List");
-                Console.WriteLine("O Open Unit List");
-                Console.WriteLine("R Remove Unit");
-                Console.WriteLine("S Save Unit List");
-                Console.WriteLine("V View Unit List");
-                Console.WriteLine("X View XML File");
-                Console.WriteLine();
-                Console.WriteLine("Q Quit");
+                Console.WriteLine("C  Clear Unit List");
+                Console.WriteLine("O  Open Unit List");
+                Console.WriteLine("S  Save Unit List");
+                Console.WriteLine("UA  Add Unit");
+                Console.WriteLine("UR  Remove Unit");
+                Console.WriteLine("US Select Unit");
+                Console.WriteLine("V  View Unit List");
+                Console.WriteLine("X  View XML File");
+                Console.WriteLine("--------------------");
+                Console.WriteLine("Q  Quit");
 
                 Console.WriteLine();
                 Console.Write("Ihre Eingabe:");
@@ -53,26 +58,29 @@ namespace RecipeHandling
 
                 switch (MenuInput)
                 {
-                    case "A":
-                        UL.AddUnit();
-                        break;
                     case "C":
-                        UL.Units.Clear();
+                        ULH.UL.ClearLists();
                         break;
                     case "O":
-                        UL.OpenList();
-                        break;
-                    case "R":
-                        UL.RemoveUnit();
+                        ULH.OpenList();
                         break;
                     case "S":
-                        UL.SaveList();
+                        ULH.SaveList();
+                        break;
+                    case "UA":
+                        ULH.UL.AddUnit();
+                        break;
+                    case "UR":
+                        ULH.UL.RemoveUnit();
+                        break;
+                    case "US":
+                        Console.WriteLine(ULH.UL.SelectUnit());
                         break;
                     case "V":
-                        UL.ShowList();
+                        ULH.UL.ShowList();
                         break;
                     case "X":
-                        UL.ViewXML();
+                        ULH.UL.ViewXML();
                         break;
                     default:
                         Console.WriteLine();
@@ -82,20 +90,8 @@ namespace RecipeHandling
             }
 
 
-            Console.WriteLine("UnitList");
-
-
-            Console.WriteLine();
-            foreach (Unit ListItem in UL.Units)
-                Console.WriteLine(ListItem);
-
-            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(UL.GetType());
-            x.Serialize(Console.Out, UL);
-
-
-
-
         }
+
     }
 }
 

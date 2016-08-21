@@ -12,24 +12,18 @@ namespace RecipeHandling
         public string UnitSymbol { get; set; }
         public string UnitType { get; set; }
 
-        private static int maxUnitID = 0;
-        private int unitID;
-        //private int parentUnit;
 
         internal Unit()
         {
-            unitID = ++maxUnitID;
         }
 
         internal Unit(bool ToBePopulated)
         {
-            unitID = ++maxUnitID;
             if (ToBePopulated) PopulateData();
         }
 
         internal Unit(string UnitName, string UnitSymbol, string UnitType)
         {
-            unitID = ++maxUnitID;
             this.UnitName = UnitName;
             this.UnitSymbol = UnitSymbol;
             this.UnitType = UnitType;
@@ -45,8 +39,8 @@ namespace RecipeHandling
 
         public void PopulateData()
         {
-            Console.WriteLine("Eingabe neue Einheit: {0,3}", unitID);
-            Console.WriteLine("-------------------------");
+            Console.WriteLine("Eingabe neue Einheit:");
+            Console.WriteLine("---------------------");
             Console.WriteLine();
             Console.Write("UnitName  : "); UnitName = Console.ReadLine();
             Console.Write("UnitSymbol: "); UnitSymbol = Console.ReadLine();
@@ -57,7 +51,7 @@ namespace RecipeHandling
 
         public override string ToString()
         {
-            return String.Format("Unit {0,5} Name: {1,10}  Symbol: {2,5} Type: {3,10}", unitID, UnitName, UnitSymbol, UnitType);
+            return String.Format("Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType);
         }
 
 
