@@ -29,13 +29,10 @@ namespace RecipeHandling
             this.UnitType = UnitType;
         }
 
-        
-
         public bool Equals(Unit unitToCompare)
         {
             return UnitSymbol.Equals(unitToCompare.UnitSymbol);
         }
-
 
         public void PopulateData()
         {
@@ -47,8 +44,6 @@ namespace RecipeHandling
             Console.Write("UnitType  : "); UnitType = Console.ReadLine();
         }
         
-
-
         public override string ToString()
         {
             return String.Format("Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType);

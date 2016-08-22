@@ -7,17 +7,20 @@ namespace RecipeHandling
 {
     public class UnitTranslation:IEquatable<UnitTranslation>
     {
+        [Flags]
+        public enum TranslationIndepedenceType
+        {IsStandard = 0x0, IsDepedent = 0x1, IsDefault =0x2}
+
         public string BaseUnitSymbol { get; set; }
         public string TargetUnitSymbol { get; set; }
         public double TranslationFactor { get; set; }
-        public bool IngredientDependent { get; set; }
-
+        public TranslationIndepedenceType IngredientDependent { get; set; }
 //        private bool UnitTypeTranslation;
 
 
         internal UnitTranslation()
         {
-            
+            IngredientDependent = (TranslationIndepedenceType) 3;
         }
 
         internal UnitTranslation(bool ToBePopulated)
@@ -25,28 +28,25 @@ namespace RecipeHandling
             if (ToBePopulated) PopulateData();
         }
 
-        internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, bool IngredientDependent)
+        internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent)
         {
             this.BaseUnitSymbol = BaseUnitSymbol;
             this.TargetUnitSymbol = TargetUnitSymbol;
             this.TranslationFactor = TranslationFactor;
-            this.IngredientDependent = IngredientDependent;
+            this.IngredientDependent = (TranslationIndepedenceType) IngredientDependent;
          
         }
-
-
-
+        
         public bool Equals(UnitTranslation UnitTranslationToCompare)
         {
             return (BaseUnitSymbol.Equals(UnitTranslationToCompare.BaseUnitSymbol) &&
                     TargetUnitSymbol.Equals(UnitTranslationToCompare.TargetUnitSymbol));
         }
-
-
+        
         public void PopulateData()
         {
             string InputString;
-            float ParsedValue;
+            double ParsedValue;
 
             Console.WriteLine("Eingabe neue Einheit:" );
             Console.WriteLine("---------------------");
@@ -57,16 +57,15 @@ namespace RecipeHandling
             do
             {
                 Console.Write("TranslationFactor: "); InputString = Console.ReadLine();
-            } while (float.TryParse(InputString, out ParsedValue));
+            } while (double.TryParse(InputString, out ParsedValue));
             TranslationFactor = ParsedValue;
 
         }
-
-
-
+        
         public override string ToString()
         {
-            return String.Format("UnitTranslation: {0,5} --> {1,5} with Factor {2,10} ", BaseUnitSymbol, TargetUnitSymbol, TranslationFactor);
+            return String.Format("UnitTranslation: {0,5} =  {1,10:F3} {2,-5} {3}", BaseUnitSymbol, TranslationFactor, TargetUnitSymbol,
+                                  IngredientDependent);
         }
 
     }

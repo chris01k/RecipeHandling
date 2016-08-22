@@ -6,9 +6,10 @@
  *                            OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
  * Version 0.11 - 2016-08-20: UnitList.Units umgebaut auf ObservableCollection. 
  *                            UnitList Methoden hinzu: AddUnit, RemoveUnit
- * Version 0.12 - 2016-08-20: Unit.maxUnitID enfernt, UnitList.UnitTranslation hinzu
+ * Version 0.12 - 2016-08-21: Unit.maxUnitID enfernt, UnitList.UnitTranslation hinzu
  *                            UnitList Methoden hinzu: SelectUnit , ClearLists
  *                            UnitListHandler hinzu: Methoden OpenList, SaveList 
+ * Version 0.13 - 2016-08-22: Flags UnitTranslation.TranslationIndependenceType hinzu
  *                            
  */
 using RecipeHandling;
@@ -29,11 +30,9 @@ namespace RecipeHandling
     {   
         static void Main(string[] args)
         {
-
-
             string MenuInput = "";
-            UnitListHandler ULH = new UnitListHandler();
-
+            UnitListHandler ULH = new UnitListHandler(true);
+//            UnitListHandler ULH = new UnitListHandler();
 
             while (MenuInput!="Q")
             {

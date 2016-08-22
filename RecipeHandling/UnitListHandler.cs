@@ -10,12 +10,13 @@ namespace RecipeHandling
     {
         public UnitList UL;
         private static string filename = "ObservedUnits.txt";
-
+        
 
         internal UnitListHandler()
         {
             UL = new RecipeHandling.UnitList();
             OpenList();
+            UL.ShowList();
 
         }
 
@@ -24,7 +25,6 @@ namespace RecipeHandling
             UL = new RecipeHandling.UnitList(ToBePopulatedWithDefaults);
 
         }
-
 
         public void OpenList()
         {

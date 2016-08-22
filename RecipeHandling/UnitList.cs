@@ -12,6 +12,7 @@ namespace RecipeHandling
         public ObservableCollection<Unit> Units;
         public ObservableCollection<UnitTranslation> UnitTranslations;
 
+
         internal UnitList()
         {
             Units = new ObservableCollection<Unit>();
@@ -27,7 +28,6 @@ namespace RecipeHandling
             if (ToBePopulatedWithDefaults) PopulateListsWithDefaults();
 
         }
-
 
         public void AddUnit()
         {
@@ -58,10 +58,12 @@ namespace RecipeHandling
             Units.Add(new Unit("Milliliter", "ml", "Volumen"));
             Units.Add(new Unit("Meter", "m", "Länge"));
 
-            UnitTranslations.Add(new UnitTranslation("kg", "g", 1000.0, false));
-            UnitTranslations.Add(new UnitTranslation("g", "mg", 1000.0, false));
-            UnitTranslations.Add(new UnitTranslation("l", "ml", 1000.0, false));
-            UnitTranslations.Add(new UnitTranslation("oz", "g",28.3495, false));
+            UnitTranslations.Add(new UnitTranslation("kg", "g", 1000.0, 0));
+            UnitTranslations.Add(new UnitTranslation("g", "mg", 1000.0, 0));
+            UnitTranslations.Add(new UnitTranslation("l", "ml", 1000.0, 0));
+            UnitTranslations.Add(new UnitTranslation("oz", "g",28.3495, 0));
+
+            UnitTranslations.Add(new UnitTranslation("l", "kg", 1.0, 3));
 
         }
 
@@ -89,7 +91,6 @@ namespace RecipeHandling
                        
 
         }
-
 
         public Unit SelectUnit()
         {
@@ -162,7 +163,6 @@ namespace RecipeHandling
 
             }
         }
-
 
     }
 }
