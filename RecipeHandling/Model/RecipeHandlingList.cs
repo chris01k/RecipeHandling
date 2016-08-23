@@ -7,20 +7,20 @@ using System.Text;
 
 namespace RecipeHandling
 {
-    public class UnitList
+    public class RecipeHandlingList
     {
         public ObservableCollection<Unit> Units;
         public ObservableCollection<UnitTranslation> UnitTranslations;
 
 
-        internal UnitList()
+        internal RecipeHandlingList()
         {
             Units = new ObservableCollection<Unit>();
             UnitTranslations = new ObservableCollection<UnitTranslation>();
 
         }
 
-        internal UnitList(bool ToBePopulatedWithDefaults)
+        internal RecipeHandlingList(bool ToBePopulatedWithDefaults)
         {
             Units = new ObservableCollection<Unit>();
             UnitTranslations = new ObservableCollection<UnitTranslation>();

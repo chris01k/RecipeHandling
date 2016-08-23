@@ -2,15 +2,18 @@
  * Kommandozeilen-Anwendung mit rudimentärem Menü zum Test der Unit-Listen-Funktionen und
  * möglicher Algoritmen zur Umrechnung von Units
  * Autor: Klaus Christochowitz  08-2016
- * Version 0.1  - 2016-08-17: Menü ist implementiert - UnitList Methoden (ClearList,  
+ * Version 0.1  - 2016-08-17: Menü ist implementiert - RecipeHandlingList Methoden (ClearList,  
  *                            OpenList, ShowList, ViewList und ViewXML) wurden implementiert.
- * Version 0.11 - 2016-08-20: UnitList.Units umgebaut auf ObservableCollection. 
- *                            UnitList Methoden hinzu: AddUnit, RemoveUnit
- * Version 0.12 - 2016-08-21: Unit.maxUnitID enfernt, UnitList.UnitTranslation hinzu
- *                            UnitList Methoden hinzu: SelectUnit , ClearLists
- *                            UnitListHandler hinzu: Methoden OpenList, SaveList 
+ * Version 0.11 - 2016-08-20: RecipeHandlingList.Units umgebaut auf ObservableCollection. 
+ *                            RecipeHandlingList Methoden hinzu: AddUnit, RemoveUnit
+ * Version 0.12 - 2016-08-21: Unit.maxUnitID enfernt, RecipeHandlingList.UnitTranslation hinzu
+ *                            RecipeHandlingList Methoden hinzu: SelectUnit , ClearLists
+ *                            RecipeHandlingListHandler hinzu: Methoden OpenList, SaveList 
  * Version 0.13 - 2016-08-22: Flags UnitTranslation.TranslationIndependenceType hinzu
- *                            
+ * Version 0.14 - 2016-08-23: Projektplege - class UnitList umbenannt nach RecipeHandlingList
+ *                                         - Unterordner Model angelegt
+ *                                         
+ * Offene Fragen: - keine - 
  */
 using RecipeHandling;
 using System;
@@ -31,8 +34,8 @@ namespace RecipeHandling
         static void Main(string[] args)
         {
             string MenuInput = "";
-            UnitListHandler ULH = new UnitListHandler(true);
-//            UnitListHandler ULH = new UnitListHandler();
+            RecipeHandlingListHandler RHLH = new RecipeHandlingListHandler(true);
+//            RecipeHandlingListHandler RHLH = new RecipeHandlingListHandler();
 
             while (MenuInput!="Q")
             {
@@ -58,28 +61,28 @@ namespace RecipeHandling
                 switch (MenuInput)
                 {
                     case "C":
-                        ULH.UL.ClearLists();
+                        RHLH.RHL.ClearLists();
                         break;
                     case "O":
-                        ULH.OpenList();
+                        RHLH.OpenList();
                         break;
                     case "S":
-                        ULH.SaveList();
+                        RHLH.SaveList();
                         break;
                     case "UA":
-                        ULH.UL.AddUnit();
+                        RHLH.RHL.AddUnit();
                         break;
                     case "UR":
-                        ULH.UL.RemoveUnit();
+                        RHLH.RHL.RemoveUnit();
                         break;
                     case "US":
-                        Console.WriteLine(ULH.UL.SelectUnit());
+                        Console.WriteLine(RHLH.RHL.SelectUnit());
                         break;
                     case "V":
-                        ULH.UL.ShowList();
+                        RHLH.RHL.ShowList();
                         break;
                     case "X":
-                        ULH.UL.ViewXML();
+                        RHLH.RHL.ViewXML();
                         break;
                     default:
                         Console.WriteLine();
