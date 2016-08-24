@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace RecipeHandling
+namespace Jamie.Model
 {
     public class Unit:IEquatable <Unit>
     {

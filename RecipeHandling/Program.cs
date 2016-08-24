@@ -10,12 +10,26 @@
  *                            RecipeHandlingList Methoden hinzu: SelectUnit , ClearLists
  *                            RecipeHandlingListHandler hinzu: Methoden OpenList, SaveList 
  * Version 0.13 - 2016-08-22: Flags UnitTranslation.TranslationIndependenceType hinzu
- * Version 0.14 - 2016-08-23: Projektplege - class UnitList umbenannt nach RecipeHandlingList
- *                                         - Unterordner Model angelegt
- *                                         
- * Offene Fragen: - keine - 
+ * Version 0.14 - 2016-08-23: Projektpflege - class UnitList umbenannt nach RecipeHandlingList
+ *                                          - Unterordner Model angelegt
+ *                                          - Übernahme aus Jamie: Ingredient, Recipe, Shoppinglist
+ * Version 0.15 - 2016-08-24: Namespaces bereinigt: Jamie.Model
+ *                            - ObservableObject und ObservableObject.RaisePropertyChanged in Ingredient 
+ *                              auskommentiert
+ *                                          
+ * Offene Fragen: - Welche Namen werden mit einem Unterstrich begonnen? 
+ *                - Welche Konventionen verwendest Du bei Eigenschaften / Variablen
+ *                - Welche Konventionen sind beim Namespace sinnvoll?
+ *                - Aus welchem Namespace kommen ObservableObject und ObservableObject.RaisePropertyChanged?
+ *                - Wie wird ein Projekt sinnvollerweise strukturiert? (Model, Presentation??)
+ *                - using Jamie.Model ---> RHL = new RecipeHandlingList(); oder besser
+ *                                         RHL = new Jamie.Model.RecipeHandlingList()
+ *                - 
+
  */
 using RecipeHandling;
+
+using Jamie.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;

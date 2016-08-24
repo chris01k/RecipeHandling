@@ -7,21 +7,14 @@
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="RecipeHandling.Ingredient">
-    <Position X="4" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Ingredient.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="RecipeHandling.IngredientPortion">
+  <Class Name="Jamie.Model.IngredientPortion">
     <Position X="2.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\IngredientPortion.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="RecipeHandling.Unit">
+  <Class Name="Jamie.Model.Unit">
     <Position X="6.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAAEgAAAAAAAAAAABIABAAAAAAAAAAA=</HashCode>
@@ -29,31 +22,17 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="RecipeHandling.ShoppingList">
-    <Position X="0.5" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\ShoppingList.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="RecipeHandling.Recipe">
-    <Position X="0.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Recipe.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="RecipeHandling.UnitType">
+  <Class Name="Jamie.Model.UnitType">
     <Position X="8" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\UnitType.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="RecipeHandling.UnitTranslation">
+  <Class Name="Jamie.Model.UnitTranslation">
     <Position X="10" Y="1.5" Width="1.5" />
     <NestedTypes>
-      <Enum Name="RecipeHandling.UnitTranslation.TranslationIndepedenceType" Collapsed="true">
+      <Enum Name="Jamie.Model.UnitTranslation.TranslationIndepedenceType" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Model\UnitTranslation.cs</NewMemberFileName>
         </TypeIdentifier>
@@ -64,6 +43,41 @@
       <FileName>Model\UnitTranslation.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Jamie.Model.IngredientRecipeSet" Collapsed="true">
+    <Position X="2.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Ingredient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.IngredientItem" Collapsed="true">
+    <Position X="4.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAoAAAAAQAAAIAAAAAAAAAgAAAAAE=</HashCode>
+      <FileName>Model\Ingredient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.Ingredient" Collapsed="true">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAIAQAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Ingredient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.RecipeSet" Collapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Recipe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.Recipe" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAgAQAAAAAAAAACQAAAQAAAAAAAQAAACAAAA=</HashCode>
+      <FileName>Model\Recipe.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

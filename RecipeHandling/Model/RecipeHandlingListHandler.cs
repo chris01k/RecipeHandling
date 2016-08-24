@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Jamie.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace RecipeHandling
+namespace Jamie.Model
 {
     public class RecipeHandlingListHandler
     {
@@ -14,7 +15,7 @@ namespace RecipeHandling
 
         internal RecipeHandlingListHandler()
         {
-            RHL = new RecipeHandling.RecipeHandlingList();
+            RHL = new RecipeHandlingList();
             OpenList();
             RHL.ShowList();
 
@@ -22,7 +23,7 @@ namespace RecipeHandling
 
         internal RecipeHandlingListHandler(bool ToBePopulatedWithDefaults)
         {
-            RHL = new RecipeHandling.RecipeHandlingList(ToBePopulatedWithDefaults);
+            RHL = new RecipeHandlingList(ToBePopulatedWithDefaults);
 
         }
 
