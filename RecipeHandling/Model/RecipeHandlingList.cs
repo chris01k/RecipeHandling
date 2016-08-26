@@ -7,47 +7,63 @@ using System.Text;
 
 namespace Jamie.Model
 {
-    public class RecipeHandlingList
+    public class RecipeHandlingSet
     {
-        public ObservableCollection<Unit> Units;
-        public ObservableCollection<UnitTranslation> UnitTranslations;
+        private RecipeSet _Recipes;
+        private UnitSet _Units;
+        private UnitTranslationSet _UnitTranslations;
 
-
-        internal RecipeHandlingList()
+        internal RecipeHandlingSet()
         {
-            Units = new ObservableCollection<Unit>();
-            UnitTranslations = new ObservableCollection<UnitTranslation>();
+            _Recipes = new RecipeSet();
+            _Units = new UnitSet();
+            _UnitTranslations = new UnitTranslationSet();
 
         }
-
-        internal RecipeHandlingList(bool ToBePopulatedWithDefaults)
+        internal RecipeHandlingSet(bool ToBePopulatedWithDefaults)
         {
-            Units = new ObservableCollection<Unit>();
-            UnitTranslations = new ObservableCollection<UnitTranslation>();
+            _Recipes = new RecipeSet();
+            _Units = new UnitSet();
+            _UnitTranslations = new UnitTranslationSet();
 
             if (ToBePopulatedWithDefaults) PopulateListsWithDefaults();
 
         }
+
+        public RecipeSet Recipes
+        {
+            get { return _Recipes; }
+            set { _Recipes = value; }
+        }
+        public UnitSet Units
+        {
+            get { return _Units; }
+            set { _Units = value; }
+        }
+        public UnitTranslationSet UnitTranslations
+        {
+            get { return _UnitTranslations; }
+            set { _UnitTranslations = value; }
+        }
+
+
 
         public void AddUnit()
         {
             Unit UnitToBeAdded = new Unit(true);
             AddUnit(UnitToBeAdded);
         }
-
         public void AddUnit(Unit UnitToBeAdded)
         {
             if (!Units.Contains(UnitToBeAdded)) Units.Add(UnitToBeAdded);
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", UnitToBeAdded);
         }
-
         public void ClearLists()
         {
             Units.Clear();
             UnitTranslations.Clear();
 
         }
-
         private void PopulateListsWithDefaults()
         {
             Units.Add(new Unit("Kilogramm", "kg", "Masse"));
@@ -66,7 +82,6 @@ namespace Jamie.Model
             UnitTranslations.Add(new UnitTranslation("l", "kg", 1.0, 3));
 
         }
-
         public void RemoveUnit()
         {
             string LocalUnitSymbol = "";
@@ -79,7 +94,6 @@ namespace Jamie.Model
             RemoveUnit(LocalUnitSymbol);
 
         }
-
         public void RemoveUnit(string UnitSymbolToBeRemoved)
         {
 
@@ -91,7 +105,6 @@ namespace Jamie.Model
                        
 
         }
-
         public Unit SelectUnit()
         {
             string LocalUnitSymbol = "";
@@ -104,7 +117,6 @@ namespace Jamie.Model
             return SelectUnit(LocalUnitSymbol);
 
         }
-
         public Unit SelectUnit(string UnitSymbolToBeSelected)
         {
             int IndexOfSelectedUnit = Units.IndexOf(new Unit("", UnitSymbolToBeSelected, ""));
@@ -118,19 +130,11 @@ namespace Jamie.Model
             else return Units[IndexOfSelectedUnit];
 
         }
-
-        public void ShowList()
+        public void ShowSet()
         {
             Console.WriteLine(); Console.WriteLine();
             Console.WriteLine("Ausgabe der Listen: ");
-            Console.WriteLine("Liste der Units:");
-            if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
-            else
-            {
-                foreach (Unit ListItem in Units)
-                    Console.WriteLine(ListItem);
-            }
-            Console.WriteLine();
+            Units.ShowSet();
             Console.WriteLine("Liste der Translations:");
             if (UnitTranslations.Count == 0) Console.WriteLine("-------> leer <-------");
             else
@@ -140,7 +144,6 @@ namespace Jamie.Model
             }
 
         }
-
         public override string ToString()
         {
             string Returnstring = "";
@@ -149,8 +152,7 @@ namespace Jamie.Model
 
             return Returnstring;
 
-        }
-        
+        }      
         public void ViewXML()
         {
             Console.WriteLine();

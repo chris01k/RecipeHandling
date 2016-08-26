@@ -1,17 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace Jamie.Model
 {
-    public class Unit:IEquatable <Unit>
+    public class UnitSet: ObservableCollection<Unit>
     {
-        public string UnitName { get; set; }
-        public string UnitSymbol { get; set; }
-        public string UnitType { get; set; }
 
+        public void ShowSet()
+        {
+            Console.WriteLine("Liste der Units:");
+            if (Count == 0) Console.WriteLine("-------> leer <-------");
+            else
+            {
+                foreach (Unit ListItem in this)
+                    Console.WriteLine(ListItem);
+            }
+            Console.WriteLine();
+        }
+
+    }
+
+
+
+public class Unit:IEquatable <Unit>
+    {
+        private string _UnitName;
+        private string _UnitSymbol;
+        private string _UnitType;
 
         internal Unit()
         {
@@ -27,6 +46,22 @@ namespace Jamie.Model
             this.UnitName = UnitName;
             this.UnitSymbol = UnitSymbol;
             this.UnitType = UnitType;
+        }
+
+        public string UnitName
+        {
+            get { return _UnitName; }
+            set { _UnitName = value; }
+        }
+        public string UnitSymbol
+        {
+            get { return _UnitSymbol; }
+            set { _UnitSymbol = value; }
+        }
+        public string UnitType
+        {
+            get { return _UnitType; }
+            set { _UnitType = value; }
         }
 
         public bool Equals(Unit unitToCompare)

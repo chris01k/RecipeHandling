@@ -21,6 +21,9 @@ namespace Jamie.Model
     public class IngredientItem  //: ObservableObject
     {
         Ingredient _SpecificIngredient;
+        private string _Unit;
+        float? _Quantity;
+
 
         public IngredientItem()
         {
@@ -39,7 +42,6 @@ namespace Jamie.Model
 //                RaisePropertyChanged(() => SpecificIngredient);
             }
         }
-
         public string Name
         {
             get { return _SpecificIngredient != null ? _SpecificIngredient.Name : ""; }
@@ -52,8 +54,6 @@ namespace Jamie.Model
                 //RaisePropertyChanged(() => Name);
             }
         }
-
-        private string _Unit;
         public string Unit
         {
             get { return _Unit; }
@@ -67,8 +67,6 @@ namespace Jamie.Model
 
             }
         }
-
-        float? _Quantity;
         public float? Quantity
         {
             get { return _Quantity; }
@@ -82,11 +80,7 @@ namespace Jamie.Model
 
             }
         }
-
-
     }
-
-
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
@@ -96,6 +90,9 @@ namespace Jamie.Model
     public class Ingredient //: ObservableObject
     {
         string _Name;
+        private bool? _IsVegetarian;
+
+
         public string Name
         {
             get { return _Name; }
@@ -108,11 +105,6 @@ namespace Jamie.Model
 //                RaisePropertyChanged(() => Name);
             }
         }
-
-
-
-        private bool? _IsVegetarian;
-
         public bool? IsVegetarian
         {
             get { return _IsVegetarian; }

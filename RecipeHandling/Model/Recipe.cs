@@ -19,25 +19,24 @@ namespace Jamie.Model
 
     public class Recipe
     {
+
+        private IngredientRecipeSet _Ingredients;
+
         public Recipe()
         {
             _Ingredients = new IngredientRecipeSet();
         }
-
-        public string Name { get; set; }
-        public string Summary { get; set; } // Summary
-        public int PortionQuantity { get; set; } // Portion min max berücksichtigen
-        public string Source {get; set; }
-        public string Page { get; set; }
-        public bool ToTakeAway { get; set; }
-
-        private IngredientRecipeSet _Ingredients;
 
         public IngredientRecipeSet Ingredients
         {
             get { return _Ingredients; }
             set { _Ingredients = value; }
         }
-
+        public string Name { get; set; }
+        public string Summary { get; set; } // Summary
+        public int PortionQuantity { get; set; } // Portion min max berücksichtigen
+        public string Source {get; set; }
+        public string Page { get; set; }
+        public bool ToTakeAway { get; set; }
     }
 }

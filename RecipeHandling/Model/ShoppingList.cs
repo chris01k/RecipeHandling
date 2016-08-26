@@ -11,18 +11,17 @@ namespace Jamie.Model
     {
         public string Name { get; set; }
 
-
         private ShoppingListItemSet _Items;
+
+        public ShoppingList()
+        {
+            _Items = new ShoppingListItemSet();
+        }
 
         public ShoppingListItemSet Items
         {
             get { return _Items; }
             set { _Items = value; }
-        }
-        
-        public ShoppingList()
-        {
-            _Items = new ShoppingListItemSet();
         }
 
         // Fügt ein Rezept sowie die Zutaten der Shopping Liste hinzu

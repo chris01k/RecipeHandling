@@ -7,23 +7,21 @@ using System.Text;
 
 namespace Jamie.Model
 {
-    public class RecipeHandlingListHandler
+    public class RecipeHandlingSetHandler
     {
-        public RecipeHandlingList RHL;
+        public RecipeHandlingSet RHL;
         private static string filename = "ObservedUnits.txt";
         
-
-        internal RecipeHandlingListHandler()
+        internal RecipeHandlingSetHandler()
         {
-            RHL = new RecipeHandlingList();
+            RHL = new RecipeHandlingSet();
             OpenList();
-            RHL.ShowList();
+            RHL.ShowSet();
 
         }
-
-        internal RecipeHandlingListHandler(bool ToBePopulatedWithDefaults)
+        internal RecipeHandlingSetHandler(bool ToBePopulatedWithDefaults)
         {
-            RHL = new RecipeHandlingList(ToBePopulatedWithDefaults);
+            RHL = new RecipeHandlingSet(ToBePopulatedWithDefaults);
 
         }
 
@@ -32,10 +30,9 @@ namespace Jamie.Model
             using (Stream fs = new FileStream(filename, FileMode.Open))
             {
                 System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(RHL.GetType());
-                RHL = (RecipeHandlingList)x.Deserialize(fs);
+                RHL = (RecipeHandlingSet)x.Deserialize(fs);
             }
         }
-
         public void SaveList()
         {
             using (FileStream fs = new FileStream(filename, FileMode.Create))
@@ -45,8 +42,5 @@ namespace Jamie.Model
             }
 
         }
-
-
-
     }
 }

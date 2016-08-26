@@ -16,14 +16,10 @@
  * Version 0.15 - 2016-08-24: Namespaces bereinigt: Jamie.Model
  *                            - ObservableObject und ObservableObject.RaisePropertyChanged in Ingredient 
  *                              auskommentiert
+ * Version 0.16 - 2016-08-26: Kosmetik am Code
+ *                            - RecipeHandlingList nach RecipeHandlingSet umbenannt.
  *                                          
- * Offene Fragen: - Welche Namen werden mit einem Unterstrich begonnen? 
- *                - Welche Konventionen verwendest Du bei Eigenschaften / Variablen
- *                - Welche Konventionen sind beim Namespace sinnvoll?
- *                - Aus welchem Namespace kommen ObservableObject und ObservableObject.RaisePropertyChanged?
- *                - Wie wird ein Projekt sinnvollerweise strukturiert? (Model, Presentation??)
- *                - using Jamie.Model ---> RHL = new RecipeHandlingList(); oder besser
- *                                         RHL = new Jamie.Model.RecipeHandlingList()
+ * Offene Fragen: 
  *                - 
 
  */
@@ -48,8 +44,8 @@ namespace RecipeHandling
         static void Main(string[] args)
         {
             string MenuInput = "";
-            RecipeHandlingListHandler RHLH = new RecipeHandlingListHandler(true);
-//            RecipeHandlingListHandler RHLH = new RecipeHandlingListHandler();
+            RecipeHandlingSetHandler RHLH = new RecipeHandlingSetHandler(true);
+//            RecipeHandlingSetHandler RHLH = new RecipeHandlingSetHandler();
 
             while (MenuInput!="Q")
             {
@@ -93,7 +89,7 @@ namespace RecipeHandling
                         Console.WriteLine(RHLH.RHL.SelectUnit());
                         break;
                     case "V":
-                        RHLH.RHL.ShowList();
+                        RHLH.RHL.ShowSet();
                         break;
                     case "X":
                         RHLH.RHL.ViewXML();
