@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Jamie.Model
 {
-    public class ShoppingList
+/*    public class ShoppingList
     {
         public string Name { get; set; }
 
@@ -25,7 +25,7 @@ namespace Jamie.Model
         }
 
         // Fügt ein Rezept sowie die Zutaten der Shopping Liste hinzu
-        public void addRecipe(Recipe mRecipe)
+       public void addRecipe(Recipe mRecipe)
         {
             foreach (var ingredients in mRecipe.Ingredients)
             {
@@ -53,6 +53,8 @@ namespace Jamie.Model
 
     }
 
+
+
     public class ShoppingListItemSet : ObservableCollection<ShoppingListItem>
     {
     }
@@ -68,5 +70,5 @@ namespace Jamie.Model
         public RecipeSet RecipesPortion { get; set; }
 
     }
-
+*/
 }

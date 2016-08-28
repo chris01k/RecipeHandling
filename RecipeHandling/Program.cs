@@ -16,8 +16,11 @@
  * Version 0.15 - 2016-08-24: Namespaces bereinigt: Jamie.Model
  *                            - ObservableObject und ObservableObject.RaisePropertyChanged in Ingredient 
  *                              auskommentiert
- * Version 0.16 - 2016-08-26: Kosmetik am Code
+ * Version 0.16 - 2016-08-26: Refactoring: Kosmetik am Code
  *                            - RecipeHandlingList nach RecipeHandlingSet umbenannt.
+ * Version 0.17 - 2016-08-28: Liste der Zutaten hinzugefügt - IngredientSet        
+ *                            - Menüstruktur überarbeitet (Untermenüs je Objekt)
+ *                            - Jeder Objektliste <Objekt>Set die Methoden hinzu (AddItem, Menu,ViewSet)
  *                                          
  * Offene Fragen: 
  *                - 
@@ -44,7 +47,7 @@ namespace RecipeHandling
         static void Main(string[] args)
         {
             string MenuInput = "";
-            RecipeHandlingSetHandler RHLH = new RecipeHandlingSetHandler(true);
+            RecipeHandlingSetHandler JamieSetHandler = new RecipeHandlingSetHandler(true);
 //            RecipeHandlingSetHandler RHLH = new RecipeHandlingSetHandler();
 
             while (MenuInput!="Q")
@@ -53,12 +56,19 @@ namespace RecipeHandling
                 Console.WriteLine("\nMenü");
                 Console.WriteLine("----");
 
-                Console.WriteLine("C  Clear Unit List");
-                Console.WriteLine("O  Open Unit List");
-                Console.WriteLine("S  Save Unit List");
-                Console.WriteLine("UA  Add Unit");
-                Console.WriteLine("UR  Remove Unit");
-                Console.WriteLine("US Select Unit");
+                Console.WriteLine("C  Clear Lists");
+                Console.WriteLine("O  Open Lists");
+                Console.WriteLine("S  Save Lists");
+                Console.WriteLine();
+
+                Console.WriteLine("I   Ingredient");
+                Console.WriteLine("U   Unit");
+                Console.WriteLine("UT  Unit Translation");
+
+
+                //                Console.WriteLine("UA  Add Unit");
+                //                Console.WriteLine("UR  Remove Unit");
+                //                Console.WriteLine("US Select Unit");
                 Console.WriteLine("V  View Unit List");
                 Console.WriteLine("X  View XML File");
                 Console.WriteLine("--------------------");
@@ -71,28 +81,34 @@ namespace RecipeHandling
                 switch (MenuInput)
                 {
                     case "C":
-                        RHLH.RHL.ClearLists();
+                        JamieSetHandler.ClearLists();
                         break;
                     case "O":
-                        RHLH.OpenList();
+                        JamieSetHandler.OpenLists();
                         break;
                     case "S":
-                        RHLH.SaveList();
+                        JamieSetHandler.SaveLists();
                         break;
-                    case "UA":
-                        RHLH.RHL.AddUnit();
+                    case "I":
+                        JamieSetHandler.JamieDataSet.Ingredients.Menu();
                         break;
-                    case "UR":
-                        RHLH.RHL.RemoveUnit();
+                    case "U":
+                        JamieSetHandler.JamieDataSet.Units.Menu();
+                        break;
+                    case "UT":
+                        JamieSetHandler.JamieDataSet.UnitTranslations.Menu();
+                        break;
+/*                    case "UR":
+                        JamieSetHandler.JamieDataSet.RemoveUnit();
                         break;
                     case "US":
-                        Console.WriteLine(RHLH.RHL.SelectUnit());
+                        Console.WriteLine(JamieSetHandler.JamieDataSet.SelectUnit());
                         break;
-                    case "V":
-                        RHLH.RHL.ShowSet();
+*/                    case "V":
+                        JamieSetHandler.JamieDataSet.ViewSet();
                         break;
                     case "X":
-                        RHLH.RHL.ViewXML();
+                        JamieSetHandler.JamieDataSet.ViewXML();
                         break;
                     default:
                         Console.WriteLine();

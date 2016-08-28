@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 //using GalaSoft.MvvmLight;
@@ -12,16 +13,80 @@ using System.Text.RegularExpressions;
 
 namespace Jamie.Model
 {
+
+
     // Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die erforderliche Menge beschreibt.
     public class IngredientRecipeSet : ObservableCollection<IngredientItem>
     {
+    }
+
+    public class IngredientSet : ObservableCollection<Ingredient>
+    {
+        //Methods
+        public void AddItem()
+        {
+            AddItem(new Ingredient(true));
+        }
+        public void AddItem(Ingredient IngredientToBeAdded)
+        {
+            if (!Contains(IngredientToBeAdded)) Add(IngredientToBeAdded);
+            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", IngredientToBeAdded);
+        }
+        public void Menu()
+        {
+            string MenuInput = "";
+
+            while (MenuInput != "Q")
+            {
+                Console.WriteLine();
+                Console.WriteLine("\nIngredient Menü");
+                Console.WriteLine("----------------------");
+                Console.WriteLine("A  Add Ingredient");
+                Console.WriteLine("V  View Set");
+                Console.WriteLine("--------------------");
+                Console.WriteLine("Q  Quit");
+
+                Console.WriteLine();
+                Console.Write("Ihre Eingabe:");
+                MenuInput = Console.ReadLine().ToUpper();
+
+                switch (MenuInput)
+                {
+                    case "A":
+                        ViewSet();
+                        AddItem();
+                        ViewSet();
+                        break;
+                    case "V":
+                        ViewSet();
+                        break;
+                    default:
+                        Console.WriteLine();
+                        break;
+                }
+
+            }
+        }
+        public void ViewSet()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Liste der Ingredients:");
+            if (Count == 0) Console.WriteLine("-------> leer <-------");
+            else
+            {
+                foreach (Ingredient ListItem in this)
+                    Console.WriteLine(ListItem);
+            }
+
+        }
+
     }
 
 
     public class IngredientItem  //: ObservableObject
     {
         Ingredient _SpecificIngredient;
-        private string _Unit;
+        private Unit _Unit;
         float? _Quantity;
 
 
@@ -54,7 +119,7 @@ namespace Jamie.Model
                 //RaisePropertyChanged(() => Name);
             }
         }
-        public string Unit
+        public Unit Unit
         {
             get { return _Unit; }
             set
@@ -87,12 +152,29 @@ namespace Jamie.Model
      * länderspezifische Zuordnung?
      */
 
-    public class Ingredient //: ObservableObject
+    public class Ingredient: IEquatable<Ingredient> //: ObservableObject
     {
+        [Flags]
+        public enum IngredientFlags:int
+        { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
+
+        //Constants
+        const byte maxIngredientFlag = 15;
+
+        //Variables
         string _Name;
-        private bool? _IsVegetarian;
+        IngredientFlags _IngredientType;
 
+        //Constructors
+        internal Ingredient()
+        {
+        }
+        internal Ingredient(bool ToBePopulated)
+        {
+            if (ToBePopulated) PopulateObject();
+        }
 
+        //Properties
         public string Name
         {
             get { return _Name; }
@@ -105,18 +187,48 @@ namespace Jamie.Model
 //                RaisePropertyChanged(() => Name);
             }
         }
-        public bool? IsVegetarian
+        public IngredientFlags IngredientType
         {
-            get { return _IsVegetarian; }
+            get
+            {
+                return _IngredientType;
+            }
+
             set
             {
-                if (_IsVegetarian == value)
-                    return;
-
-                _IsVegetarian = value;
-//                RaisePropertyChanged(() => IsVegetarian);
-
+                _IngredientType = value;
             }
+        }
+
+        //Methods
+        public bool Equals(Ingredient IngredientToCompare)
+        {           
+            return Name.ToUpper().Equals(IngredientToCompare.Name.ToUpper());
+        }
+        public void PopulateObject()
+        {
+            IngredientFlags FlagValue;
+            string InputString;
+            bool ParsedBoolValue;
+
+            FlagValue = 0;
+
+            Console.WriteLine("Eingabe neue Zutat:");
+            Console.WriteLine("-------------------");
+            Console.WriteLine();
+            Console.Write("         Name  : "); Name = Console.ReadLine();
+
+            for (int i = 1; i <= maxIngredientFlag; i=(i*2))
+            {
+                Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
+                if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
+            }
+            IngredientType = FlagValue;
+
+        }
+        public override string ToString()
+        {
+            return String.Format("Name: {0,10}  Type: {1,5}", Name, IngredientType);
         }
 
     }

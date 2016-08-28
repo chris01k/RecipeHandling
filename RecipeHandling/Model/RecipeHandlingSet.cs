@@ -7,29 +7,43 @@ using System.Text;
 
 namespace Jamie.Model
 {
-    public class RecipeHandlingSet
+    public class RecipeDataSets
     {
+        private IngredientSet _Ingredients;
         private RecipeSet _Recipes;
         private UnitSet _Units;
         private UnitTranslationSet _UnitTranslations;
 
-        internal RecipeHandlingSet()
+        internal RecipeDataSets()
         {
+            _Ingredients = new IngredientSet();
+            _Recipes = new RecipeSet();
+            _Units = new UnitSet();
+            _UnitTranslations = new UnitTranslationSet();
+        }
+        internal RecipeDataSets(bool ToBePopulatedWithDefaults)
+        {
+            _Ingredients = new IngredientSet();
             _Recipes = new RecipeSet();
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet();
 
+            if (ToBePopulatedWithDefaults) PopulateSetsWithDefaults();
+
         }
-        internal RecipeHandlingSet(bool ToBePopulatedWithDefaults)
+
+        public IngredientSet Ingredients
         {
-            _Recipes = new RecipeSet();
-            _Units = new UnitSet();
-            _UnitTranslations = new UnitTranslationSet();
+            get
+            {
+                return _Ingredients;
+            }
 
-            if (ToBePopulatedWithDefaults) PopulateListsWithDefaults();
-
+            set
+            {
+                _Ingredients = value;
+            }
         }
-
         public RecipeSet Recipes
         {
             get { return _Recipes; }
@@ -47,7 +61,6 @@ namespace Jamie.Model
         }
 
 
-
         public void AddUnit()
         {
             Unit UnitToBeAdded = new Unit(true);
@@ -60,11 +73,11 @@ namespace Jamie.Model
         }
         public void ClearLists()
         {
+            Recipes.Clear();
             Units.Clear();
             UnitTranslations.Clear();
-
         }
-        private void PopulateListsWithDefaults()
+        private void PopulateSetsWithDefaults()
         {
             Units.Add(new Unit("Kilogramm", "kg", "Masse"));
             Units.Add(new Unit("Gramm", "g", "Masse"));
@@ -78,7 +91,6 @@ namespace Jamie.Model
             UnitTranslations.Add(new UnitTranslation("g", "mg", 1000.0, 0));
             UnitTranslations.Add(new UnitTranslation("l", "ml", 1000.0, 0));
             UnitTranslations.Add(new UnitTranslation("oz", "g",28.3495, 0));
-
             UnitTranslations.Add(new UnitTranslation("l", "kg", 1.0, 3));
 
         }
@@ -130,18 +142,12 @@ namespace Jamie.Model
             else return Units[IndexOfSelectedUnit];
 
         }
-        public void ShowSet()
+        public void ViewSet()
         {
             Console.WriteLine(); Console.WriteLine();
-            Console.WriteLine("Ausgabe der Listen: ");
-            Units.ShowSet();
-            Console.WriteLine("Liste der Translations:");
-            if (UnitTranslations.Count == 0) Console.WriteLine("-------> leer <-------");
-            else
-            {
-                foreach (UnitTranslation ListItem in UnitTranslations)
-                    Console.WriteLine(ListItem);
-            }
+            Ingredients.ViewSet();
+            Units.ViewSet();
+            UnitTranslations.ViewSet();
 
         }
         public override string ToString()
@@ -156,12 +162,12 @@ namespace Jamie.Model
         public void ViewXML()
         {
             Console.WriteLine();
-            Console.WriteLine("Ausgabe der Liste:");
+            Console.WriteLine("XML Ausgabe der Liste:");
             if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
             else
             {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(Units.GetType());
-                x.Serialize(Console.Out, Units);
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(Console.Out, this);
 
             }
         }
