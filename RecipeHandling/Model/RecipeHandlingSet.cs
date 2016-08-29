@@ -14,6 +14,7 @@ namespace Jamie.Model
         private UnitSet _Units;
         private UnitTranslationSet _UnitTranslations;
 
+        //Constructors
         internal RecipeDataSets()
         {
             _Ingredients = new IngredientSet();
@@ -28,10 +29,11 @@ namespace Jamie.Model
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet();
 
-            if (ToBePopulatedWithDefaults) PopulateSetsWithDefaults();
+            if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
         }
 
+        //Properties
         public IngredientSet Ingredients
         {
             get
@@ -60,7 +62,7 @@ namespace Jamie.Model
             set { _UnitTranslations = value; }
         }
 
-
+        //Methods
         public void AddUnit()
         {
             Unit UnitToBeAdded = new Unit(true);
@@ -71,28 +73,29 @@ namespace Jamie.Model
             if (!Units.Contains(UnitToBeAdded)) Units.Add(UnitToBeAdded);
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", UnitToBeAdded);
         }
-        public void ClearLists()
+        public void ClearList()
         {
+            Ingredients.Clear();
             Recipes.Clear();
             Units.Clear();
             UnitTranslations.Clear();
         }
-        private void PopulateSetsWithDefaults()
+        public int Count()
         {
-            Units.Add(new Unit("Kilogramm", "kg", "Masse"));
-            Units.Add(new Unit("Gramm", "g", "Masse"));
-            Units.Add(new Unit("Unze", "oz", "Masse"));
-            Units.Add(new Unit("Liter", "l", "Volumen"));
-            Units.Add(new Unit("Stück", "st", "Anzahl"));
-            Units.Add(new Unit("Milliliter", "ml", "Volumen"));
-            Units.Add(new Unit("Meter", "m", "Länge"));
+            int ReturnValue = 0;
 
-            UnitTranslations.Add(new UnitTranslation("kg", "g", 1000.0, 0));
-            UnitTranslations.Add(new UnitTranslation("g", "mg", 1000.0, 0));
-            UnitTranslations.Add(new UnitTranslation("l", "ml", 1000.0, 0));
-            UnitTranslations.Add(new UnitTranslation("oz", "g",28.3495, 0));
-            UnitTranslations.Add(new UnitTranslation("l", "kg", 1.0, 3));
+            ReturnValue += Ingredients.Count();
+            ReturnValue += Recipes.Count();
+            ReturnValue += Units.Count();
+            ReturnValue += UnitTranslations.Count();
 
+            return ReturnValue;
+        }
+        public void PopulateSetWithDefaults()
+        {
+            Ingredients.PopulateSetWithDefaults();
+            Units.PopulateSetWithDefaults();
+            UnitTranslations.PopulateSetWithDefaults();
         }
         public void RemoveUnit()
         {
@@ -144,26 +147,25 @@ namespace Jamie.Model
         }
         public void ViewSet()
         {
-            Console.WriteLine(); Console.WriteLine();
-            Ingredients.ViewSet();
-            Units.ViewSet();
-            UnitTranslations.ViewSet();
-
+            Console.WriteLine();
+            Console.WriteLine(ToString());
         }
         public override string ToString()
         {
-            string Returnstring = "";
-            foreach (Unit ListItem in Units)
-                Returnstring = Returnstring + ListItem.ToString() + "\n";
+            string ReturnString = "";
 
-            return Returnstring;
+            ReturnString += Ingredients.ToString();
+            ReturnString += Recipes.ToString();
+            ReturnString += Units.ToString();
+            ReturnString += UnitTranslations.ToString();
+            return ReturnString;
 
         }      
         public void ViewXML()
         {
             Console.WriteLine();
-            Console.WriteLine("XML Ausgabe der Liste:");
-            if (Units.Count == 0) Console.WriteLine("-------> leer <-------");
+            Console.WriteLine("XML Ausgabe der Listen:");
+            if (Units.Count == 0) Console.WriteLine("-------> Alle Listen leer <-------");
             else
             {
                 System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());

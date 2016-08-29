@@ -21,10 +21,17 @@
  * Version 0.17 - 2016-08-28: Liste der Zutaten hinzugefügt - IngredientSet        
  *                            - Menüstruktur überarbeitet (Untermenüs je Objekt)
  *                            - Jeder Objektliste <Objekt>Set die Methoden hinzu (AddItem, Menu,ViewSet)
- *                                          
+ * Version 0.18 - 2016-08-29: Klassen Ingredient, UnitTranslation und Unit standardisiert
+ *                            - ViewSet / ToString überarbeitet und vereinheitlicht.
+ *                            - PopulateSetWithDefault überarbeitet und vereinheitlicht.
+ * 
  * Offene Fragen: 
  *                - 
-
+ *                
+ * To Dos       : - Recipe einbinden....
+ *                  Interface IEquatable implementieren: Equals zufügen
+ *                  Methoden zufügen
+ *                  Reihenfolge: <Object>ToString, <Set>ToString, <Set>ViewSet, <Set>Menu, 
  */
 using RecipeHandling;
 
@@ -62,13 +69,13 @@ namespace RecipeHandling
                 Console.WriteLine();
 
                 Console.WriteLine("I   Ingredient");
+                Console.WriteLine("R   Recipe");
                 Console.WriteLine("U   Unit");
                 Console.WriteLine("UT  Unit Translation");
-
-
                 //                Console.WriteLine("UA  Add Unit");
                 //                Console.WriteLine("UR  Remove Unit");
                 //                Console.WriteLine("US Select Unit");
+                Console.WriteLine();
                 Console.WriteLine("V  View Unit List");
                 Console.WriteLine("X  View XML File");
                 Console.WriteLine("--------------------");
@@ -91,6 +98,9 @@ namespace RecipeHandling
                         break;
                     case "I":
                         JamieSetHandler.JamieDataSet.Ingredients.Menu();
+                        break;
+                    case "R":
+                        JamieSetHandler.JamieDataSet.Recipes.Menu();
                         break;
                     case "U":
                         JamieSetHandler.JamieDataSet.Units.Menu();

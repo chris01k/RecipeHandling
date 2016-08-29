@@ -43,7 +43,7 @@ namespace Jamie.Model
         //Methods
         public void ClearLists()
         {
-            JamieDataSet.ClearLists();
+            JamieDataSet.ClearList();
         }
         public void OpenLists()
         {

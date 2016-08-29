@@ -53,17 +53,31 @@ namespace Jamie.Model
 
             }
         }
-        public void ViewSet()
+        public void PopulateSetWithDefaults()
         {
-            Console.WriteLine();
-            Console.WriteLine("Liste der Translations:");
-            if (Count == 0) Console.WriteLine("-------> leer <-------");
+            AddItem(new UnitTranslation("kg", "g", 1000.0, 0));
+            AddItem(new UnitTranslation("g", "mg", 1000.0, 0));
+            AddItem(new UnitTranslation("l", "ml", 1000.0, 0));
+            AddItem(new UnitTranslation("oz", "g", 28.3495, 0));
+            AddItem(new UnitTranslation("l", "kg", 1.0, 3));
+        }
+        public override string ToString()
+        {
+            string ReturnString = "";
+
+            ReturnString += "\nListe der Unit Umrechnungen:\n";
+            if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
                 foreach (UnitTranslation ListItem in this)
-                    Console.WriteLine(ListItem);
+                    ReturnString += ListItem.ToString() + "\n";
             }
-
+            ReturnString += "\n";
+            return ReturnString;
+        }
+        public void ViewSet()
+        {
+            Console.WriteLine(ToString());
         }
     }
 
@@ -118,10 +132,10 @@ namespace Jamie.Model
         }
 
         //Methods
-        public bool Equals(UnitTranslation UnitTranslationToCompare)
+        public bool Equals(UnitTranslation ItemToCompare)
         {
-            return (BaseUnitSymbol.Equals(UnitTranslationToCompare.BaseUnitSymbol) &&
-                    TargetUnitSymbol.Equals(UnitTranslationToCompare.TargetUnitSymbol));
+            return (BaseUnitSymbol.Equals(ItemToCompare.BaseUnitSymbol) &&
+                    TargetUnitSymbol.Equals(ItemToCompare.TargetUnitSymbol));
         }       
         public void PopulateObject()
         {

@@ -54,24 +54,39 @@ namespace Jamie.Model
 
             }
         }
+        public void PopulateSetWithDefaults()
+        {
+            AddItem(new Unit("Kilogramm", "kg", "Masse"));
+            AddItem(new Unit("Gramm", "g", "Masse"));
+            AddItem(new Unit("Unze", "oz", "Masse"));
+            AddItem(new Unit("Liter", "l", "Volumen"));
+            AddItem(new Unit("Stück", "st", "Anzahl"));
+            AddItem(new Unit("Milliliter", "ml", "Volumen"));
+            AddItem(new Unit("Meter", "m", "Länge"));
+        }
         public void ViewSet()
         {
-            Console.WriteLine();
-            Console.WriteLine("Liste der Units:");
-            if (Count == 0) Console.WriteLine("-------> leer <-------");
+            Console.WriteLine(ToString());
+        }
+        public override string ToString()
+        {
+            string ReturnString = "";
+
+            ReturnString = ReturnString + "\nListe der Units:\n";
+            if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
                 foreach (Unit ListItem in this)
-                    Console.WriteLine(ListItem);
+                    ReturnString += ListItem.ToString() + "\n";
             }
-            Console.WriteLine();
+            ReturnString += "\n";
+            return ReturnString;
         }
     }
 
-
-
-public class Unit:IEquatable <Unit>
+    public class Unit:IEquatable <Unit>
     {
+        //Fields
         private string _UnitName;
         private string _UnitSymbol;
         private string _UnitType;
@@ -110,9 +125,9 @@ public class Unit:IEquatable <Unit>
         }
 
         //Methods
-        public bool Equals(Unit UnitToCompare)
+        public bool Equals(Unit ItemToCompare)
         {
-            return UnitSymbol.Equals(UnitToCompare.UnitSymbol);
+            return UnitSymbol.Equals(ItemToCompare.UnitSymbol);
         }
         public void PopulateObject()
         {
@@ -127,8 +142,6 @@ public class Unit:IEquatable <Unit>
         {
             return String.Format("Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType);
         }
-
-
     }
 
 }

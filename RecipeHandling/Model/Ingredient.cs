@@ -67,19 +67,55 @@ namespace Jamie.Model
 
             }
         }
+        //public void ViewSet()
+        //{
+        //    Console.WriteLine();
+        //    Console.WriteLine("Liste der Ingredients:");
+        //    if (Count == 0) Console.WriteLine("-------> leer <-------");
+        //    else
+        //    {
+        //        foreach (Ingredient ListItem in this)
+        //            Console.WriteLine(ListItem);
+        //    }
+
+        //}
+        public void PopulateSetWithDefaults()
+        {
+            Ingredient.IngredientFlags FlagsTobeSet;
+
+            FlagsTobeSet = 0;
+            FlagsTobeSet |= Ingredient.IngredientFlags.IsVegan;
+            AddItem(new Ingredient("Zwiebeln", Ingredient.IngredientFlags.IsVegetarian
+                                             | Ingredient.IngredientFlags.IsVegan
+                                             | Ingredient.IngredientFlags.IsLowCarb
+                                             | Ingredient.IngredientFlags.IsLowFat));
+            AddItem(new Ingredient("Tomaten", Ingredient.IngredientFlags.IsVegetarian
+                                             | Ingredient.IngredientFlags.IsVegan
+                                             | Ingredient.IngredientFlags.IsLowCarb
+                                             | Ingredient.IngredientFlags.IsLowFat));
+            AddItem(new Ingredient("Rinderfilet", Ingredient.IngredientFlags.IsLowCarb));
+            AddItem(new Ingredient("Quinoa", Ingredient.IngredientFlags.IsVegetarian
+                                             | Ingredient.IngredientFlags.IsVegan
+                                             | Ingredient.IngredientFlags.IsLowFat));
+        }
         public void ViewSet()
         {
-            Console.WriteLine();
-            Console.WriteLine("Liste der Ingredients:");
-            if (Count == 0) Console.WriteLine("-------> leer <-------");
+            Console.WriteLine(ToString());
+        }
+        public override string ToString()
+        {
+            string ReturnString = "";
+
+            ReturnString += "\nListe der Zutaten:\n";
+            if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
                 foreach (Ingredient ListItem in this)
-                    Console.WriteLine(ListItem);
+                    ReturnString += ListItem.ToString() + "\n";
             }
-
+            ReturnString += "\n";
+            return ReturnString;
         }
-
     }
 
 
@@ -173,6 +209,11 @@ namespace Jamie.Model
         {
             if (ToBePopulated) PopulateObject();
         }
+        internal Ingredient(string Name, IngredientFlags IngredientType)
+        {
+            this.Name = Name;
+            this.IngredientType = IngredientType;
+        }
 
         //Properties
         public string Name
@@ -201,15 +242,14 @@ namespace Jamie.Model
         }
 
         //Methods
-        public bool Equals(Ingredient IngredientToCompare)
-        {           
-            return Name.ToUpper().Equals(IngredientToCompare.Name.ToUpper());
+        public bool Equals(Ingredient ItemToCompare)
+        {
+            return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
         }
         public void PopulateObject()
         {
             IngredientFlags FlagValue;
             string InputString;
-            bool ParsedBoolValue;
 
             FlagValue = 0;
 
