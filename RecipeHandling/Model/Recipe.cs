@@ -1,14 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Jamie.Model
 {
     public class RecipeSet: ObservableCollection<Recipe>
     {
+        private static RecipeDataSets _Data;
+
+        public RecipeSet(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
 
         //Methods
         public void AddItem()
@@ -18,7 +20,22 @@ namespace Jamie.Model
         public void AddItem(Recipe ItemToBeAdded)
         {
             if (!Contains(ItemToBeAdded)) Add(ItemToBeAdded);
-            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
+            else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
+        }
+        public void AddItem(RecipeDataSets Data)
+        {
+            Recipe NewRecipe = new Recipe(true);
+
+            if (Count == 0)
+            {
+                _Data = Data;
+                NewRecipe.SetDataReference(Data);
+            }
+            AddItem(NewRecipe);
+        }
+        public bool IsEmpty()
+        {
+            return (Count == 0);
         }
         public void Menu()
         {
@@ -27,9 +44,9 @@ namespace Jamie.Model
             while (MenuInput != "Q")
             {
                 Console.WriteLine();
-                Console.WriteLine("\nIngredient Menü");
-                Console.WriteLine("----------------------");
-                Console.WriteLine("A  Add Ingredient");
+                Console.WriteLine("\nRecipe Menü");
+                Console.WriteLine("---------------");
+                Console.WriteLine("A  Add Recipe");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");
@@ -42,7 +59,7 @@ namespace Jamie.Model
                 {
                     case "A":
                         ViewSet();
-//                        AddItem();
+                        AddItem(_Data);
                         ViewSet();
                         break;
                     case "V":
@@ -92,9 +109,7 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
-
     }
-
 
     /* Ein Rezept ist für eine Portionsanzahl ausgelegt.
      * Rezepte generieren ein Gesamtmerkmal aus den einzelnen Merkmalen von allen Zutaten
@@ -102,11 +117,16 @@ namespace Jamie.Model
 
     public class Recipe:IEquatable<Recipe>
     {
+        //Variables
+        private static RecipeDataSets _Data;
+        private static long _MaxID;
+        private long _ID;
 
         private IngredientRecipeSet _Ingredients;
         private string _Name;
         private int _PortionQuantity; // Portion min max berücksichtigen
         private string _Source; // Source: Cookbook the recipe is taken from 
+        private string _SourceISBN;
         private string _SourcePage; // Page the recipe is found in the cookbook
         private string _Summary; // Summary
 //        private bool _ToTakeAway;
@@ -114,15 +134,41 @@ namespace Jamie.Model
         //Constructors
         public Recipe()
         {
-            _Ingredients = new IngredientRecipeSet();
+            ID = ++MaxID;
+            _Ingredients = new IngredientRecipeSet(_Data);
         }
         public Recipe(bool ToBePopulated)
         {
-            _Ingredients = new IngredientRecipeSet();
+            ID = ++MaxID;
+            _Ingredients = new IngredientRecipeSet(_Data);
             if (ToBePopulated) PopulateObject();
         }
 
         //Properties
+        public static long MaxID
+        {
+            get
+            {
+                return _MaxID;
+            }
+
+            set
+            {
+                _MaxID = value;
+            }
+        }
+        public long ID
+        {
+            get
+            {
+                return _ID;
+            }
+
+            set
+            {
+                _ID = value;
+            }
+        }
         public IngredientRecipeSet Ingredients
         {
             get { return _Ingredients; }
@@ -164,6 +210,19 @@ namespace Jamie.Model
                 _Source = value;
             }
         }
+        public string SourceISBN
+        {
+            get
+            {
+                return _SourceISBN;
+            }
+
+            set
+            {
+                _SourceISBN = value;
+            }
+        }
+
         public string SourcePage
         {
             get
@@ -193,6 +252,10 @@ namespace Jamie.Model
         //Methods
         public bool Equals(Recipe ItemToCompare)
         {
+            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+        }
+        public bool EqualKey(Recipe ItemToCompare)
+        {
             return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
         }
         public void PopulateObject()
@@ -204,15 +267,21 @@ namespace Jamie.Model
             do
             {
                 Console.Write("PortionQuantity : "); InputString = Console.ReadLine();
-            } while (int.TryParse(InputString, out ParsedIntValue));
+            } while (!int.TryParse(InputString, out ParsedIntValue));
             PortionQuantity = ParsedIntValue;
-            Console.Write("Summary : "); Summary = Console.ReadLine();
-            Console.Write("Source : "); Source = Console.ReadLine();
-
+            Console.Write("Summary         : "); Summary = Console.ReadLine();
+            Console.Write("Source          : "); Source = Console.ReadLine();
+            Console.Write("SourcePage      : "); SourcePage = Console.ReadLine();
+            Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
+        }
+        public void SetDataReference(RecipeDataSets Data)
+        {
+            _Data = Data;
+            Ingredients.SetDataReference(Data);
         }
         public override string ToString()
         {
-            return String.Format("Name: {0,10}  Source: {1,5}  Seite: {2,5}  Summary {3,15}", Name, Source, SourcePage, Summary);
+            return string.Format("{0,6}-Name: {1,10}  Source: {2,5}  Seite: {3,5}  Summary {4,15}", ID, Name, Source, SourcePage, Summary);
         }
 
     }

@@ -1,14 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Jamie.Model
 {
     public class UnitSet: ObservableCollection<Unit>
     {
+        private static RecipeDataSets _Data;
+
+        //Constructors
+        public UnitSet(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
+
+
         //Methods
         public void AddItem()
         {
@@ -54,6 +59,40 @@ namespace Jamie.Model
 
             }
         }
+        public Unit SelectUnit()
+        {
+            string LocalUnitSymbol = "";
+
+            Console.WriteLine("Unit suchen:");
+            Console.WriteLine("------------");
+            Console.WriteLine();
+            Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
+
+            return SelectUnit(LocalUnitSymbol);
+
+        }
+        public Unit SelectUnit(string UnitSymbolToBeSelected)
+        {
+            string InputString;
+            Unit LocalUnitToSelect = new Unit("", UnitSymbolToBeSelected, "");
+
+            int IndexOfSelectedUnit = IndexOf(LocalUnitToSelect);
+            if (IndexOfSelectedUnit == -1)
+            {
+                Console.WriteLine();
+                Console.WriteLine("---------------> Unit {0} nicht bekannt <---------------", UnitSymbolToBeSelected);
+                Console.WriteLine("Neue Unit eingeben (J/N)?"); InputString = Console.ReadLine();
+                if (InputString.ToUpper() == "J")
+                {
+                    AddItem();
+                    IndexOfSelectedUnit = Count - 1;
+                }
+                else return null;
+            }
+            return this[IndexOfSelectedUnit];
+
+        }
+
         public void PopulateSetWithDefaults()
         {
             AddItem(new Unit("Kilogramm", "kg", "Masse"));
@@ -87,6 +126,8 @@ namespace Jamie.Model
     public class Unit:IEquatable <Unit>
     {
         //Fields
+        private long _ID;
+        private static long _maxID;
         private string _UnitName;
         private string _UnitSymbol;
         private string _UnitType;
@@ -95,19 +136,40 @@ namespace Jamie.Model
         // Constructors
         internal Unit()
         {
+            _ID = ++_maxID;
         }
         internal Unit(bool ToBePopulated)
         {
+            _ID = ++_maxID;
             if (ToBePopulated) PopulateObject();
         }
         internal Unit(string UnitName, string UnitSymbol, string UnitType)
         {
+            _ID = ++_maxID;
             this.UnitName = UnitName;
             this.UnitSymbol = UnitSymbol;
             this.UnitType = UnitType;
         }
 
         // Properties
+        public long ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public static long MaxID
+        {
+            get
+            {
+                return _maxID;
+            }
+        }
         public string UnitName
         {
             get { return _UnitName; }
@@ -124,8 +186,13 @@ namespace Jamie.Model
             set { _UnitType = value; }
         }
 
+
         //Methods
         public bool Equals(Unit ItemToCompare)
+        {
+            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+        }
+        public bool EqualKey(Unit ItemToCompare)
         {
             return UnitSymbol.Equals(ItemToCompare.UnitSymbol);
         }
@@ -140,7 +207,7 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return String.Format("Name: {0,10}  Symbol: {1,5} Type: {2,10}", UnitName, UnitSymbol, UnitType);
+            return string.Format("{0,6}-Name: {1,10}  Symbol: {2,5} Type: {3,10}", ID, UnitName, UnitSymbol, UnitType);
         }
     }
 

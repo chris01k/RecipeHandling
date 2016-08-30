@@ -1,27 +1,39 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-//using GalaSoft.MvvmLight;
-using System.Text.RegularExpressions;
+
 
 
 namespace Jamie.Model
 {
-
-
     // Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die erforderliche Menge beschreibt.
     public class IngredientRecipeSet : ObservableCollection<IngredientItem>
     {
+        private static RecipeDataSets _Data;
+
+        //Constructors
+        public IngredientRecipeSet(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
+
+        //Methods
+        public void SetDataReference(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
     }
 
     public class IngredientSet : ObservableCollection<Ingredient>
     {
+        private static RecipeDataSets _Data;
+
+        //Constructors
+        public IngredientSet(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
+
         //Methods
         public void AddItem()
         {
@@ -67,18 +79,6 @@ namespace Jamie.Model
 
             }
         }
-        //public void ViewSet()
-        //{
-        //    Console.WriteLine();
-        //    Console.WriteLine("Liste der Ingredients:");
-        //    if (Count == 0) Console.WriteLine("-------> leer <-------");
-        //    else
-        //    {
-        //        foreach (Ingredient ListItem in this)
-        //            Console.WriteLine(ListItem);
-        //    }
-
-        //}
         public void PopulateSetWithDefaults()
         {
             Ingredient.IngredientFlags FlagsTobeSet;
@@ -121,16 +121,24 @@ namespace Jamie.Model
 
     public class IngredientItem  //: ObservableObject
     {
-        Ingredient _SpecificIngredient;
-        private Unit _Unit;
-        float? _Quantity;
-
-
+        //Constructors
         public IngredientItem()
         {
             _SpecificIngredient = new Ingredient();
         }
+        public IngredientItem(bool ToBePopulated)
+        {
+            _SpecificIngredient = new Ingredient();
+            if (ToBePopulated) PopulateObject();
+        }
 
+
+        //Variables
+        private float? _Quantity;
+        private Ingredient _SpecificIngredient;
+        private Unit _Unit;
+
+        //Properties
         public Ingredient SpecificIngredient
         {
             get { return _SpecificIngredient; }
@@ -181,6 +189,37 @@ namespace Jamie.Model
 
             }
         }
+
+        //Methods
+        public void PopulateObject()
+        {
+            string InputString;
+            float ParsedDoubleValue;
+
+            Console.WriteLine("Eingabe neue Zutat zum Rezept:");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine();
+            do
+            {
+                Console.Write("Menge (Quantity): "); InputString = Console.ReadLine();
+            } while (!float.TryParse(InputString, out ParsedDoubleValue));
+            Quantity = ParsedDoubleValue;
+            Console.Write("Unit: "); InputString = Console.ReadLine();
+
+
+            Console.Write("         Name  : "); Name = Console.ReadLine();
+
+
+
+            //for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
+            //{
+            //    Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
+            //    if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
+            //}
+            //IngredientType = FlagValue;
+
+        }
+
     }
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
@@ -197,25 +236,45 @@ namespace Jamie.Model
         //Constants
         const byte maxIngredientFlag = 15;
 
+
         //Variables
-        string _Name;
-        IngredientFlags _IngredientType;
+        private static long _MaxID;
+        private long _ID;
+        private string _Name;
+        private IngredientFlags _IngredientType;
 
         //Constructors
         internal Ingredient()
         {
+            _ID = ++_MaxID;
         }
         internal Ingredient(bool ToBePopulated)
         {
+            _ID = ++_MaxID;
             if (ToBePopulated) PopulateObject();
         }
         internal Ingredient(string Name, IngredientFlags IngredientType)
         {
+            _ID = ++_MaxID;
             this.Name = Name;
             this.IngredientType = IngredientType;
         }
 
         //Properties
+        public long ID
+        {
+            get
+            {
+                return _ID;
+            }
+        }
+        public long MaxID
+        {
+            get
+            {
+                return _MaxID;
+            }
+        }
         public string Name
         {
             get { return _Name; }
@@ -241,8 +300,13 @@ namespace Jamie.Model
             }
         }
 
+
         //Methods
         public bool Equals(Ingredient ItemToCompare)
+        {
+            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+        }
+        public bool EqualKey(Ingredient ItemToCompare)
         {
             return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
         }
@@ -258,7 +322,7 @@ namespace Jamie.Model
             Console.WriteLine();
             Console.Write("         Name  : "); Name = Console.ReadLine();
 
-            for (int i = 1; i <= maxIngredientFlag; i=(i*2))
+            for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
             {
                 Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
                 if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
@@ -268,7 +332,7 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return String.Format("Name: {0,10}  Type: {1,5}", Name, IngredientType);
+            return string.Format("{0,6}-Name: {1,15}  Type: {2}", ID, Name, IngredientType);
         }
 
     }

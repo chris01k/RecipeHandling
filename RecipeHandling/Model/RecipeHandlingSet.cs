@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Jamie.Model
 {
@@ -15,19 +11,19 @@ namespace Jamie.Model
         private UnitTranslationSet _UnitTranslations;
 
         //Constructors
-        internal RecipeDataSets()
+        public RecipeDataSets()
         {
-            _Ingredients = new IngredientSet();
-            _Recipes = new RecipeSet();
-            _Units = new UnitSet();
-            _UnitTranslations = new UnitTranslationSet();
+            _Ingredients = new IngredientSet(this);
+            _Recipes = new RecipeSet(this);
+            _Units = new UnitSet(this);
+            _UnitTranslations = new UnitTranslationSet(this);
         }
-        internal RecipeDataSets(bool ToBePopulatedWithDefaults)
+        public RecipeDataSets(bool ToBePopulatedWithDefaults)
         {
-            _Ingredients = new IngredientSet();
-            _Recipes = new RecipeSet();
-            _Units = new UnitSet();
-            _UnitTranslations = new UnitTranslationSet();
+            _Ingredients = new IngredientSet(this);
+            _Recipes = new RecipeSet(this);
+            _Units = new UnitSet(this);
+            _UnitTranslations = new UnitTranslationSet(this);
 
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
@@ -118,31 +114,6 @@ namespace Jamie.Model
             if (Units.Contains(UnitToBeRemoved)) Units.Remove(UnitToBeRemoved);
             else Console.WriteLine("UnitSymbol {0} konnte nicht gefunden werden", UnitSymbolToBeRemoved);
                        
-
-        }
-        public Unit SelectUnit()
-        {
-            string LocalUnitSymbol = "";
-
-            Console.WriteLine("Unit suchen:");
-            Console.WriteLine("------------");
-            Console.WriteLine();
-            Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
-
-            return SelectUnit(LocalUnitSymbol);
-
-        }
-        public Unit SelectUnit(string UnitSymbolToBeSelected)
-        {
-            int IndexOfSelectedUnit = Units.IndexOf(new Unit("", UnitSymbolToBeSelected, ""));
-
-            if (IndexOfSelectedUnit == -1)
-            {
-                Console.WriteLine();
-                Console.WriteLine("---------------> UnitSymbol {0} nicht bekannt <---------------", UnitSymbolToBeSelected);
-                return null;
-            }
-            else return Units[IndexOfSelectedUnit];
 
         }
         public void ViewSet()

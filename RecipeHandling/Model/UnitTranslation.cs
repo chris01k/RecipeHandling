@@ -1,13 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 
 namespace Jamie.Model
 {
     public class UnitTranslationSet : ObservableCollection<UnitTranslation>
     {
+        private static RecipeDataSets _Data;
+
+        //Constructors
+        public UnitTranslationSet(RecipeDataSets Data)
+        {
+            _Data = Data;
+        }
+
         //Methods
         public void AddItem()
         {
@@ -87,6 +92,8 @@ namespace Jamie.Model
         public enum TranslationIndepedenceType
         {IsStandard = 0x0, IsDepedent = 0x1, IsDefault =0x2}
 
+        private static long _MaxID;
+        private long _ID;
         private string _BaseUnitSymbol;
         private string _TargetUnitSymbol;
         private double _TranslationFactor;
@@ -95,21 +102,48 @@ namespace Jamie.Model
         //Constructors
         internal UnitTranslation()
         {
+            _ID = ++_MaxID;
             IngredientDependent = (TranslationIndepedenceType) 3;
         }
         internal UnitTranslation(bool ToBePopulated)
         {
+            _ID = ++_MaxID;
             if (ToBePopulated) PopulateObject();
         }
         internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent)
         {
-            this.BaseUnitSymbol = BaseUnitSymbol;
+            _ID = ++_MaxID;
+            _BaseUnitSymbol = BaseUnitSymbol;
             this.TargetUnitSymbol = TargetUnitSymbol;
             this.TranslationFactor = TranslationFactor;
             this.IngredientDependent = (TranslationIndepedenceType) IngredientDependent;
         }
 
         //Properties
+        public static long MaxID
+        {
+            get
+            {
+                return _MaxID;
+            }
+
+            set
+            {
+                _MaxID = value;
+            }
+        }
+        public long ID
+        {
+            get
+            {
+                return _ID;
+            }
+
+            set
+            {
+                _ID = value;
+            }
+        }
         public string BaseUnitSymbol
         {
             get { return _BaseUnitSymbol; }
@@ -134,9 +168,13 @@ namespace Jamie.Model
         //Methods
         public bool Equals(UnitTranslation ItemToCompare)
         {
+            return _ID.Equals(ItemToCompare._ID) | EqualKey(ItemToCompare);
+        }       
+        public bool EqualKey(UnitTranslation ItemToCompare)
+        {
             return (BaseUnitSymbol.Equals(ItemToCompare.BaseUnitSymbol) &&
                     TargetUnitSymbol.Equals(ItemToCompare.TargetUnitSymbol));
-        }       
+        }
         public void PopulateObject()
         {
             string InputString;
@@ -157,7 +195,7 @@ namespace Jamie.Model
         }       
         public override string ToString()
         {
-            return String.Format("UnitTranslation: {0,5} =  {1,10:F3} {2,-5} {3}", BaseUnitSymbol, TranslationFactor, TargetUnitSymbol,
+            return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,10:F3} {3,-5} {4}", ID, BaseUnitSymbol, TranslationFactor, TargetUnitSymbol,
                                   IngredientDependent);
         }
         

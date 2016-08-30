@@ -24,38 +24,39 @@
  * Version 0.18 - 2016-08-29: Klassen Ingredient, UnitTranslation und Unit standardisiert
  *                            - ViewSet / ToString überarbeitet und vereinheitlicht.
  *                            - PopulateSetWithDefault überarbeitet und vereinheitlicht.
+ * Version 0.19 - 2016-08-30: Recipe und RecipeSet eingebunden
+ * Version 0.20 - 2016-0x-xx: IngredientRecipeSet zufügen.
+ *                             
  * 
- * Offene Fragen: 
- *                - 
+ * Offene Fragen: - Globale Enums in einer Klasse zusammenfassen?
+ *                - Konstruktoren internal oder public?
+ *                - Bei Properties im Konstuktor: _Property = Property oder this.Property = Property
  *                
  * To Dos       : - Recipe einbinden....
- *                  Interface IEquatable implementieren: Equals zufügen
- *                  Methoden zufügen
- *                  Reihenfolge: <Object>ToString, <Set>ToString, <Set>ViewSet, <Set>Menu, 
+ *                - IngredientType Definition globalisieren????
+ *                - Variable ID kapseln
+ * 
+ * 
+ * Checklisten : 1. Neue Objektliste einfügen....
+ *                  - Interface IEquatable implementieren: Equals zufügen
+ *                  - Methoden zufügen - Reihenfolge: <Object>ToString, <Set>ToString, <Set>ViewSet, <Set>Menu, 
  */
-using RecipeHandling;
 
 using Jamie.Model;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 
 
-namespace RecipeHandling
+namespace Main
 {
+
     class Program
-    {   
+    {
         static void Main(string[] args)
         {
             string MenuInput = "";
-            RecipeHandlingSetHandler JamieSetHandler = new RecipeHandlingSetHandler(true);
-//            RecipeHandlingSetHandler RHLH = new RecipeHandlingSetHandler();
+            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler(true);
 
             while (MenuInput!="Q")
             {
@@ -88,25 +89,25 @@ namespace RecipeHandling
                 switch (MenuInput)
                 {
                     case "C":
-                        JamieSetHandler.ClearLists();
+                        JamieData.ClearLists();
                         break;
                     case "O":
-                        JamieSetHandler.OpenLists();
+                        JamieData.OpenLists();
                         break;
                     case "S":
-                        JamieSetHandler.SaveLists();
+                        JamieData.SaveLists();
                         break;
                     case "I":
-                        JamieSetHandler.JamieDataSet.Ingredients.Menu();
+                        JamieData.JamieDataSet.Ingredients.Menu();
                         break;
                     case "R":
-                        JamieSetHandler.JamieDataSet.Recipes.Menu();
+                        JamieData.JamieDataSet.Recipes.Menu();
                         break;
                     case "U":
-                        JamieSetHandler.JamieDataSet.Units.Menu();
+                        JamieData.JamieDataSet.Units.Menu();
                         break;
                     case "UT":
-                        JamieSetHandler.JamieDataSet.UnitTranslations.Menu();
+                        JamieData.JamieDataSet.UnitTranslations.Menu();
                         break;
 /*                    case "UR":
                         JamieSetHandler.JamieDataSet.RemoveUnit();
@@ -115,10 +116,10 @@ namespace RecipeHandling
                         Console.WriteLine(JamieSetHandler.JamieDataSet.SelectUnit());
                         break;
 */                    case "V":
-                        JamieSetHandler.JamieDataSet.ViewSet();
+                        JamieData.JamieDataSet.ViewSet();
                         break;
                     case "X":
-                        JamieSetHandler.JamieDataSet.ViewXML();
+                        JamieData.JamieDataSet.ViewXML();
                         break;
                     default:
                         Console.WriteLine();

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="RecipeHandling.Program" Collapsed="true">
+  <Class Name="Main.Program" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Jamie.Model.IngredientPortion">
+  <Class Name="Jamie.Model.IngredientPortion" Collapsed="true">
     <Position X="2.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -17,7 +17,7 @@
   <Class Name="Jamie.Model.Unit">
     <Position X="6.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAIBEAAAEgAAAAABAAAAABIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAIAAAIBEAAAEgAAAAABAgAAABIAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -47,36 +47,46 @@
   <Class Name="Jamie.Model.IngredientRecipeSet" Collapsed="true">
     <Position X="2.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
       <FileName>Model\Ingredient.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Jamie.Model.IngredientItem" Collapsed="true">
     <Position X="4.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAAAAAoAAAAAQAAAIAAAAAAAAAgAAAAAE=</HashCode>
+      <HashCode>ABAAAAAAAABAAAAAoAAAAAQAAAIAAAAAAAAAgAAAAAE=</HashCode>
       <FileName>Model\Ingredient.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Jamie.Model.Ingredient" Collapsed="true">
-    <Position X="2.75" Y="2.75" Width="1.5" />
+  <Class Name="Jamie.Model.Ingredient">
+    <Position X="12" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Jamie.Model.Ingredient.IngredientFlags">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Ingredient.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>QAAIAAAAAABAAAAEgAAAIAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>QAAIAAAAAABAgAAEgAAAoAQIgAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Model\Ingredient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Jamie.Model.RecipeSet" Collapsed="true">
+  <Class Name="Jamie.Model.RecipeSet">
     <Position X="2.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgAAAAAAAAAAAAEAAAAAAAAgAAIAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAgAAAAAAAAAAAAEAAAAAAAAgAAIAAAAAAAEAAAAAAA=</HashCode>
       <FileName>Model\Recipe.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Jamie.Model.Recipe" Collapsed="true">
-    <Position X="0.5" Y="4.5" Width="1.5" />
+  <Class Name="Jamie.Model.Recipe">
+    <Position X="0.5" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BACAAAAAAgBAgAAEgAAAIKQAAEQAAABAAAAAAACAAAA=</HashCode>
+      <HashCode>BACAAAAAAgBAgAAEgAAAIKQAAEQAAABAAAAEAACAAAA=</HashCode>
       <FileName>Model\Recipe.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
