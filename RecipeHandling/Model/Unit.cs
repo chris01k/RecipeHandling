@@ -11,7 +11,7 @@ namespace Jamie.Model
         private static long _MaxID = 0;
 
         //Constructors
-        public UnitSet(RecipeDataSets Data)
+        public UnitSet()
         {
         }
 
@@ -27,7 +27,9 @@ namespace Jamie.Model
         //Methods
         public void AddItem()
         {
-            AddItem(new Unit(true));
+            Unit newItem = new Unit();
+            newItem.PopulateObject();
+            AddItem(newItem);
         }
         public void AddItem(Unit ItemToBeAdded)
         {
@@ -37,6 +39,15 @@ namespace Jamie.Model
                 ItemToBeAdded.ID = ++_MaxID;
             }
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
+        }
+        public bool KeyItemExists(string KeyUnitSymbol)
+        {
+            Unit KeyUnit = new Unit("", KeyUnitSymbol, "");
+            return KeyItemExists(KeyUnit);
+        }
+        public bool KeyItemExists(Unit KeyUnit)
+        {
+            return (IndexOf(KeyUnit) != -1);
         }
         public void Menu()
         {
@@ -108,13 +119,13 @@ namespace Jamie.Model
         }
         public void PopulateSetWithDefaults()
         {
-            AddItem(new Unit("Kilogramm", "kg", "Masse"));
-            AddItem(new Unit("Gramm", "g", "Masse"));
-            AddItem(new Unit("Unze", "oz", "Masse"));
-            AddItem(new Unit("Liter", "l", "Volumen"));
-            AddItem(new Unit("Stück", "st", "Anzahl"));
-            AddItem(new Unit("Milliliter", "ml", "Volumen"));
-            AddItem(new Unit("Meter", "m", "Länge"));
+            AddItem(new Unit("kg", "Kilogramm", "Masse"));
+            AddItem(new Unit("g", "Gramm", "Masse"));
+            AddItem(new Unit("oz", "Unzen",  "Masse"));
+            AddItem(new Unit("l", "Liter", "Volumen"));
+            AddItem(new Unit("st", "Stück", "Anzahl"));
+            AddItem(new Unit("ml", "Milliliter", "Volumen"));
+            AddItem(new Unit("m", "Meter", "Länge"));
         }
         public void ViewSet()
         {
@@ -143,8 +154,8 @@ namespace Jamie.Model
 
         //Variables
         private long? _ID;
+        private string _UnitSymbol; //Key
         private string _UnitName;
-        private string _UnitSymbol;
         private string _UnitType;
 
 
@@ -156,11 +167,11 @@ namespace Jamie.Model
         {
             if (ToBePopulated) PopulateObject();
         }
-        internal Unit(string UnitName, string UnitSymbol, string UnitType)
+        internal Unit(string UnitSymbol, string UnitName,  string UnitType)
         {
-            this.UnitName = UnitName;
-            this.UnitSymbol = UnitSymbol;
-            this.UnitType = UnitType;
+            _UnitSymbol = UnitSymbol;
+            _UnitName = UnitName;
+            _UnitType = UnitType;
         }
 
         // Properties
@@ -176,15 +187,15 @@ namespace Jamie.Model
 //                else throw exception;
             }
         }
-        public string UnitName
-        {
-            get { return _UnitName; }
-            set { _UnitName = value; }
-        }
         public string UnitSymbol
         {
             get { return _UnitSymbol; }
             set { _UnitSymbol = value; }
+        }
+        public string UnitName
+        {
+            get { return _UnitName; }
+            set { _UnitName = value; }
         }
         public string UnitType
         {
@@ -213,7 +224,7 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-Name: {1,10}  Symbol: {2,5} Type: {3,10}", ID, UnitName, UnitSymbol, UnitType);
+            return string.Format("{0,6} {1,5} - Name: {2,10}   Type: {3,10}", ID, UnitSymbol, UnitName,  UnitType);
         }
     }
 

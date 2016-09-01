@@ -28,6 +28,11 @@
  * Version 0.20 - 2016-09-01: Unique ID einführt: Ingredient, Recipe, Unit, UnitSet - IngredientFlag im Namespace
  *                            Unique ID : MaxID zum Set, ID im <Objekt> kann einmal geschrieben werden
  *                            IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
+ * Version 0.21 - 2016-09-01: Ersatz - Weitergabe von RecipeDataSet an <Object>Set & <Object> durch spezifisch erforderliche Sets:
+ *                            - Übergabe des/der spezifischen Sets an die <Object>Set
+ *                            - Umbau des <Object> Konstruktors auf Konstruktor([Set1[, Set2[...]]])
+ *                            - Einbindung der Prüfroutine in PopulateObject: Units ()
+ *                              noch offen UnitTranslation (Unit), Ingredient(), Recipe(Unit,Ingredient)
  *                            
  *                             
  * 

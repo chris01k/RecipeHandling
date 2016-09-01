@@ -9,8 +9,8 @@ namespace Jamie.Model
         //        private static RecipeDataSets _Data;
         //        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
         //        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
-        private UnitSet _UnitSetData;
         private static long _MaxID = 0;
+        private UnitSet _UnitSetData;
 
         //Constructors
         public UnitTranslationSet(UnitSet UnitSetData)
@@ -26,11 +26,25 @@ namespace Jamie.Model
                 return _MaxID;
             }
         }
+        public UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+
+            set
+            {
+                _UnitSetData = value;
+            }
+        }
 
         //Methods
         public void AddItem()
         {
-            AddItem (new UnitTranslation(true));
+            UnitTranslation NewUnitTranslation = new UnitTranslation();
+            NewUnitTranslation.PopulateObject(UnitSetData);
+            AddItem (NewUnitTranslation);
         }
         public void AddItem(UnitTranslation ItemToBeAdded)
         {
@@ -122,9 +136,9 @@ namespace Jamie.Model
         {
             IngredientDependent = (TranslationIndepedenceType) 0;
         }
-        internal UnitTranslation(bool ToBePopulated)
+        internal UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
         {
-            if (ToBePopulated) PopulateObject();
+            if (ToBePopulated) PopulateObject(UnitSetData);
         }
         internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent)
         {
@@ -178,7 +192,7 @@ namespace Jamie.Model
             return (BaseUnitSymbol.Equals(ItemToCompare.BaseUnitSymbol) &&
                     TargetUnitSymbol.Equals(ItemToCompare.TargetUnitSymbol));
         }
-        public void PopulateObject()
+        public void PopulateObject(UnitSet UnitSetData)
         {
             string InputString;
             double ParsedDoubleValue;
