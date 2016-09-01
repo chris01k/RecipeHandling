@@ -5,7 +5,13 @@ using System.Collections.ObjectModel;
 
 
 namespace Jamie.Model
-{
+{   
+    [Flags]
+    // IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
+    public enum IngredientFlags : int
+    { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
+
+
     // Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die erforderliche Menge beschreibt.
     public class IngredientRecipeSet : ObservableCollection<IngredientItem>
     {
@@ -27,6 +33,7 @@ namespace Jamie.Model
     public class IngredientSet : ObservableCollection<Ingredient>
     {
         private static RecipeDataSets _Data;
+        private static long _MaxID = 0;
 
         //Constructors
         public IngredientSet(RecipeDataSets Data)
@@ -39,10 +46,14 @@ namespace Jamie.Model
         {
             AddItem(new Ingredient(true));
         }
-        public void AddItem(Ingredient IngredientToBeAdded)
+        public void AddItem(Ingredient ItemToBeAdded)
         {
-            if (!Contains(IngredientToBeAdded)) Add(IngredientToBeAdded);
-            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", IngredientToBeAdded);
+            if (!Contains(ItemToBeAdded))
+            {
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
+            }
+            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
         public void Menu()
         {
@@ -81,22 +92,22 @@ namespace Jamie.Model
         }
         public void PopulateSetWithDefaults()
         {
-            Ingredient.IngredientFlags FlagsTobeSet;
+            IngredientFlags FlagsTobeSet;
 
             FlagsTobeSet = 0;
-            FlagsTobeSet |= Ingredient.IngredientFlags.IsVegan;
-            AddItem(new Ingredient("Zwiebeln", Ingredient.IngredientFlags.IsVegetarian
-                                             | Ingredient.IngredientFlags.IsVegan
-                                             | Ingredient.IngredientFlags.IsLowCarb
-                                             | Ingredient.IngredientFlags.IsLowFat));
-            AddItem(new Ingredient("Tomaten", Ingredient.IngredientFlags.IsVegetarian
-                                             | Ingredient.IngredientFlags.IsVegan
-                                             | Ingredient.IngredientFlags.IsLowCarb
-                                             | Ingredient.IngredientFlags.IsLowFat));
-            AddItem(new Ingredient("Rinderfilet", Ingredient.IngredientFlags.IsLowCarb));
-            AddItem(new Ingredient("Quinoa", Ingredient.IngredientFlags.IsVegetarian
-                                             | Ingredient.IngredientFlags.IsVegan
-                                             | Ingredient.IngredientFlags.IsLowFat));
+            FlagsTobeSet |= IngredientFlags.IsVegan;
+            AddItem(new Ingredient("Zwiebeln", IngredientFlags.IsVegetarian
+                                             | IngredientFlags.IsVegan
+                                             | IngredientFlags.IsLowCarb
+                                             | IngredientFlags.IsLowFat));
+            AddItem(new Ingredient("Tomaten",  IngredientFlags.IsVegetarian
+                                             | IngredientFlags.IsVegan
+                                             | IngredientFlags.IsLowCarb
+                                             | IngredientFlags.IsLowFat));
+            AddItem(new Ingredient("Rinderfilet", IngredientFlags.IsLowCarb));
+            AddItem(new Ingredient("Quinoa", IngredientFlags.IsVegetarian
+                                           | IngredientFlags.IsVegan
+                                           | IngredientFlags.IsLowFat));
         }
         public void ViewSet()
         {
@@ -229,50 +240,40 @@ namespace Jamie.Model
 
     public class Ingredient: IEquatable<Ingredient> //: ObservableObject
     {
-        [Flags]
-        public enum IngredientFlags:int
-        { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
 
         //Constants
         const byte maxIngredientFlag = 15;
 
-
         //Variables
-        private static long _MaxID;
-        private long _ID;
+        private long? _ID;
         private string _Name;
         private IngredientFlags _IngredientType;
 
         //Constructors
         internal Ingredient()
         {
-            _ID = ++_MaxID;
         }
         internal Ingredient(bool ToBePopulated)
         {
-            _ID = ++_MaxID;
             if (ToBePopulated) PopulateObject();
         }
         internal Ingredient(string Name, IngredientFlags IngredientType)
         {
-            _ID = ++_MaxID;
-            this.Name = Name;
-            this.IngredientType = IngredientType;
+            _Name = Name;
+            _IngredientType = IngredientType;
         }
 
         //Properties
-        public long ID
+        public long? ID
         {
             get
             {
                 return _ID;
             }
-        }
-        public long MaxID
-        {
-            get
+            set
             {
-                return _MaxID;
+                if (_ID == null) _ID = value;
+                //                else throw exception;
             }
         }
         public string Name

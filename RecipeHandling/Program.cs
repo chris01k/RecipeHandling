@@ -25,16 +25,21 @@
  *                            - ViewSet / ToString überarbeitet und vereinheitlicht.
  *                            - PopulateSetWithDefault überarbeitet und vereinheitlicht.
  * Version 0.19 - 2016-08-30: Recipe und RecipeSet eingebunden
- * Version 0.20 - 2016-0x-xx: IngredientRecipeSet zufügen.
+ * Version 0.20 - 2016-09-01: Unique ID einführt: Ingredient, Recipe, Unit, UnitSet - IngredientFlag im Namespace
+ *                            Unique ID : MaxID zum Set, ID im <Objekt> kann einmal geschrieben werden
+ *                            IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
+ *                            
  *                             
  * 
  * Offene Fragen: - Globale Enums in einer Klasse zusammenfassen?
  *                - Konstruktoren internal oder public?
  *                - Bei Properties im Konstuktor: _Property = Property oder this.Property = Property
  *                
- * To Dos       : - Recipe einbinden....
+ * To Dos       : - InitMaxID nach Deserialize (für den Fall, dass Program mit leeren Listen beginnt)
+ *                - Recipe einbinden....
  *                - IngredientType Definition globalisieren????
  *                - Variable ID kapseln
+ *                - IngredientRecipeSet zufügen.
  * 
  * 
  * Checklisten : 1. Neue Objektliste einfügen....

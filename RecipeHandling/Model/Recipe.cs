@@ -6,6 +6,7 @@ namespace Jamie.Model
     public class RecipeSet: ObservableCollection<Recipe>
     {
         private static RecipeDataSets _Data;
+        private static long _MaxID = 0;
 
         public RecipeSet(RecipeDataSets Data)
         {
@@ -19,7 +20,11 @@ namespace Jamie.Model
         }
         public void AddItem(Recipe ItemToBeAdded)
         {
-            if (!Contains(ItemToBeAdded)) Add(ItemToBeAdded);
+            if (!Contains(ItemToBeAdded))
+            {
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
+            }
             else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
         public void AddItem(RecipeDataSets Data)
@@ -119,8 +124,7 @@ namespace Jamie.Model
     {
         //Variables
         private static RecipeDataSets _Data;
-        private static long _MaxID;
-        private long _ID;
+        private long? _ID;
 
         private IngredientRecipeSet _Ingredients;
         private string _Name;
@@ -134,39 +138,25 @@ namespace Jamie.Model
         //Constructors
         public Recipe()
         {
-            ID = ++MaxID;
             _Ingredients = new IngredientRecipeSet(_Data);
         }
         public Recipe(bool ToBePopulated)
         {
-            ID = ++MaxID;
             _Ingredients = new IngredientRecipeSet(_Data);
             if (ToBePopulated) PopulateObject();
         }
 
         //Properties
-        public static long MaxID
-        {
-            get
-            {
-                return _MaxID;
-            }
-
-            set
-            {
-                _MaxID = value;
-            }
-        }
-        public long ID
+        public long? ID
         {
             get
             {
                 return _ID;
             }
-
             set
             {
-                _ID = value;
+                if (_ID == null) _ID = value;
+                //                else throw exception;
             }
         }
         public IngredientRecipeSet Ingredients

@@ -3,14 +3,28 @@ using System.Collections.ObjectModel;
 
 namespace Jamie.Model
 {
+
     public class UnitTranslationSet : ObservableCollection<UnitTranslation>
     {
-        private static RecipeDataSets _Data;
+        //        private static RecipeDataSets _Data;
+        //        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
+        //        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
+        private UnitSet _UnitSetData;
+        private static long _MaxID = 0;
 
         //Constructors
-        public UnitTranslationSet(RecipeDataSets Data)
+        public UnitTranslationSet(UnitSet UnitSetData)
         {
-            _Data = Data;
+            _UnitSetData = UnitSetData;
+        }
+
+        //Properties
+        public static long MaxID
+        {
+            get
+            {
+                return _MaxID;
+            }
         }
 
         //Methods
@@ -18,10 +32,15 @@ namespace Jamie.Model
         {
             AddItem (new UnitTranslation(true));
         }
-        public void AddItem(UnitTranslation UnitTranslationToBeAdded)
+        public void AddItem(UnitTranslation ItemToBeAdded)
         {
-            if (!Contains(UnitTranslationToBeAdded)) Add(UnitTranslationToBeAdded);
-            else Console.WriteLine("Die Unit Translation ist bereits vorhanden: \n {0}", UnitTranslationToBeAdded);
+            if (!Contains(ItemToBeAdded))
+            {
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
+            }
+
+            else Console.WriteLine("Die Unit Translation ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
         public void Menu()
         {
@@ -90,10 +109,9 @@ namespace Jamie.Model
     {
         [Flags]
         public enum TranslationIndepedenceType
-        {IsStandard = 0x0, IsDepedent = 0x1, IsDefault =0x2}
+        { IsStandard = 0x0, IsDepedent = 0x1, IsDefault = 0x2 }
 
-        private static long _MaxID;
-        private long _ID;
+        private long? _ID;
         private string _BaseUnitSymbol;
         private string _TargetUnitSymbol;
         private double _TranslationFactor;
@@ -102,46 +120,31 @@ namespace Jamie.Model
         //Constructors
         internal UnitTranslation()
         {
-            _ID = ++_MaxID;
-            IngredientDependent = (TranslationIndepedenceType) 3;
+            IngredientDependent = (TranslationIndepedenceType) 0;
         }
         internal UnitTranslation(bool ToBePopulated)
         {
-            _ID = ++_MaxID;
             if (ToBePopulated) PopulateObject();
         }
         internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent)
         {
-            _ID = ++_MaxID;
             _BaseUnitSymbol = BaseUnitSymbol;
-            this.TargetUnitSymbol = TargetUnitSymbol;
-            this.TranslationFactor = TranslationFactor;
-            this.IngredientDependent = (TranslationIndepedenceType) IngredientDependent;
+            _TargetUnitSymbol = TargetUnitSymbol;
+            _TranslationFactor = TranslationFactor;
+            _IngredientDependent = (TranslationIndepedenceType) IngredientDependent;
         }
 
-        //Properties
-        public static long MaxID
-        {
-            get
-            {
-                return _MaxID;
-            }
-
-            set
-            {
-                _MaxID = value;
-            }
-        }
-        public long ID
+        // Properties
+        public long? ID
         {
             get
             {
                 return _ID;
             }
-
             set
             {
-                _ID = value;
+                if (_ID == null) _ID = value;
+                //                else throw exception;
             }
         }
         public string BaseUnitSymbol

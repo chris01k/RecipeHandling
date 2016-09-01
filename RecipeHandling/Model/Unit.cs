@@ -5,24 +5,38 @@ namespace Jamie.Model
 {
     public class UnitSet: ObservableCollection<Unit>
     {
-        private static RecipeDataSets _Data;
+//        private static RecipeDataSets _Data;
+//        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
+//        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
+        private static long _MaxID = 0;
 
         //Constructors
         public UnitSet(RecipeDataSets Data)
         {
-            _Data = Data;
         }
 
+        //Properties
+        public static long MaxID
+        {
+            get
+            {
+                return _MaxID;
+            }
+        }
 
         //Methods
         public void AddItem()
         {
             AddItem(new Unit(true));
         }
-        public void AddItem(Unit UnitToBeAdded)
+        public void AddItem(Unit ItemToBeAdded)
         {
-            if (!Contains(UnitToBeAdded)) Add(UnitToBeAdded);
-            else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", UnitToBeAdded);
+            if (!Contains(ItemToBeAdded)) 
+            {
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
+            }
+            else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
         public void Menu()
         {
@@ -92,7 +106,6 @@ namespace Jamie.Model
             return this[IndexOfSelectedUnit];
 
         }
-
         public void PopulateSetWithDefaults()
         {
             AddItem(new Unit("Kilogramm", "kg", "Masse"));
@@ -111,7 +124,7 @@ namespace Jamie.Model
         {
             string ReturnString = "";
 
-            ReturnString = ReturnString + "\nListe der Units:\n";
+            ReturnString += string.Format("\nListe der Units - MaxID: {0}\n", MaxID);
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
@@ -125,9 +138,11 @@ namespace Jamie.Model
 
     public class Unit:IEquatable <Unit>
     {
-        //Fields
-        private long _ID;
-        private static long _maxID;
+        //Constants
+
+
+        //Variables
+        private long? _ID;
         private string _UnitName;
         private string _UnitSymbol;
         private string _UnitType;
@@ -136,23 +151,20 @@ namespace Jamie.Model
         // Constructors
         internal Unit()
         {
-            _ID = ++_maxID;
         }
         internal Unit(bool ToBePopulated)
         {
-            _ID = ++_maxID;
             if (ToBePopulated) PopulateObject();
         }
         internal Unit(string UnitName, string UnitSymbol, string UnitType)
         {
-            _ID = ++_maxID;
             this.UnitName = UnitName;
             this.UnitSymbol = UnitSymbol;
             this.UnitType = UnitType;
         }
 
         // Properties
-        public long ID
+        public long? ID
         {
             get
             {
@@ -160,14 +172,8 @@ namespace Jamie.Model
             }
             set
             {
-                _ID = value;
-            }
-        }
-        public static long MaxID
-        {
-            get
-            {
-                return _maxID;
+                if (_ID == null) _ID = value;
+//                else throw exception;
             }
         }
         public string UnitName
