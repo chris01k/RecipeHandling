@@ -98,16 +98,16 @@ namespace Jamie.Model
             return SelectItem(LocalUnitSymbol);
 
         }
-        public Unit SelectItem(string UnitSymbolToBeSelected)
+        public Unit SelectItem(string ItemTextToBeSelected)
         {
             string InputString;
-            Unit LocalUnitToSelect = new Unit("", UnitSymbolToBeSelected, "");
+            Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", "");
 
             int IndexOfSelectedUnit = IndexOf(LocalUnitToSelect);
             if (IndexOfSelectedUnit == -1)
             {
                 Console.WriteLine();
-                Console.WriteLine("---------------> Unit {0} nicht bekannt <---------------", UnitSymbolToBeSelected);
+                Console.WriteLine("---------------> Unit {0} nicht bekannt <---------------", ItemTextToBeSelected);
                 Console.WriteLine("Neue Unit eingeben (J/N)?"); InputString = Console.ReadLine();
                 if (InputString.ToUpper() == "J")
                 {

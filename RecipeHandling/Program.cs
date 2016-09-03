@@ -35,6 +35,10 @@
  *                              noch offen UnitTranslation (Unit), Ingredient(), Recipe(Unit,Ingredient)
  * Version 0.22 - 2016-09-03: Recipe eingebunden
  *                            - Menu(), AddItem(), SelectItem() angepasst
+ */
+
+/* Version 0.23 - 2016-09-03: Recipe inclusive IngredientItemSet eingefügt
+ *                            
  *                             
  * 
  * Offene Fragen: 
@@ -81,9 +85,6 @@ namespace Main
                 Console.WriteLine("R   Recipe");
                 Console.WriteLine("U   Unit");
                 Console.WriteLine("UT  Unit Translation");
-                //                Console.WriteLine("UA  Add Unit");
-                //                Console.WriteLine("UR  Remove Unit");
-                //                Console.WriteLine("US Select Unit");
                 Console.WriteLine();
                 Console.WriteLine("V  View Unit List");
                 Console.WriteLine("X  View XML File");

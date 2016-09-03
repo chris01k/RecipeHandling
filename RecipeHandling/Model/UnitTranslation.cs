@@ -178,10 +178,6 @@ namespace Jamie.Model
             {
                 return _UnitSetData;
             }
-            //set
-            //{
-            //    _UnitSetData = value;
-            //}
         } //ReadOnly
 
         public string BaseUnitSymbol

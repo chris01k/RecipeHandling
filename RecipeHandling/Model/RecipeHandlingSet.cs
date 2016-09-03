@@ -13,17 +13,17 @@ namespace Jamie.Model
         //Constructors
         public RecipeDataSets()
         {
-            _Ingredients = new IngredientSet(this);
-            _Recipes = new RecipeSet(_Units, _Ingredients);
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
+            _Ingredients = new IngredientSet(_Units);
+            _Recipes = new RecipeSet(_Units, _Ingredients);
         }
         public RecipeDataSets(bool ToBePopulatedWithDefaults)
         {
-            _Ingredients = new IngredientSet(this);
-            _Recipes = new RecipeSet(_Units, _Ingredients);
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
+            _Ingredients = new IngredientSet(_Units);
+            _Recipes = new RecipeSet(_Units, _Ingredients);
 
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
@@ -59,7 +59,7 @@ namespace Jamie.Model
         }
 
         //Methods
-        public void AddUnit()
+/*        public void AddUnit()
         {
             Unit UnitToBeAdded = new Unit(true);
             AddUnit(UnitToBeAdded);
@@ -69,10 +69,10 @@ namespace Jamie.Model
             if (!Units.Contains(UnitToBeAdded)) Units.Add(UnitToBeAdded);
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", UnitToBeAdded);
         }
-        public void ClearList()
+*/        public void ClearList()
         {
             Ingredients.Clear();
-            Recipes.Clear();
+            //Recipes.Clear();
             Units.Clear();
             UnitTranslations.Clear();
         }
@@ -81,7 +81,7 @@ namespace Jamie.Model
             int ReturnValue = 0;
 
             ReturnValue += Ingredients.Count();
-            ReturnValue += Recipes.Count();
+            //ReturnValue += Recipes.Count();
             ReturnValue += Units.Count();
             ReturnValue += UnitTranslations.Count();
 
@@ -89,9 +89,9 @@ namespace Jamie.Model
         }
         public void PopulateSetWithDefaults()
         {
-            Ingredients.PopulateSetWithDefaults();
             Units.PopulateSetWithDefaults();
             UnitTranslations.PopulateSetWithDefaults();
+            Ingredients.PopulateSetWithDefaults();
         }
         public void RemoveUnit()
         {

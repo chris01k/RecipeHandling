@@ -83,6 +83,8 @@ namespace Jamie.Model
                 Console.WriteLine(_SelectedRecipe);
                 Console.WriteLine("---------------");
                 Console.WriteLine("A  Add Recipe");
+                Console.WriteLine("I  Add Ingredient");
+                Console.WriteLine("R  View Recipe");
                 Console.WriteLine("S  Select Recipe");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
@@ -94,6 +96,13 @@ namespace Jamie.Model
                 {
                     case "A":
                         AddItem();
+                        break;
+                    case "I":
+                        _SelectedRecipe.Ingredients.AddItem();
+                        Console.WriteLine(_SelectedRecipe.ToString());
+                        break;
+                    case "R":
+                        Console.WriteLine(_SelectedRecipe.ToString());
                         break;
                     case "S":
                         _SelectedRecipe = SelectItem(true);
@@ -196,7 +205,7 @@ namespace Jamie.Model
         private string _SourceISBN;
         private string _SourcePage; // Page the recipe is found in the cookbook
         private string _Summary; // Summary
-        //        private bool _ToTakeAway;
+        //private bool _ToTakeAway;
 
         
         //Constructors
@@ -248,7 +257,7 @@ namespace Jamie.Model
             //}
         }
 
-        public IngredientItemSet Ingredients  // Maybe Readonly
+        public IngredientItemSet Ingredients  
         {
             get { return _Ingredients; }
             set { _Ingredients = value; }
@@ -327,8 +336,6 @@ namespace Jamie.Model
             }
         }
 
-
-
         //Methods
         public bool Equals(Recipe ItemToCompare)
         {
@@ -357,12 +364,12 @@ namespace Jamie.Model
         public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
             _UnitSetData = UnitSetData;
+            _Ingredients.SetDataReference(UnitSetData, IngredientSetData);
             _IngredientSetData = IngredientSetData;
-//            Ingredients.SetDataReference(Data);
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-Name: {1,10}  Source: {2,5}  Seite: {3,5}  Summary {4,15}", ID, Name, Source, SourcePage, Summary);
+            return string.Format("{0,6}-Name: {1,10} Portionen: {2,4} Source: {3,5}  Seite: {4,5}  Summary {5,15}", ID, Name, PortionQuantity, Source, SourcePage, Summary);
         }
 
     }

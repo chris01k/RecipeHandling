@@ -5,12 +5,14 @@ using System.Collections.ObjectModel;
 
 
 namespace Jamie.Model
-{   
+{
     [Flags]
-
     //IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
-     public enum IngredientFlags : int
+    public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
+
+
+
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
@@ -24,19 +26,29 @@ namespace Jamie.Model
 
         //Variables
         private long? _ID;
+        private static UnitSet _UnitSetData;
+
         private string _Name;
+//        private Unit _TargetUnit;  
         private IngredientFlags _IngredientType;
 
         //Constructors
-        internal Ingredient()
+        public Ingredient()
         {
+
         }
-        internal Ingredient(bool ToBePopulated)
+        public Ingredient(UnitSet UnitSetData)
         {
+            _UnitSetData = UnitSetData;
+        }
+        public Ingredient(bool ToBePopulated, UnitSet UnitSetData)
+        {
+            _UnitSetData = UnitSetData;
             if (ToBePopulated) PopulateObject();
         }
-        internal Ingredient(string Name, IngredientFlags IngredientType)
+        public Ingredient(string Name, IngredientFlags IngredientType, UnitSet UnitSetData)
         {
+            _UnitSetData = UnitSetData;
             _Name = Name;
             _IngredientType = IngredientType;
         }
@@ -54,18 +66,6 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set
-            {
-                if (_Name == value)
-                    return;
-
-                _Name = value;
-                //                RaisePropertyChanged(() => Name);
-            }
-        }
         public IngredientFlags IngredientType
         {
             get
@@ -78,6 +78,30 @@ namespace Jamie.Model
                 _IngredientType = value;
             }
         }
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                if (_Name == value)
+                    return;
+
+                _Name = value;
+                //                RaisePropertyChanged(() => Name);
+            }
+        }
+        //public Unit TargetUnit
+        //{
+        //    get
+        //    {
+        //        return _TargetUnit;
+        //    }
+
+        //    set
+        //    {
+        //        _TargetUnit = value;
+        //    }
+        //}
 
 
         //Methods
@@ -100,6 +124,8 @@ namespace Jamie.Model
             Console.WriteLine("-------------------");
             Console.WriteLine();
             Console.Write("         Name  : "); Name = Console.ReadLine();
+            Console.Write("  Target Unit  : "); InputString = Console.ReadLine();
+
 
             for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
             {
@@ -119,20 +145,27 @@ namespace Jamie.Model
     public class IngredientSet : ObservableCollection<Ingredient>
     {
 
-
-        private static RecipeDataSets _Data;
+        private static UnitSet _UnitSetData; //Readonly
         private static long _MaxID = 0;
 
-        //Constructors
-        public IngredientSet(RecipeDataSets Data)
+        public static UnitSet UnitSetData
         {
-            _Data = Data;
+            get
+            {
+                return _UnitSetData;
+            }
+        }
+
+        //Constructors
+        public IngredientSet(UnitSet UnitSetData)
+        {
+            _UnitSetData = UnitSetData;
         }
 
         //Methods
         public void AddItem()
         {
-            AddItem(new Ingredient(true));
+            AddItem(new Ingredient(true, UnitSetData));
         }
         public void AddItem(Ingredient ItemToBeAdded)
         {
@@ -187,15 +220,36 @@ namespace Jamie.Model
             AddItem(new Ingredient("Zwiebeln", IngredientFlags.IsVegetarian
                                              | IngredientFlags.IsVegan
                                              | IngredientFlags.IsLowCarb
-                                             | IngredientFlags.IsLowFat));
+                                             | IngredientFlags.IsLowFat,UnitSetData));
             AddItem(new Ingredient("Tomaten",  IngredientFlags.IsVegetarian
                                              | IngredientFlags.IsVegan
                                              | IngredientFlags.IsLowCarb
-                                             | IngredientFlags.IsLowFat));
-            AddItem(new Ingredient("Rinderfilet", IngredientFlags.IsLowCarb));
+                                             | IngredientFlags.IsLowFat,UnitSetData));
+            AddItem(new Ingredient("Rinderfilet", IngredientFlags.IsLowCarb,UnitSetData));
             AddItem(new Ingredient("Quinoa", IngredientFlags.IsVegetarian
                                            | IngredientFlags.IsVegan
-                                           | IngredientFlags.IsLowFat));
+                                           | IngredientFlags.IsLowFat, UnitSetData));
+        }
+        public Ingredient SelectItem()
+        {
+            string InputItemText = "";
+
+            Console.WriteLine("Unit suchen:");
+            Console.WriteLine("------------");
+            Console.WriteLine();
+            Console.Write("IngredientName: "); InputItemText = Console.ReadLine();
+
+            return SelectItem(InputItemText);
+
+        }
+        public Ingredient SelectItem(string ItemTextToBeSelected)
+        {
+            Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0,UnitSetData);
+
+            int IndexOfSelectedUnit = IndexOf(LocalItemToSelect);
+
+            if (IndexOfSelectedUnit == -1) return null;
+            else return this[IndexOfSelectedUnit];
         }
         public void ViewSet()
         {
@@ -224,7 +278,7 @@ namespace Jamie.Model
         //Variables
         private long? _ID;
 
-        private float? _Quantity;
+        private double _Quantity;
         private Ingredient _Ingredient;
         private Unit _Unit;
 
@@ -232,11 +286,20 @@ namespace Jamie.Model
         //Constructors
         public IngredientItem()
         {
-            _Ingredient = new Ingredient();
+
+//            _Ingredient = new Ingredient(null);
+
         }
+        public IngredientItem(double Quantity, Unit Unit, Ingredient Ingredient)
+        {
+            _Quantity = Quantity;
+            _Unit = Unit;
+            _Ingredient = Ingredient;
+        }
+
         public IngredientItem(bool ToBePopulated)
         {
-            _Ingredient = new Ingredient();
+//            _Ingredient = new Ingredient(null);
             if (ToBePopulated) PopulateObject();
         }
 
@@ -290,7 +353,7 @@ namespace Jamie.Model
 
             }
         }
-        public float? Quantity
+        public double Quantity
         {
             get { return _Quantity; }
             set
@@ -310,6 +373,7 @@ namespace Jamie.Model
         {
             string InputString;
             float ParsedDoubleValue;
+            //Unit SelectedUnit;
 
             Console.WriteLine("Eingabe neue Zutat zum Rezept:");
             Console.WriteLine("------------------------------");
@@ -320,6 +384,9 @@ namespace Jamie.Model
             } while (!float.TryParse(InputString, out ParsedDoubleValue));
             Quantity = ParsedDoubleValue;
             Console.Write("Unit: "); InputString = Console.ReadLine();
+            
+
+
 
 
             Console.Write("         Name  : "); Name = Console.ReadLine();
@@ -334,6 +401,14 @@ namespace Jamie.Model
             //IngredientType = FlagValue;
 
         }
+        public override string ToString()
+        {
+            string ReturnString = string.Format(" {0,8} {1} {2}", Quantity, Unit, Ingredient.Name);
+
+            ReturnString += "\n";
+            return ReturnString;
+        }
+
 
     }
 
@@ -344,10 +419,10 @@ namespace Jamie.Model
     public class IngredientItemSet : ObservableCollection<IngredientItem>
     {
         //Variables
+        private static long _MaxID;
+        private Recipe _RelatedRecipe;
         private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
-        private static Recipe _RelatedRecipe;
-        private static long _MaxID;
 
         //Constructors
         public IngredientItemSet(UnitSet UnitSetData, IngredientSet IngredientSetData, Recipe RelatedRecipe)
@@ -365,18 +440,70 @@ namespace Jamie.Model
                 return _MaxID;
             }
         }
-        public static Recipe RelatedRecipe
+        public Recipe RelatedRecipe
         {
             get
             {
                 return _RelatedRecipe;
             }
         }
+        public static UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+
+            set
+            {
+                _UnitSetData = value;
+            }
+        }
+        public static IngredientSet IngredientSetData
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+
+            set
+            {
+                _IngredientSetData = value;
+            }
+        }
 
         //Methods
         public void AddItem()
         {
-            AddItem(new IngredientItem(true));
+            string InputString;
+            double ParsedDoubleValue;
+            Unit InputUnit;
+            Ingredient InputIngredient;
+            IngredientItem NewIngredientItem = new IngredientItem();
+            do
+            {
+                Console.Write("Quantity: "); InputString = Console.ReadLine();
+            } while (!double.TryParse(InputString, out ParsedDoubleValue));
+            NewIngredientItem.Quantity = ParsedDoubleValue;
+            do
+            {
+                if (UnitSetData != null) UnitSetData.ViewSet();
+                Console.WriteLine("Unit      : "); InputString = Console.ReadLine();
+                InputUnit = UnitSetData.SelectItem(InputString);
+            } while (InputUnit == null);
+            NewIngredientItem.Unit = InputUnit;
+
+            do
+            {
+                IngredientSetData.ViewSet();
+                Console.WriteLine("Ingredient: "); InputString = Console.ReadLine();
+                InputIngredient = IngredientSetData.SelectItem(InputString);
+            } while (InputIngredient == null);
+
+
+            NewIngredientItem.Ingredient = InputIngredient;
+
+            AddItem(NewIngredientItem);
         }
         public void AddItem(IngredientItem ItemToBeAdded)
         {
@@ -429,13 +556,15 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            string ReturnString = string.Format("{0,8} Zutaten im Rezept: {1}", MaxID, RelatedRecipe);
+            string ReturnString = "";
+//                string.Format("{0,8} Zutaten im Rezept: {1} \n", MaxID, RelatedRecipe);
 
             if (Count == 0) ReturnString += "         -------> leer <-------\n         ";
             else
             {
                 foreach (IngredientItem ListItem in this)
-                    ReturnString += ListItem.ToString() + "\n      ";
+                    //                    ReturnString += ListItem.ToString() + "\n      ";
+                    ReturnString += string.Format("{0,6} {1,5} {2,20} {3}  \n", ListItem.Quantity, ListItem.Unit.UnitSymbol, ListItem.Ingredient.Name, RelatedRecipe.Name);
             }
             ReturnString += "\n";
             return ReturnString;
