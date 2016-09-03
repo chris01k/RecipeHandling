@@ -5,18 +5,55 @@ namespace Jamie.Model
 {
     public class RecipeSet: ObservableCollection<Recipe>
     {
-        private static RecipeDataSets _Data;
+        private static UnitSet _UnitSetData;
+        private static IngredientSet _IngredientSetData;
+        private static Recipe _SelectedRecipe;
         private static long _MaxID = 0;
 
-        public RecipeSet(RecipeDataSets Data)
+
+        //Constructors
+        public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
-            _Data = Data;
+            _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
         }
+
+        //Properties
+        public static UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+            //set
+            //{
+            //    _UnitSetData = value;
+            //}
+        } //Readonly
+        public static IngredientSet IngredientSetData
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+
+            //set
+            //{
+            //    _IngredientSetData = value;
+            //}
+        } //Readonly
+
 
         //Methods
         public void AddItem()
         {
-            AddItem(new Recipe(true));
+            Recipe NewRecipe = new Recipe(true);
+
+            if (Count == 0)
+            {
+                NewRecipe.SetDataReference(_UnitSetData, _IngredientSetData);
+            }
+            AddItem(NewRecipe);
         }
         public void AddItem(Recipe ItemToBeAdded)
         {
@@ -26,17 +63,7 @@ namespace Jamie.Model
                 ItemToBeAdded.ID = ++_MaxID;
             }
             else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
-        }
-        public void AddItem(RecipeDataSets Data)
-        {
-            Recipe NewRecipe = new Recipe(true);
-
-            if (Count == 0)
-            {
-                _Data = Data;
-                NewRecipe.SetDataReference(Data);
-            }
-            AddItem(NewRecipe);
+            _SelectedRecipe = SelectItem(ItemToBeAdded);
         }
         public bool IsEmpty()
         {
@@ -46,26 +73,30 @@ namespace Jamie.Model
         {
             string MenuInput = "";
 
+            _SelectedRecipe = SelectItem(false);
             while (MenuInput != "Q")
             {
+
+                ViewSet();
                 Console.WriteLine();
                 Console.WriteLine("\nRecipe Menü");
+                Console.WriteLine(_SelectedRecipe);
                 Console.WriteLine("---------------");
                 Console.WriteLine("A  Add Recipe");
+                Console.WriteLine("S  Select Recipe");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");
-
                 Console.WriteLine();
                 Console.Write("Ihre Eingabe:");
                 MenuInput = Console.ReadLine().ToUpper();
-
                 switch (MenuInput)
                 {
                     case "A":
-                        ViewSet();
-                        AddItem(_Data);
-                        ViewSet();
+                        AddItem();
+                        break;
+                    case "S":
+                        _SelectedRecipe = SelectItem(true);
                         break;
                     case "V":
                         ViewSet();
@@ -96,6 +127,35 @@ namespace Jamie.Model
         //                                     | Ingredient.IngredientFlags.IsVegan
         //                                     | Ingredient.IngredientFlags.IsLowFat));
         //}
+        public Recipe SelectItem(bool ByRequest)
+        {
+            Recipe ReturnValue = null;
+
+            if (ByRequest)
+            {
+                Recipe RequestedItem = new Recipe();
+
+                Console.WriteLine("Recipe suchen:");
+                Console.WriteLine("--------------");
+                Console.WriteLine();
+                Console.Write("Recipe Name: "); RequestedItem.Name = Console.ReadLine();
+
+                ReturnValue = SelectItem(RequestedItem);
+            }
+            else if (Count != 0) ReturnValue = this[0];
+
+            return ReturnValue;
+
+        }
+        public Recipe SelectItem(Recipe ItemToBeSelected)
+        {
+            Recipe ReturnValue = null;
+
+            int IndexOfSelectedItem = IndexOf(ItemToBeSelected);
+            if (IndexOfSelectedItem != -1) ReturnValue = this[IndexOfSelectedItem];
+            return ReturnValue;
+        }
+
         public void ViewSet()
         {
             Console.WriteLine(ToString());
@@ -109,7 +169,10 @@ namespace Jamie.Model
             else
             {
                 foreach (Recipe ListItem in this)
+                {
                     ReturnString += ListItem.ToString() + "\n";
+                    ReturnString += ListItem.Ingredients.ToString() + "\n";
+                }
             }
             ReturnString += "\n";
             return ReturnString;
@@ -119,30 +182,31 @@ namespace Jamie.Model
     /* Ein Rezept ist für eine Portionsanzahl ausgelegt.
      * Rezepte generieren ein Gesamtmerkmal aus den einzelnen Merkmalen von allen Zutaten
      */
-
     public class Recipe:IEquatable<Recipe>
     {
         //Variables
-        private static RecipeDataSets _Data;
+        private static UnitSet _UnitSetData;
+        private static IngredientSet _IngredientSetData;
         private long? _ID;
 
-        private IngredientRecipeSet _Ingredients;
+        private IngredientItemSet _Ingredients;
         private string _Name;
         private int _PortionQuantity; // Portion min max berücksichtigen
         private string _Source; // Source: Cookbook the recipe is taken from 
         private string _SourceISBN;
         private string _SourcePage; // Page the recipe is found in the cookbook
         private string _Summary; // Summary
-//        private bool _ToTakeAway;
+        //        private bool _ToTakeAway;
 
+        
         //Constructors
         public Recipe()
         {
-            _Ingredients = new IngredientRecipeSet(_Data);
+            _Ingredients = new IngredientItemSet(UnitSetData, IngredientSetData, this);
         }
         public Recipe(bool ToBePopulated)
         {
-            _Ingredients = new IngredientRecipeSet(_Data);
+            _Ingredients = new IngredientItemSet(UnitSetData, IngredientSetData, this);
             if (ToBePopulated) PopulateObject();
         }
 
@@ -159,7 +223,32 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
-        public IngredientRecipeSet Ingredients
+        public static UnitSet UnitSetData //Readonly
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+
+            //set
+            //{
+            //    _UnitSetData = value;
+            //}
+        }
+        public static IngredientSet IngredientSetData //Readonly
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+
+            //set
+            //{
+            //    _IngredientSetData = value;
+            //}
+        }
+
+        public IngredientItemSet Ingredients  // Maybe Readonly
         {
             get { return _Ingredients; }
             set { _Ingredients = value; }
@@ -239,6 +328,7 @@ namespace Jamie.Model
         }
 
 
+
         //Methods
         public bool Equals(Recipe ItemToCompare)
         {
@@ -264,10 +354,11 @@ namespace Jamie.Model
             Console.Write("SourcePage      : "); SourcePage = Console.ReadLine();
             Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
         }
-        public void SetDataReference(RecipeDataSets Data)
+        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
-            _Data = Data;
-            Ingredients.SetDataReference(Data);
+            _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
+//            Ingredients.SetDataReference(Data);
         }
         public override string ToString()
         {

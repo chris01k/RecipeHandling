@@ -33,18 +33,16 @@
  *                            - Umbau des <Object> Konstruktors auf Konstruktor([Set1[, Set2[...]]])
  *                            - Einbindung der Prüfroutine in PopulateObject: Units ()
  *                              noch offen UnitTranslation (Unit), Ingredient(), Recipe(Unit,Ingredient)
- *                            
+ * Version 0.22 - 2016-09-03: Recipe eingebunden
+ *                            - Menu(), AddItem(), SelectItem() angepasst
  *                             
  * 
- * Offene Fragen: - Globale Enums in einer Klasse zusammenfassen?
- *                - Konstruktoren internal oder public?
- *                - Bei Properties im Konstuktor: _Property = Property oder this.Property = Property
+ * Offene Fragen: 
+ *
  *                
  * To Dos       : - InitMaxID nach Deserialize (für den Fall, dass Program mit leeren Listen beginnt)
- *                - Recipe einbinden....
- *                - IngredientType Definition globalisieren????
- *                - Variable ID kapseln
- *                - IngredientRecipeSet zufügen.
+ *                - IngredientItemSet einbinden.
+ *
  * 
  * 
  * Checklisten : 1. Neue Objektliste einfügen....

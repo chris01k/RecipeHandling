@@ -10,7 +10,7 @@ namespace Jamie.Model
         //        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
         //        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
         private static long _MaxID = 0;
-        private UnitSet _UnitSetData;
+        private static UnitSet _UnitSetData;
 
         //Constructors
         public UnitTranslationSet(UnitSet UnitSetData)
@@ -25,26 +25,31 @@ namespace Jamie.Model
             {
                 return _MaxID;
             }
-        }
-        public UnitSet UnitSetData
+        } //Readonly
+        public static UnitSet UnitSetData
         {
             get
             {
                 return _UnitSetData;
             }
-
-            set
-            {
-                _UnitSetData = value;
-            }
-        }
+            //set
+            //{
+            //    _UnitSetData = value;
+            //}
+        } //Readonly
 
         //Methods
         public void AddItem()
         {
             UnitTranslation NewUnitTranslation = new UnitTranslation();
-            NewUnitTranslation.PopulateObject(UnitSetData);
-            AddItem (NewUnitTranslation);
+
+            if (Count == 0)
+            {
+                NewUnitTranslation.SetDataReference(_UnitSetData);
+            }
+            AddItem(NewUnitTranslation);
+//            NewUnitTranslation.PopulateObject(UnitSetData);
+//            AddItem (NewUnitTranslation);
         }
         public void AddItem(UnitTranslation ItemToBeAdded)
         {
@@ -54,7 +59,11 @@ namespace Jamie.Model
                 ItemToBeAdded.ID = ++_MaxID;
             }
 
-            else Console.WriteLine("Die Unit Translation ist bereits vorhanden: \n {0}", ItemToBeAdded);
+            else
+            {
+               int ExistingIndex = IndexOf(ItemToBeAdded);
+               Console.WriteLine("Die Unit Translation\n{0} ......ist bereits vorhanden als\n{1}", ItemToBeAdded, this[ExistingIndex]);
+            }
         }
         public void Menu()
         {
@@ -126,6 +135,8 @@ namespace Jamie.Model
         { IsStandard = 0x0, IsDepedent = 0x1, IsDefault = 0x2 }
 
         private long? _ID;
+        private static UnitSet _UnitSetData;
+
         private string _BaseUnitSymbol;
         private string _TargetUnitSymbol;
         private double _TranslationFactor;
@@ -161,6 +172,18 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
+        public UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+            //set
+            //{
+            //    _UnitSetData = value;
+            //}
+        } //ReadOnly
+
         public string BaseUnitSymbol
         {
             get { return _BaseUnitSymbol; }
@@ -209,7 +232,11 @@ namespace Jamie.Model
                 } while (!double.TryParse(InputString, out ParsedDoubleValue));
                 TranslationFactor = ParsedDoubleValue;
 
-        }       
+        }
+        public void SetDataReference(UnitSet UnitSetData)
+        {
+            _UnitSetData = UnitSetData;
+        }
         public override string ToString()
         {
             return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,10:F3} {3,-5} {4}", ID, BaseUnitSymbol, TranslationFactor, TargetUnitSymbol,

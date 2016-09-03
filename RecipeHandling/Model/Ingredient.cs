@@ -7,31 +7,119 @@ using System.Collections.ObjectModel;
 namespace Jamie.Model
 {   
     [Flags]
-    // IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
-    public enum IngredientFlags : int
+
+    //IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
+     public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
 
-
-    // Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die erforderliche Menge beschreibt.
-    public class IngredientRecipeSet : ObservableCollection<IngredientItem>
+    /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
+     * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
+     * länderspezifische Zuordnung?
+     */
+    public class Ingredient : IEquatable<Ingredient> //: ObservableObject
     {
-        private static RecipeDataSets _Data;
+
+        //Constants
+        const byte maxIngredientFlag = 15;
+
+        //Variables
+        private long? _ID;
+        private string _Name;
+        private IngredientFlags _IngredientType;
 
         //Constructors
-        public IngredientRecipeSet(RecipeDataSets Data)
+        internal Ingredient()
         {
-            _Data = Data;
+        }
+        internal Ingredient(bool ToBePopulated)
+        {
+            if (ToBePopulated) PopulateObject();
+        }
+        internal Ingredient(string Name, IngredientFlags IngredientType)
+        {
+            _Name = Name;
+            _IngredientType = IngredientType;
         }
 
-        //Methods
-        public void SetDataReference(RecipeDataSets Data)
+        //Properties
+        public long? ID
         {
-            _Data = Data;
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                if (_ID == null) _ID = value;
+                //                else throw exception;
+            }
         }
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                if (_Name == value)
+                    return;
+
+                _Name = value;
+                //                RaisePropertyChanged(() => Name);
+            }
+        }
+        public IngredientFlags IngredientType
+        {
+            get
+            {
+                return _IngredientType;
+            }
+
+            set
+            {
+                _IngredientType = value;
+            }
+        }
+
+
+        //Methods
+        public bool Equals(Ingredient ItemToCompare)
+        {
+            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+        }
+        public bool EqualKey(Ingredient ItemToCompare)
+        {
+            return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
+        }
+        public void PopulateObject()
+        {
+            IngredientFlags FlagValue;
+            string InputString;
+
+            FlagValue = 0;
+
+            Console.WriteLine("Eingabe neue Zutat:");
+            Console.WriteLine("-------------------");
+            Console.WriteLine();
+            Console.Write("         Name  : "); Name = Console.ReadLine();
+
+            for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
+            {
+                Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
+                if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
+            }
+            IngredientType = FlagValue;
+
+        }
+        public override string ToString()
+        {
+            return string.Format("{0,6}-Name: {1,15}  Type: {2}", ID, Name, IngredientType);
+        }
+
     }
 
     public class IngredientSet : ObservableCollection<Ingredient>
     {
+
+
         private static RecipeDataSets _Data;
         private static long _MaxID = 0;
 
@@ -62,8 +150,8 @@ namespace Jamie.Model
             while (MenuInput != "Q")
             {
                 Console.WriteLine();
-                Console.WriteLine("\nIngredient Menü");
-                Console.WriteLine("----------------------");
+                Console.WriteLine("\nREcipe-Ingredient Menü");
+                Console.WriteLine("------------------------");
                 Console.WriteLine("A  Add Ingredient");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
@@ -129,48 +217,63 @@ namespace Jamie.Model
         }
     }
 
-
+    /* IngredientItem ist ein (Quanity, Unit, Ingredient) Triple, welches einem Rezept zugeordnet ist
+     */
     public class IngredientItem  //: ObservableObject
     {
+        //Variables
+        private long? _ID;
+
+        private float? _Quantity;
+        private Ingredient _Ingredient;
+        private Unit _Unit;
+
+
         //Constructors
         public IngredientItem()
         {
-            _SpecificIngredient = new Ingredient();
+            _Ingredient = new Ingredient();
         }
         public IngredientItem(bool ToBePopulated)
         {
-            _SpecificIngredient = new Ingredient();
+            _Ingredient = new Ingredient();
             if (ToBePopulated) PopulateObject();
         }
 
-
-        //Variables
-        private float? _Quantity;
-        private Ingredient _SpecificIngredient;
-        private Unit _Unit;
-
         //Properties
-        public Ingredient SpecificIngredient
+        public long? ID
         {
-            get { return _SpecificIngredient; }
+            get
+            {
+                return _ID;
+            }
             set
             {
-                if (_SpecificIngredient == value)
+                if (_ID == null) _ID = value;
+                //                else throw exception;
+            }
+        }
+        public Ingredient Ingredient
+        {
+            get { return _Ingredient; }
+            set
+            {
+                if (_Ingredient == value)
                     return;
 
-                _SpecificIngredient = value;
+                _Ingredient = value;
 //                RaisePropertyChanged(() => SpecificIngredient);
             }
         }
         public string Name
         {
-            get { return _SpecificIngredient != null ? _SpecificIngredient.Name : ""; }
+            get { return _Ingredient != null ? _Ingredient.Name : ""; }
             set
             {
-                if (_SpecificIngredient.Name == value)
+                if (_Ingredient.Name == value)
                     return;
 
-                _SpecificIngredient.Name = value;
+                _Ingredient.Name = value;
                 //RaisePropertyChanged(() => Name);
             }
         }
@@ -200,6 +303,7 @@ namespace Jamie.Model
 
             }
         }
+
 
         //Methods
         public void PopulateObject()
@@ -233,108 +337,114 @@ namespace Jamie.Model
 
     }
 
-    /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
-     * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
-     * länderspezifische Zuordnung?
-     */
-
-    public class Ingredient: IEquatable<Ingredient> //: ObservableObject
+    /* IngredientRecipeSet ist eine Liste IngredientItems (Menge, Ingredient):
+ * Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die 
+ * erforderliche Menge beschreibt.
+ */
+    public class IngredientItemSet : ObservableCollection<IngredientItem>
     {
-
-        //Constants
-        const byte maxIngredientFlag = 15;
-
         //Variables
-        private long? _ID;
-        private string _Name;
-        private IngredientFlags _IngredientType;
+        private static UnitSet _UnitSetData;
+        private static IngredientSet _IngredientSetData;
+        private static Recipe _RelatedRecipe;
+        private static long _MaxID;
 
         //Constructors
-        internal Ingredient()
+        public IngredientItemSet(UnitSet UnitSetData, IngredientSet IngredientSetData, Recipe RelatedRecipe)
         {
-        }
-        internal Ingredient(bool ToBePopulated)
-        {
-            if (ToBePopulated) PopulateObject();
-        }
-        internal Ingredient(string Name, IngredientFlags IngredientType)
-        {
-            _Name = Name;
-            _IngredientType = IngredientType;
+            _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
+            _RelatedRecipe = RelatedRecipe;
         }
 
         //Properties
-        public long? ID
+        public static long MaxID
         {
             get
             {
-                return _ID;
-            }
-            set
-            {
-                if (_ID == null) _ID = value;
-                //                else throw exception;
+                return _MaxID;
             }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set
-            {
-                if (_Name == value)
-                    return;
-
-                _Name = value;
-//                RaisePropertyChanged(() => Name);
-            }
-        }
-        public IngredientFlags IngredientType
+        public static Recipe RelatedRecipe
         {
             get
             {
-                return _IngredientType;
-            }
-
-            set
-            {
-                _IngredientType = value;
+                return _RelatedRecipe;
             }
         }
-
 
         //Methods
-        public bool Equals(Ingredient ItemToCompare)
+        public void AddItem()
         {
-            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+            AddItem(new IngredientItem(true));
         }
-        public bool EqualKey(Ingredient ItemToCompare)
+        public void AddItem(IngredientItem ItemToBeAdded)
         {
-            return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
-        }
-        public void PopulateObject()
-        {
-            IngredientFlags FlagValue;
-            string InputString;
-
-            FlagValue = 0;
-
-            Console.WriteLine("Eingabe neue Zutat:");
-            Console.WriteLine("-------------------");
-            Console.WriteLine();
-            Console.Write("         Name  : "); Name = Console.ReadLine();
-
-            for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
+            if (!Contains(ItemToBeAdded))
             {
-                Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
-                if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
             }
-            IngredientType = FlagValue;
+            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
+        }
+        public void Menu()
+        {
+            string MenuInput = "";
 
+            while (MenuInput != "Q")
+            {
+                Console.WriteLine();
+                Console.WriteLine("\nRezept-Zutaten: {0}",RelatedRecipe);
+                Console.WriteLine("-----------------");
+                Console.WriteLine("A  Add Ingredient");
+                Console.WriteLine("V  View Set");
+                Console.WriteLine("-----------------");
+                Console.WriteLine("Q  Quit");
+
+                Console.WriteLine();
+                Console.Write("Ihre Eingabe:");
+                MenuInput = Console.ReadLine().ToUpper();
+
+                switch (MenuInput)
+                {
+                    case "A":
+                        ViewSet();
+                        AddItem();
+                        ViewSet();
+                        break;
+                    case "V":
+                        ViewSet();
+                        break;
+                    default:
+                        Console.WriteLine();
+                        break;
+                }
+
+            }
+        }
+        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
+        {
+            _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-Name: {1,15}  Type: {2}", ID, Name, IngredientType);
+            string ReturnString = string.Format("{0,8} Zutaten im Rezept: {1}", MaxID, RelatedRecipe);
+
+            if (Count == 0) ReturnString += "         -------> leer <-------\n         ";
+            else
+            {
+                foreach (IngredientItem ListItem in this)
+                    ReturnString += ListItem.ToString() + "\n      ";
+            }
+            ReturnString += "\n";
+            return ReturnString;
+        }
+        public void ViewSet()
+        {
+            Console.WriteLine(ToString());
         }
 
     }
+
 }

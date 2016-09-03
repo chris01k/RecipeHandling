@@ -14,14 +14,14 @@ namespace Jamie.Model
         public RecipeDataSets()
         {
             _Ingredients = new IngredientSet(this);
-            _Recipes = new RecipeSet(this);
+            _Recipes = new RecipeSet(_Units, _Ingredients);
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
         }
         public RecipeDataSets(bool ToBePopulatedWithDefaults)
         {
             _Ingredients = new IngredientSet(this);
-            _Recipes = new RecipeSet(this);
+            _Recipes = new RecipeSet(_Units, _Ingredients);
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
 

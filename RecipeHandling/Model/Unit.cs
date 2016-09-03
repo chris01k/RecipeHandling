@@ -25,20 +25,22 @@ namespace Jamie.Model
         }
 
         //Methods
-        public void AddItem()
+        public bool AddItem()
         {
             Unit newItem = new Unit();
             newItem.PopulateObject();
-            AddItem(newItem);
+            return AddItem(newItem);
         }
-        public void AddItem(Unit ItemToBeAdded)
+        public bool AddItem(Unit ItemToBeAdded)
         {
             if (!Contains(ItemToBeAdded)) 
             {
                 Add(ItemToBeAdded);
                 ItemToBeAdded.ID = ++_MaxID;
+                return true;
             }
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
+            return false;
         }
         public bool KeyItemExists(string KeyUnitSymbol)
         {
@@ -84,7 +86,7 @@ namespace Jamie.Model
 
             }
         }
-        public Unit SelectUnit()
+        public Unit SelectItem()
         {
             string LocalUnitSymbol = "";
 
@@ -93,10 +95,10 @@ namespace Jamie.Model
             Console.WriteLine();
             Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
 
-            return SelectUnit(LocalUnitSymbol);
+            return SelectItem(LocalUnitSymbol);
 
         }
-        public Unit SelectUnit(string UnitSymbolToBeSelected)
+        public Unit SelectItem(string UnitSymbolToBeSelected)
         {
             string InputString;
             Unit LocalUnitToSelect = new Unit("", UnitSymbolToBeSelected, "");
