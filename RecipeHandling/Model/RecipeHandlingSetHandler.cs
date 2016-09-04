@@ -5,7 +5,7 @@ namespace Jamie.Model
     public class RecipeHandlingSetHandler
     {
         private RecipeDataSets _JamieDataSet;
-        private static string filename = "ObservedUnits.txt";
+        private static string filename = "DATA\\ObservedUnits.rds";
 
         //Constructors
         internal RecipeHandlingSetHandler()
@@ -50,6 +50,8 @@ namespace Jamie.Model
         }
         public void SaveLists()
         {
+            JamieDataSet.SaveSet("DATA\\Jamie");
+
             using (FileStream fs = new FileStream(filename, FileMode.Create))
             {
                 System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(JamieDataSet.GetType());

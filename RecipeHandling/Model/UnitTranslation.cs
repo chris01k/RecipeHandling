@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.ObjectModel;
 
 namespace Jamie.Model
@@ -6,10 +7,9 @@ namespace Jamie.Model
 
     public class UnitTranslationSet : ObservableCollection<UnitTranslation>
     {
-        //        private static RecipeDataSets _Data;
-        //        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
-        //        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
+        //Variables
         private static long _MaxID = 0;
+        private const string FileExtension = ".tran";
         private static UnitSet _UnitSetData;
 
         //Constructors
@@ -48,8 +48,6 @@ namespace Jamie.Model
                 NewUnitTranslation.SetDataReference(_UnitSetData);
             }
             AddItem(NewUnitTranslation);
-//            NewUnitTranslation.PopulateObject(UnitSetData);
-//            AddItem (NewUnitTranslation);
         }
         public void AddItem(UnitTranslation ItemToBeAdded)
         {
@@ -100,6 +98,19 @@ namespace Jamie.Model
 
             }
         }
+        public UnitTranslationSet OpenSet(string FileName)
+        {
+            UnitTranslationSet ReturnSet = this;
+            ReturnSet.Clear();
+            FileName += FileExtension;
+            using (Stream fs = new FileStream(FileName, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
+                ReturnSet = (UnitTranslationSet)x.Deserialize(fs);
+            }
+            return ReturnSet;
+
+        }
         public void PopulateSetWithDefaults()
         {
             AddItem(new UnitTranslation("kg", "g", 1000.0, 0));
@@ -107,6 +118,16 @@ namespace Jamie.Model
             AddItem(new UnitTranslation("l", "ml", 1000.0, 0));
             AddItem(new UnitTranslation("oz", "g", 28.3495, 0));
             AddItem(new UnitTranslation("l", "kg", 1.0, 3));
+        }
+        public void SaveSet(string FileName)
+        {
+            FileName += FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
         }
         public override string ToString()
         {
@@ -128,24 +149,72 @@ namespace Jamie.Model
         }
     }
 
+    /* UnitTranslation - Grundsätze
+     * 
+     * 1. Es sollte alle Umrechnungen geben vom Typ "Immer gültig"
+     * 2. Je IngredientType (Flüssig, Fest, Pulver, Kräuter, ....)
+     *    gibt es genau eine Default-Umrechnung.
+     * 3. Wird eine Defaultumrechnung verwendet, dann wird diese für die Zutat protokolliert, 
+     *    damit die fehlende Zutaten spezifische Umrechnung nachgetragen und verifiziert werden kann
+     * 4. Für jede Zutat und Typenwechsel darf es nur einen "Von Zutat abhängiger UnitTypenWechsel" geben
+     * 5. Für jede Zutat und Typenwechsel können unter Berücksichtigung der Einträge "Immer gültig"
+     *    alle weiteren notwendigen Umrechnungsfaktoren berechnet werden. 
+     *    
+     * Beschreibung der Umrechnung für eine Zutat:
+     * 1. Ermittle StartUnit aus IngredientItem.Unit
+     * 2. Ermittle ZielUnit aus Ingredient.TargetUnit
+     * 3. Vergleiche UnitType
+     *    3a  UnitType gleich
+     *    3a1 Ermittle UnitTranslation Fall 0 mit StartUnit und ZielUnit
+     *    3a2 Falls vorhanden --> Rechne um
+     *    3a3 Falls nicht vorhanden --> Meldung "Umrechnung fehlt."
+     *    
+     * 
+     * 
+     * TranslationIndependenceType Flags - Anwendungsfälle
+     * 
+     * Fall 0: - Immer gültig 
+     *         - Wert = 0,  <kein Flag gesetzt>
+     *         - Unabhängig von der Zutat, UnitTypen sind gleich
+     *         - Ingredient muss gleich >null< sein 
+     *         - IngredientType muss gleich >null< sein 
+     *         - Umrechnung gilt immer: Beispiel 1kg --> 1000g
+     *           
+     * Fall 1: - Defaultumrechnung, wenn noch kein spez. Eintrag für die Zutat besteht
+     *         - Wert = 1, IsTypeChange
+     *         - UnitTypen sind verschieden        
+     *         - Ingredient muss gleich >null< sein 
+     *         - IngredientType muss ungleich >null< sein 
+     *         - z.B. 1l --> 1kg
+     * 
+     * Fall 2: - Wert = 2: - wird nicht verwendet
+     * 
+     * Fall 3: - "Von Zutat abhängiger UnitTypenWechsel", wenn noch kein spez. Eintrag für die Zutat besteht
+     *         - Wert = 3, IsTypeChange, IsRelatedToIngredient
+     *         - UnitTypen sind verschieden
+     *         - Abhängig von der Zutat
+     *         - Zutat muss ungleich >null< sein 
+     *         - IngredientType spielt keine Rolle, sollte aber mit dem IngredientType der Zutat übereinstimmen
+     *         - z.B. 1TL Salz --> 9g
+     */
     public class UnitTranslation:IEquatable<UnitTranslation>
     {
         [Flags]
-        public enum TranslationIndepedenceType
-        { IsStandard = 0x0, IsDepedent = 0x1, IsDefault = 0x2 }
+        public enum TranslationIndependenceType
+        { IsTypeChange = 0x1, IsRelatedToIngredient = 0x2}
 
+        //Variables
         private long? _ID;
         private static UnitSet _UnitSetData;
-
         private string _BaseUnitSymbol;
         private string _TargetUnitSymbol;
         private double _TranslationFactor;
-        private TranslationIndepedenceType _IngredientDependent;
+        private TranslationIndependenceType _IngredientDependent;
 
         //Constructors
         internal UnitTranslation()
         {
-            IngredientDependent = (TranslationIndepedenceType) 0;
+            IngredientDependent = (TranslationIndependenceType) 0;
         }
         internal UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
         {
@@ -156,7 +225,7 @@ namespace Jamie.Model
             _BaseUnitSymbol = BaseUnitSymbol;
             _TargetUnitSymbol = TargetUnitSymbol;
             _TranslationFactor = TranslationFactor;
-            _IngredientDependent = (TranslationIndepedenceType) IngredientDependent;
+            _IngredientDependent = (TranslationIndependenceType) IngredientDependent;
         }
 
         // Properties
@@ -195,7 +264,7 @@ namespace Jamie.Model
             get { return _TranslationFactor; }
             set { _TranslationFactor = value; }
         }
-        public TranslationIndepedenceType IngredientDependent
+        public TranslationIndependenceType IngredientDependent
         {
             get { return _IngredientDependent; }
             set { _IngredientDependent = value; }

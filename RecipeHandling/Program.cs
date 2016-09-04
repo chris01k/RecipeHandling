@@ -35,19 +35,18 @@
  *                              noch offen UnitTranslation (Unit), Ingredient(), Recipe(Unit,Ingredient)
  * Version 0.22 - 2016-09-03: Recipe eingebunden
  *                            - Menu(), AddItem(), SelectItem() angepasst
+ * Version 0.23 - 2016-09-03: Recipe inclusive IngredientItemSet eingefügt
  */
 
-/* Version 0.23 - 2016-09-03: Recipe inclusive IngredientItemSet eingefügt
- *                            
+/* Version 0.24 - 2016-09-04: Sicherung der Listen in einzelnen XML-Files implementiert.
+ *                            - Grundsätze zur UnitTranslation beschrieben
+ *                            - enum Jamie.Model.UnitType hinzu
+ *                            - Flags UnitTranslation.TranslationIndependenceType überarbeitet
+ *                            - Use Cases TranslationIndependenceType beschrieben
  *                             
  * 
  * Offene Fragen: 
  *
- *                
- * To Dos       : - InitMaxID nach Deserialize (für den Fall, dass Program mit leeren Listen beginnt)
- *                - IngredientItemSet einbinden.
- *
- * 
  * 
  * Checklisten : 1. Neue Objektliste einfügen....
  *                  - Interface IEquatable implementieren: Equals zufügen
@@ -58,9 +57,7 @@ using Jamie.Model;
 using System;
 
 
-
-
-namespace Main
+namespace Jamie.Main
 {
 
     class Program
@@ -68,7 +65,8 @@ namespace Main
         static void Main(string[] args)
         {
             string MenuInput = "";
-            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler(true);
+            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler();
+//            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler(true);
 
             while (MenuInput!="Q")
             {
@@ -86,7 +84,7 @@ namespace Main
                 Console.WriteLine("U   Unit");
                 Console.WriteLine("UT  Unit Translation");
                 Console.WriteLine();
-                Console.WriteLine("V  View Unit List");
+                Console.WriteLine("V  View Lists");
                 Console.WriteLine("X  View XML File");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");

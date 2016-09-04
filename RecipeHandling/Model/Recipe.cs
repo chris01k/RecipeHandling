@@ -1,15 +1,19 @@
 ﻿using System;
+using System.IO;
 using System.Collections.ObjectModel;
 
 namespace Jamie.Model
 {
     public class RecipeSet: ObservableCollection<Recipe>
     {
+        //Constants
+        private const string FileExtension = ".recp";
+
+        //Variables
+        private static long _MaxID = 0;
         private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
         private static Recipe _SelectedRecipe;
-        private static long _MaxID = 0;
-
 
         //Constructors
         public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
@@ -117,25 +121,36 @@ namespace Jamie.Model
 
             }
         }
-        //public void PopulateSetWithDefaults()
-        //{
-        //    Ingredient.IngredientFlags FlagsTobeSet;
+        public RecipeSet OpenSet(string FileName)
+        {
+            RecipeSet ReturnSet = this;
+            ReturnSet.Clear();
+            FileName += FileExtension;
+            using (Stream fs = new FileStream(FileName, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
+                ReturnSet = (RecipeSet)x.Deserialize(fs);
+            }
+            return ReturnSet;
 
-        //    FlagsTobeSet = 0;
-        //    FlagsTobeSet |= Ingredient.IngredientFlags.IsVegan;
-        //    AddItem(new Ingredient("Zwiebeln", Ingredient.IngredientFlags.IsVegetarian
-        //                                     | Ingredient.IngredientFlags.IsVegan
-        //                                     | Ingredient.IngredientFlags.IsLowCarb
-        //                                     | Ingredient.IngredientFlags.IsLowFat));
-        //    AddItem(new Ingredient("Tomaten", Ingredient.IngredientFlags.IsVegetarian
-        //                                     | Ingredient.IngredientFlags.IsVegan
-        //                                     | Ingredient.IngredientFlags.IsLowCarb
-        //                                     | Ingredient.IngredientFlags.IsLowFat));
-        //    AddItem(new Ingredient("Rinderfilet", Ingredient.IngredientFlags.IsLowCarb));
-        //    AddItem(new Ingredient("Quinoa", Ingredient.IngredientFlags.IsVegetarian
-        //                                     | Ingredient.IngredientFlags.IsVegan
-        //                                     | Ingredient.IngredientFlags.IsLowFat));
-        //}
+        }
+        public void SaveSet(string BaseFileName)
+        {
+            string FileName = BaseFileName + FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
+            foreach (Recipe Rcp in this)
+            {
+                FileName = BaseFileName + "." + Rcp.Name;
+                Rcp.Ingredients.SaveSet(FileName);
+            }
+
+        }
+
         public Recipe SelectItem(bool ByRequest)
         {
             Recipe ReturnValue = null;

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Main.Program" Collapsed="true">
+  <Class Name="Jamie.Main.Program" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
@@ -10,22 +10,15 @@
   <Class Name="Jamie.Model.Unit" Collapsed="true">
     <Position X="5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAIBEgAAEgAAAAABAgAAABIAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AgAAAAAAAABAgAAEgAAAIAQAgAAAAAAAAQAAAAAEDAA=</HashCode>
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Jamie.Model.UnitType" Collapsed="true">
-    <Position X="6.75" Y="4.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\UnitType.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Jamie.Model.UnitTranslation" Collapsed="true">
     <Position X="8.5" Y="4.25" Width="1.5" />
     <NestedTypes>
-      <Enum Name="Jamie.Model.UnitTranslation.TranslationIndepedenceType" Collapsed="true">
+      <Enum Name="Jamie.Model.UnitTranslation.TranslationIndependenceType" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Model\UnitTranslation.cs</NewMemberFileName>
         </TypeIdentifier>
@@ -103,6 +96,34 @@
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAIAAACEAAAAAAAAgAAIAgAEAAQAAAAAAAA=</HashCode>
       <FileName>Model\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.FoodPlanItemSet">
+    <Position X="5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\FoodPlan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.FoodPlanSet">
+    <Position X="2.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\FoodPlan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.FoodPlan">
+    <Position X="2.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\FoodPlan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jamie.Model.FoodPlanItem">
+    <Position X="5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\FoodPlan.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Enum Name="Jamie.Model.IngredientFlags" Collapsed="true">

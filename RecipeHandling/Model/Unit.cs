@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+
 
 namespace Jamie.Model
 {
+    public enum UnitType : int
+    { IsCount = 1, IsLength, IsArea, IsVolume, IsWeight, IsTime };
+
+
     public class UnitSet: ObservableCollection<Unit>
     {
-//        private static RecipeDataSets _Data;
-//        auskommentiert weil umgebaut wird auf spezifische Set-Anforderungen 
-//        (es ist nicht erforderlich, dass das RecipeDataSet übergeben wird - stattdessen spezifische Listen)
+        //Variables
         private static long _MaxID = 0;
+        private const string FileExtension = ".unit";
 
         //Constructors
         public UnitSet()
@@ -44,7 +49,7 @@ namespace Jamie.Model
         }
         public bool KeyItemExists(string KeyUnitSymbol)
         {
-            Unit KeyUnit = new Unit("", KeyUnitSymbol, "");
+            Unit KeyUnit = new Unit("", KeyUnitSymbol, (UnitType) 0);
             return KeyItemExists(KeyUnit);
         }
         public bool KeyItemExists(Unit KeyUnit)
@@ -86,6 +91,29 @@ namespace Jamie.Model
 
             }
         }
+        public UnitSet OpenSet(string FileName)
+        {
+            UnitSet ReturnUnitSet = this;
+            ReturnUnitSet.Clear();
+            FileName += FileExtension;
+            using (Stream fs = new FileStream(FileName, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnUnitSet.GetType());
+                ReturnUnitSet = (UnitSet)x.Deserialize(fs);
+            }
+            return ReturnUnitSet;
+
+        }
+        public void SaveSet(string FileName)
+        {
+            FileName += FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
+        }
         public Unit SelectItem()
         {
             string LocalUnitSymbol = "";
@@ -101,7 +129,7 @@ namespace Jamie.Model
         public Unit SelectItem(string ItemTextToBeSelected)
         {
             string InputString;
-            Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", "");
+            Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", (UnitType)0);
 
             int IndexOfSelectedUnit = IndexOf(LocalUnitToSelect);
             if (IndexOfSelectedUnit == -1)
@@ -121,13 +149,13 @@ namespace Jamie.Model
         }
         public void PopulateSetWithDefaults()
         {
-            AddItem(new Unit("kg", "Kilogramm", "Masse"));
-            AddItem(new Unit("g", "Gramm", "Masse"));
-            AddItem(new Unit("oz", "Unzen",  "Masse"));
-            AddItem(new Unit("l", "Liter", "Volumen"));
-            AddItem(new Unit("st", "Stück", "Anzahl"));
-            AddItem(new Unit("ml", "Milliliter", "Volumen"));
-            AddItem(new Unit("m", "Meter", "Länge"));
+            AddItem(new Unit("kg", "Kilogramm", UnitType.IsWeight));
+            AddItem(new Unit("g", "Gramm", UnitType.IsWeight));
+            AddItem(new Unit("oz", "Unzen", UnitType.IsWeight));
+            AddItem(new Unit("l", "Liter", UnitType.IsVolume));
+            AddItem(new Unit("st", "Stück", UnitType.IsCount));
+            AddItem(new Unit("ml", "Milliliter", UnitType.IsVolume));
+            AddItem(new Unit("m", "Meter", UnitType.IsLength));
         }
         public void ViewSet()
         {
@@ -156,9 +184,9 @@ namespace Jamie.Model
 
         //Variables
         private long? _ID;
-        private string _UnitSymbol; //Key
-        private string _UnitName;
-        private string _UnitType;
+        private string _Symbol; //Key
+        private string _Name;
+        private UnitType _Type; //Anzahl, Länge, (Fläche), Volumen, Masse, Zeit
 
 
         // Constructors
@@ -169,11 +197,11 @@ namespace Jamie.Model
         {
             if (ToBePopulated) PopulateObject();
         }
-        internal Unit(string UnitSymbol, string UnitName,  string UnitType)
+        internal Unit(string Symbol, string Name,  UnitType Type)
         {
-            _UnitSymbol = UnitSymbol;
-            _UnitName = UnitName;
-            _UnitType = UnitType;
+            _Symbol = Symbol;
+            _Name = Name;
+            _Type = Type;
         }
 
         // Properties
@@ -189,20 +217,20 @@ namespace Jamie.Model
 //                else throw exception;
             }
         }
-        public string UnitSymbol
+        public string Symbol
         {
-            get { return _UnitSymbol; }
-            set { _UnitSymbol = value; }
+            get { return _Symbol; }
+            set { _Symbol = value; }
         }
-        public string UnitName
+        public string Name
         {
-            get { return _UnitName; }
-            set { _UnitName = value; }
+            get { return _Name; }
+            set { _Name = value; }
         }
-        public string UnitType
+        public UnitType Type
         {
-            get { return _UnitType; }
-            set { _UnitType = value; }
+            get { return _Type; }
+            set { _Type = value; }
         }
 
 
@@ -213,20 +241,36 @@ namespace Jamie.Model
         }
         public bool EqualKey(Unit ItemToCompare)
         {
-            return UnitSymbol.Equals(ItemToCompare.UnitSymbol);
+            return Symbol.Equals(ItemToCompare.Symbol);
         }
         public void PopulateObject()
         {
+            string InputString;
+
             Console.WriteLine("Eingabe neue Einheit:");
             Console.WriteLine("---------------------");
             Console.WriteLine();
-            Console.Write("UnitName  : "); UnitName = Console.ReadLine();
-            Console.Write("UnitSymbol: "); UnitSymbol = Console.ReadLine();
-            Console.Write("UnitType  : "); UnitType = Console.ReadLine();
+            Console.Write("UnitName  : "); Name = Console.ReadLine();
+            Console.Write("UnitSymbol: "); Symbol = Console.ReadLine();
+            do
+            {
+                Console.Write("UnitType  : "); InputString = Console.ReadLine();
+                try
+                {
+                    Type = (UnitType)Enum.Parse(typeof(UnitType), InputString);
+                }
+                catch
+                {
+                    continue;
+                }
+                break;
+            } while (true);
+
+
         }
         public override string ToString()
         {
-            return string.Format("{0,6} {1,5} - Name: {2,10}   Type: {3,10}", ID, UnitSymbol, UnitName,  UnitType);
+            return string.Format("{0,6} {1,5} - Name: {2,10}   Type: {3,10}", ID, Symbol, Name,  Type);
         }
     }
 

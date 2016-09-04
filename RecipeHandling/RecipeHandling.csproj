@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\FoodPlan.cs" />
     <Compile Include="Model\Ingredient.cs" />
     <Compile Include="Model\IngredientPortion.cs" />
     <Compile Include="Program.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Model\RecipeHandlingSet.cs" />
     <Compile Include="Model\RecipeHandlingSetHandler.cs" />
     <Compile Include="Model\UnitTranslation.cs" />
-    <Compile Include="Model\UnitType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IO;
 using System.Collections.ObjectModel;
 
 
@@ -144,10 +145,14 @@ namespace Jamie.Model
 
     public class IngredientSet : ObservableCollection<Ingredient>
     {
+        //Constants
+        private const string FileExtension = ".ingr";
 
+        //Variables
         private static UnitSet _UnitSetData; //Readonly
         private static long _MaxID = 0;
 
+        //Properties
         public static UnitSet UnitSetData
         {
             get
@@ -230,6 +235,17 @@ namespace Jamie.Model
                                            | IngredientFlags.IsVegan
                                            | IngredientFlags.IsLowFat, UnitSetData));
         }
+        public void SaveSet(string FileName)
+        {
+            FileName += FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
+        }
+
         public Ingredient SelectItem()
         {
             string InputItemText = "";
@@ -418,8 +434,12 @@ namespace Jamie.Model
  */
     public class IngredientItemSet : ObservableCollection<IngredientItem>
     {
+        //Constants
+        private const string FileExtension = ".rcig";
+
         //Variables
         private static long _MaxID;
+
         private Recipe _RelatedRecipe;
         private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
@@ -549,6 +569,29 @@ namespace Jamie.Model
 
             }
         }
+        public IngredientItemSet OpenSet(string FileName)
+        {
+            IngredientItemSet ReturnSet = this;
+            ReturnSet.Clear();
+            FileName += "." + RelatedRecipe.Name + FileExtension;
+            using (Stream fs = new FileStream(FileName, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
+                ReturnSet = (IngredientItemSet)x.Deserialize(fs);
+            }
+            return ReturnSet;
+
+        }
+        public void SaveSet(string FileName)
+        {
+            FileName += "." + RelatedRecipe.Name + FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
+        }
         public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
             _UnitSetData = UnitSetData;
@@ -564,7 +607,7 @@ namespace Jamie.Model
             {
                 foreach (IngredientItem ListItem in this)
                     //                    ReturnString += ListItem.ToString() + "\n      ";
-                    ReturnString += string.Format("{0,6} {1,5} {2,20} {3}  \n", ListItem.Quantity, ListItem.Unit.UnitSymbol, ListItem.Ingredient.Name, RelatedRecipe.Name);
+                    ReturnString += string.Format("{0,6} {1,5} {2,20} {3}  \n", ListItem.Quantity, ListItem.Unit.Symbol, ListItem.Ingredient.Name, RelatedRecipe.Name);
             }
             ReturnString += "\n";
             return ReturnString;
