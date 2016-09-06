@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ListHelper.cs" />
     <Compile Include="Model\FoodPlan.cs" />
     <Compile Include="Model\Ingredient.cs" />
     <Compile Include="Model\IngredientPortion.cs" />

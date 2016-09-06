@@ -8,7 +8,6 @@ namespace Jamie.Model
     public enum UnitType : int
     { IsCount = 1, IsLength, IsArea, IsVolume, IsWeight, IsTime };
 
-
     public class UnitSet: ObservableCollection<Unit>
     {
         //Variables
@@ -128,23 +127,11 @@ namespace Jamie.Model
         }
         public Unit SelectItem(string ItemTextToBeSelected)
         {
-            string InputString;
             Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", (UnitType)0);
 
             int IndexOfSelectedUnit = IndexOf(LocalUnitToSelect);
-            if (IndexOfSelectedUnit == -1)
-            {
-                Console.WriteLine();
-                Console.WriteLine("---------------> Unit {0} nicht bekannt <---------------", ItemTextToBeSelected);
-                Console.WriteLine("Neue Unit eingeben (J/N)?"); InputString = Console.ReadLine();
-                if (InputString.ToUpper() == "J")
-                {
-                    AddItem();
-                    IndexOfSelectedUnit = Count - 1;
-                }
-                else return null;
-            }
-            return this[IndexOfSelectedUnit];
+            if (IndexOfSelectedUnit == -1)  return null;
+            else return this[IndexOfSelectedUnit];
 
         }
         public void PopulateSetWithDefaults()

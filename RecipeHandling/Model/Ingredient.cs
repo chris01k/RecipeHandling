@@ -23,15 +23,15 @@ namespace Jamie.Model
     {
 
         //Constants
-        const byte maxIngredientFlag = 15;
+        public const byte maxIngredientFlag = 15;
 
         //Variables
         private long? _ID;
         private static UnitSet _UnitSetData;
 
-        private string _Name;
-//        private Unit _TargetUnit;  
         private IngredientFlags _IngredientType;
+        private string _Name;
+        private Unit _TargetUnit;  
 
         //Constructors
         public Ingredient()
@@ -91,21 +91,18 @@ namespace Jamie.Model
                 //                RaisePropertyChanged(() => Name);
             }
         }
-        //public Unit TargetUnit
-        //{
-        //    get
-        //    {
-        //        return _TargetUnit;
-        //    }
+        public Unit TargetUnit
+        {
+            get
+            {
+                return _TargetUnit;
+            }
 
-        //    set
-        //    {
-        //        _TargetUnit = value;
-        //    }
-        //}
-
-
-        //Methods
+            set
+            {
+                _TargetUnit = value;
+            }
+        }
         public bool Equals(Ingredient ItemToCompare)
         {
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
@@ -116,10 +113,8 @@ namespace Jamie.Model
         }
         public void PopulateObject()
         {
-            IngredientFlags FlagValue;
+            IngredientFlags FlagValue=0;
             string InputString;
-
-            FlagValue = 0;
 
             Console.WriteLine("Eingabe neue Zutat:");
             Console.WriteLine("-------------------");
@@ -138,7 +133,7 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-Name: {1,15}  Type: {2}", ID, Name, IngredientType);
+            return string.Format("{0,6}-Name: {1,15} Type: {2}\n\t TargetUnit{3,5}", ID, Name, IngredientType, TargetUnit);
         }
 
     }
@@ -149,23 +144,31 @@ namespace Jamie.Model
         private const string FileExtension = ".ingr";
 
         //Variables
+        private static Ingredient _SelectedItem; //Readonly
         private static UnitSet _UnitSetData; //Readonly
         private static long _MaxID = 0;
-
-        //Properties
-        public static UnitSet UnitSetData
-        {
-            get
-            {
-                return _UnitSetData;
-            }
-        }
 
         //Constructors
         public IngredientSet(UnitSet UnitSetData)
         {
             _UnitSetData = UnitSetData;
         }
+
+        //Properties
+        public Ingredient SelectedIngredient
+        {
+            get
+            {
+                return _SelectedItem;
+            }
+        }
+        public static UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+        }  
 
         //Methods
         public void AddItem()
@@ -178,23 +181,68 @@ namespace Jamie.Model
             {
                 Add(ItemToBeAdded);
                 ItemToBeAdded.ID = ++_MaxID;
+                _SelectedItem = SelectItem(ItemToBeAdded.Name);
             }
             else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
-        public void Menu()
+        public void EditSelectedItem()
         {
+            string InputString = "";
             string MenuInput = "";
 
             while (MenuInput != "Q")
             {
+                ViewSet();
                 Console.WriteLine();
-                Console.WriteLine("\nREcipe-Ingredient Menü");
-                Console.WriteLine("------------------------");
+                Console.WriteLine("Edit Selected Ingredient: {0}\n", _SelectedItem);
+                Console.WriteLine("-------------------------\n");
+                Console.WriteLine();
+                Console.WriteLine("C  Change Field");
+                Console.WriteLine("R  Reset Field");
+                Console.WriteLine("--------------------");
+                Console.WriteLine("Q  Quit");
+                Console.WriteLine();
+                Console.Write("Ihre Eingabe:");
+                MenuInput = Console.ReadLine().ToUpper();
+
+                switch (MenuInput)
+                {
+                    case "C":
+                        string[] FieldsToBeSelected = { "Name", "IngredientType", "TargetUnit" };
+
+                        InputString = ListHelper.SelectField(FieldsToBeSelected);
+                        if (InputString == "Name") SelectedIngredient.Name = ListHelper.ChangeStringField(InputString);
+                        else if (InputString == "IngredientType") SelectedIngredient.IngredientType = ListHelper.ChangeIngredientFlagField(InputString);
+                        else if (InputString == "TargetUnit") SelectedIngredient.TargetUnit = ListHelper.ChangeUnitField(InputString, _UnitSetData);
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        break;
+                }
+
+
+            }
+        }
+        public void Menu()
+        {
+            _SelectedItem = this[Count - 1];
+            string MenuInput = "";
+
+            while (MenuInput != "Q")
+            {
+                ViewSet();
+                Console.WriteLine();
+                Console.WriteLine("\nIngredient Menü");
+                Console.WriteLine("------------------------\n");
+                Console.WriteLine("Selected Ingredient {0}\n", _SelectedItem);
+                Console.WriteLine();
                 Console.WriteLine("A  Add Ingredient");
+                Console.WriteLine("E  Edit Selected Ingredient");
+                Console.WriteLine("S  Select Ingredient");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");
-
                 Console.WriteLine();
                 Console.Write("Ihre Eingabe:");
                 MenuInput = Console.ReadLine().ToUpper();
@@ -202,12 +250,15 @@ namespace Jamie.Model
                 switch (MenuInput)
                 {
                     case "A":
-                        ViewSet();
                         AddItem();
-                        ViewSet();
+                        break;
+                    case "E":
+                        EditSelectedItem();
+                        break;
+                    case "S":
+                        _SelectedItem = SelectItem();
                         break;
                     case "V":
-                        ViewSet();
                         break;
                     default:
                         Console.WriteLine();
@@ -245,7 +296,6 @@ namespace Jamie.Model
             }
 
         }
-
         public Ingredient SelectItem()
         {
             string InputItemText = "";
