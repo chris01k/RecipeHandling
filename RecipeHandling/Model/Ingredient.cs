@@ -12,9 +12,6 @@ namespace Jamie.Model
     public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
 
-
-
-
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
      * länderspezifische Zuordnung?
@@ -144,9 +141,9 @@ namespace Jamie.Model
         private const string FileExtension = ".ingr";
 
         //Variables
-        private static Ingredient _SelectedItem; //Readonly
-        private static UnitSet _UnitSetData; //Readonly
         private static long _MaxID = 0;
+        private static Ingredient _SelectedItem; 
+        private static UnitSet _UnitSetData; 
 
         //Constructors
         public IngredientSet(UnitSet UnitSetData)
@@ -155,20 +152,20 @@ namespace Jamie.Model
         }
 
         //Properties
-        public Ingredient SelectedIngredient
+        public Ingredient SelectedItem
         {
             get
             {
                 return _SelectedItem;
             }
-        }
+        }//Readonly
         public static UnitSet UnitSetData
         {
             get
             {
                 return _UnitSetData;
             }
-        }  
+        }  //Readonly
 
         //Methods
         public void AddItem()
@@ -211,9 +208,9 @@ namespace Jamie.Model
                         string[] FieldsToBeSelected = { "Name", "IngredientType", "TargetUnit" };
 
                         InputString = ListHelper.SelectField(FieldsToBeSelected);
-                        if (InputString == "Name") SelectedIngredient.Name = ListHelper.ChangeStringField(InputString);
-                        else if (InputString == "IngredientType") SelectedIngredient.IngredientType = ListHelper.ChangeIngredientFlagField(InputString);
-                        else if (InputString == "TargetUnit") SelectedIngredient.TargetUnit = ListHelper.ChangeUnitField(InputString, _UnitSetData);
+                        if (InputString == "Name") SelectedItem.Name = ListHelper.ChangeStringField(InputString);
+                        else if (InputString == "IngredientType") SelectedItem.IngredientType = ListHelper.ChangeIngredientFlagField(InputString);
+                        else if (InputString == "TargetUnit") SelectedItem.TargetUnit = ListHelper.ChangeUnitField(InputString, _UnitSetData);
                         break;
 
                     default:

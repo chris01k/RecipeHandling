@@ -47,11 +47,14 @@
  *                              ListHelper.ChangeStringFlagField hinzu
  *                              ListHelper.ChangeUnitField hinzu
  *                            - Ingredients erweitert: _SelectedItem: Menu
+ * Version 0.26 - 2016-09-07: UnitTranslation überarbeitet
+ *                            - EditSelectedItem hinzu
+ *                            - Umbau: BaseUnitSymbol --> BaseUnit, TargetUnitSymbol --> TargetUnit                         
  *                            
  */
 
-/* Version 0.26 - 2016-09-0x: x
- *                            - 
+/* Version 0.27 - 2016-09-0x: U
+ *                            -
  *                             
  * 
  * Offene Fragen: 

@@ -4,6 +4,8 @@ namespace Jamie.Model
 {
     public static class ListHelper
     {
+
+        //Mathods
         public static IngredientFlags ChangeIngredientFlagField(string DisplayFieldToBeChanged)
         {
             IngredientFlags FieldToBeChanged;
@@ -22,18 +24,18 @@ namespace Jamie.Model
 
             return FieldToBeChanged;
         }
-        public static Unit ChangeUnitField(string DisplayFieldToBeChanged, UnitSet UnitSelection)
+        public static double ChangeDoubleField(string DisplayFieldToBeChanged)
         {
-            Unit ReturnValueUnit=null;
             string InputString;
+            double FieldToBeChanged;
+            do
+            {
+                Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
+                InputString = Console.ReadLine();
+            } while (!double.TryParse(InputString, out FieldToBeChanged));
 
-            Console.Write("Neuer Eintrag für {0} - Symbol: ", DisplayFieldToBeChanged);
-            InputString = Console.ReadLine();
-            while (ReturnValueUnit == null)
-                {
-                    ReturnValueUnit = UnitSelection.SelectItem(InputString);
-                };
-            return ReturnValueUnit;
+
+            return FieldToBeChanged;
         }
         public static string ChangeStringField(string DisplayFieldToBeChanged)
         {
@@ -42,8 +44,19 @@ namespace Jamie.Model
             FieldToBeChanged = Console.ReadLine();
             return FieldToBeChanged;
         }
+        public static Unit ChangeUnitField(string DisplayFieldToBeChanged, UnitSet UnitSelection)
+        {
+            Unit ReturnValueUnit = null;
+            string InputString;
 
-
+            Console.Write("Neuer Eintrag für {0} - Symbol: ", DisplayFieldToBeChanged);
+            InputString = Console.ReadLine();
+            while (ReturnValueUnit == null)
+            {
+                ReturnValueUnit = UnitSelection.SelectItem(InputString);
+            };
+            return ReturnValueUnit;
+        }
         public static string SelectField(string[] Fields)
         {
             string InputString ="";
@@ -65,7 +78,6 @@ namespace Jamie.Model
             }
             return "";
         }
-
         public static void ResetString(string DisplayFieldToBeChanged)
         {
             DisplayFieldToBeChanged = "";
