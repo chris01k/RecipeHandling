@@ -1,6 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace Jamie.Model
 {
@@ -69,6 +70,13 @@ namespace Jamie.Model
             else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
             _SelectedRecipe = SelectItem(ItemToBeAdded);
         }
+        public void EvaluateMaxID()
+        {
+            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            if (maxIDFromFile == null) _MaxID = 0;
+            else _MaxID = (long)maxIDFromFile;
+        }
         public bool IsEmpty()
         {
             return (Count == 0);
@@ -131,6 +139,7 @@ namespace Jamie.Model
                 System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
                 ReturnSet = (RecipeSet)x.Deserialize(fs);
             }
+            EvaluateMaxID();
             return ReturnSet;
 
         }
@@ -186,9 +195,9 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            string ReturnString = "";
+            string ReturnString;
 
-            ReturnString += "\nListe der Rezepte:\n";
+            ReturnString = string.Format("\nListe der Rezepte: MaxID {0}\n", _MaxID);
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {

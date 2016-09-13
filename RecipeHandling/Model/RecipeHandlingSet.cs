@@ -77,6 +77,13 @@ namespace Jamie.Model
 
             return ReturnValue;
         }
+        public void EvaluateMaxIDs()
+        {
+            Ingredients.EvaluateMaxID();
+            Recipes.EvaluateMaxID();
+            Units.EvaluateMaxID();
+            UnitTranslations.EvaluateMaxID();
+        }
         public void PopulateSetWithDefaults()
         {
             Units.PopulateSetWithDefaults();

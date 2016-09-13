@@ -1,21 +1,26 @@
 ﻿using System;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Jamie.Model
 {
+    [Flags]
+    public enum TranslationType
+    { IsTypeChange = 0x1, IsIngredientDependent = 0x2 }
 
 
     /* UnitTranslation - Grundsätze
      * 
      * 1. Es sollte alle Umrechnungen geben vom Typ "Immer gültig"
      * 2. Je IngredientType (Flüssig, Fest, Pulver, Kräuter, ....)
-     *    gibt es genau eine Default-Umrechnung.
+     *    gibt es genau eine Default-Umrechnung für jede Kombination an UnitTypes
      * 3. Wird eine Defaultumrechnung verwendet, dann wird diese für die Zutat protokolliert, 
      *    damit die fehlende Zutaten spezifische Umrechnung nachgetragen und verifiziert werden kann
      * 4. Für jede Zutat und Typenwechsel darf es nur einen "Von Zutat abhängiger UnitTypenWechsel" geben
      * 5. Für jede Zutat und Typenwechsel können unter Berücksichtigung der Einträge "Immer gültig"
      *    alle weiteren notwendigen Umrechnungsfaktoren berechnet werden. 
+     * 6. Synonyme bei Units können über UnitTranslations mit dem TranslationFactor 1,0 eingegeben werden.
      *    
      * Beschreibung der Umrechnung für eine Zutat:
      * 1. Ermittle StartUnit aus IngredientItem.Unit
@@ -47,7 +52,7 @@ namespace Jamie.Model
      * Fall 2: - Wert = 2: - wird nicht verwendet
      * 
      * Fall 3: - "Von Zutat abhängiger UnitTypenWechsel", wenn noch kein spez. Eintrag für die Zutat besteht
-     *         - Wert = 3, IsTypeChange, IsRelatedToIngredient
+     *         - Wert = 3, IsTypeChange, IsIngredientDependent
      *         - UnitTypen sind verschieden
      *         - Abhängig von der Zutat
      *         - Zutat muss ungleich >null< sein 
@@ -56,34 +61,43 @@ namespace Jamie.Model
      */
     public class UnitTranslation:IEquatable<UnitTranslation>
     {
-        [Flags]
-        public enum TranslationIndependenceType
-        { IsTypeChange = 0x1, IsRelatedToIngredient = 0x2}
-
         //Variables
         private long? _ID;
         private static UnitSet _UnitSetData;
+
+        private Ingredient _AffectedIngredient;
         private Unit _BaseUnit;
         private Unit _TargetUnit;
         private double _TranslationFactor;
-        private TranslationIndependenceType _IngredientDependent;
+        private TranslationType _TranslationFlag;
 
         //Constructors
-        internal UnitTranslation()
+        public UnitTranslation()
         {
-            IngredientDependent = (TranslationIndependenceType) 0;
+            TranslationFlag = (TranslationType) 0;
         }
-        internal UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
+        public UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
         {
             _UnitSetData = UnitSetData;
             if (ToBePopulated) PopulateObject(UnitSetData);
         }
-        internal UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent, UnitSet UnitSetData)
+        public UnitTranslation(Unit Base, Unit Target, double TranslationFactor, UnitTranslation Template)
+        {
+            // auf der Basis einer Vorlage (Ingredient und TranslationFlag werden übernommen),
+
+            _BaseUnit = Base;
+            _TargetUnit = Target;
+            _TranslationFactor = TranslationFactor;
+            _AffectedIngredient = Template.AffectedIngredient;
+            _TranslationFlag = Template.TranslationFlag;
+
+        }
+        public UnitTranslation(string BaseUnitSymbol, string TargetUnitSymbol, double TranslationFactor, int IngredientDependent, UnitSet UnitSetData)
         {
             _BaseUnit = UnitSetData.SelectItem(BaseUnitSymbol);
             _TargetUnit = UnitSetData.SelectItem(TargetUnitSymbol);
             _TranslationFactor = TranslationFactor;
-            _IngredientDependent = (TranslationIndependenceType) IngredientDependent;
+            _TranslationFlag = (TranslationType) IngredientDependent;
             _UnitSetData = UnitSetData;
         }
 
@@ -108,6 +122,18 @@ namespace Jamie.Model
             }
         } //ReadOnly
 
+        public Ingredient AffectedIngredient
+        {
+            get
+            {
+                return _AffectedIngredient;
+            }
+
+            set
+            {
+                _AffectedIngredient = value;
+            }
+        }
         public Unit BaseUnit
         {
             get { return _BaseUnit; }
@@ -123,11 +149,12 @@ namespace Jamie.Model
             get { return _TranslationFactor; }
             set { _TranslationFactor = value; }
         }
-        public TranslationIndependenceType IngredientDependent
+        public TranslationType TranslationFlag
         {
-            get { return _IngredientDependent; }
-            set { _IngredientDependent = value; }
+            get { return _TranslationFlag; }
+            set { _TranslationFlag = value; }
         }
+
 
         //Methods
         public bool Equals(UnitTranslation ItemToCompare)
@@ -136,8 +163,21 @@ namespace Jamie.Model
         }       
         public bool EqualKey(UnitTranslation ItemToCompare)
         {
-            return (BaseUnit.Equals(ItemToCompare.BaseUnit) &&
-                    TargetUnit.Equals(ItemToCompare.TargetUnit));
+            return (BaseUnit.Equals(ItemToCompare.BaseUnit) && TargetUnit.Equals(ItemToCompare.TargetUnit)) || 
+                    (BaseUnit.Equals(ItemToCompare.TargetUnit) && TargetUnit.Equals(ItemToCompare.BaseUnit));
+        }
+        public UnitTranslation Inverse()
+        {
+            UnitTranslation ReturnItem;
+
+            ReturnItem = new Model.UnitTranslation();
+
+            ReturnItem.ID = 0;
+            ReturnItem.BaseUnit = this.TargetUnit;
+            ReturnItem.TargetUnit = this.BaseUnit;
+            ReturnItem.TranslationFactor = (1 / this.TranslationFactor);
+
+            return ReturnItem;
         }
         public void PopulateObject(UnitSet UnitSetData)
         {
@@ -150,16 +190,14 @@ namespace Jamie.Model
             Console.WriteLine("Eingabe neue Einheit:" );
             Console.WriteLine("---------------------");
             Console.WriteLine();
-//            Console.Write("BaseUnitSymbol   : "); BaseUnit = Console.ReadLine();
+            UnitSetData.ViewSet();
             do
             {
-//                ProsessedUnit = null;
                 Console.Write("BaseUnitSymbol   : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
             } while (ProcessedUnit==null);
             BaseUnit  = ProcessedUnit;
             do
             {
-//                ProsessedUnit = null;
                 Console.Write("TargetUnitSymbol   : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
             } while (ProcessedUnit == null);
             TargetUnit = ProcessedUnit;
@@ -170,6 +208,16 @@ namespace Jamie.Model
             } while (!double.TryParse(InputString, out ParsedDoubleValue));
             TranslationFactor = ParsedDoubleValue;
 
+            if (BaseUnit.Type != TargetUnit.Type) TranslationFlag |= TranslationType.IsTypeChange;
+
+            Console.Write("IsIngredientDependent:"); InputString = Console.ReadLine();
+            if (InputString.Length > 0)
+            {
+                TranslationFlag |= TranslationType.IsIngredientDependent;
+                    
+            }
+
+
         }
         public void SetDataReference(UnitSet UnitSetData)
         {
@@ -178,7 +226,7 @@ namespace Jamie.Model
         public override string ToString()
         {
             return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,10:F3} {3,-5} {4}", ID, BaseUnit, TranslationFactor, TargetUnit,
-                                  IngredientDependent);
+                                  TranslationFlag);
         }
         
     }
@@ -188,9 +236,8 @@ namespace Jamie.Model
         //Variables
         private const string FileExtension = ".tran";
         private static long _MaxID = 0;
-        private static UnitTranslation _SelectedItem; 
+        private static UnitTranslation _SelectedItem;
         private static UnitSet _UnitSetData;
-        
 
         //Constructors
         public UnitTranslationSet(UnitSet UnitSetData)
@@ -230,7 +277,8 @@ namespace Jamie.Model
         public void AddItem()
         {
             UnitTranslation NewUnitTranslation = new UnitTranslation();
-
+            NewUnitTranslation.PopulateObject(UnitSetData);
+                                   
             if (Count == 0)
             {
                 NewUnitTranslation.SetDataReference(_UnitSetData);
@@ -239,10 +287,46 @@ namespace Jamie.Model
         }
         public void AddItem(UnitTranslation ItemToBeAdded)
         {
+            //ItemToBeAdded und der Kehrwert nicht vorhanden
             if (!Contains(ItemToBeAdded))
             {
-                Add(ItemToBeAdded);
-                ItemToBeAdded.ID = ++_MaxID;
+
+
+                if ((ItemToBeAdded.TranslationFlag & TranslationType.IsIngredientDependent)==TranslationType.IsIngredientDependent)
+                // von Zutat ABHÄNGIG   
+
+                {
+                    if ((ItemToBeAdded.TranslationFlag & TranslationType.IsTypeChange) == TranslationType.IsTypeChange)
+                    // Fall 3: von Zutat ABHÄNGIG - MIT Wechsel des UnitTyps
+                    {
+
+                    }
+                    else
+                    // Fall 2: von Zutat ABHÄNGIG - OHNE Wechsel des UnitTyps
+                    {
+                        //trow Exception --> Fall 2 kommt nicht vor
+                    }
+                                        
+                }
+
+                else
+                // von Zutat UNABHÄNGIG
+                {
+                    if ((ItemToBeAdded.TranslationFlag & TranslationType.IsTypeChange) == TranslationType.IsTypeChange)
+                    // Fall 1: von Zutat UNABHÄNGIG - MIT Wechsel des UnitTyps
+                    {
+
+                    }
+                    else
+                    // Fall 0: von Zutat UNABHÄNGIG - OHNE Wechsel des UnitTyps
+                    {
+                        ItemToBeAdded.ID = ++_MaxID;
+                        Add(ItemToBeAdded);
+                        AddAllItemsWithSameType(ItemToBeAdded);
+                        _SelectedItem = ItemToBeAdded;
+                    }
+
+                }
             }
 
             else
@@ -251,48 +335,130 @@ namespace Jamie.Model
                 Console.WriteLine("Die Unit Translation\n{0} ......ist bereits vorhanden als\n{1}", ItemToBeAdded, this[ExistingIndex]);
             }
         }
-        public void EditSelectedItem()
+        public void AddAllItemsWithSameType(UnitTranslation ItemToBeAdded)
         {
-            string InputString = "";
-            string MenuInput = "";
+            UnitTranslation GeneratedUnitTranslation;
+            UnitTranslation HelpingUnitTranslation;
+            
+            var ImplicitTranslations = (from u in UnitSetData
+                                        where (u.Type == ItemToBeAdded.BaseUnit.Type) && (u != ItemToBeAdded.BaseUnit)
+                                        select new {  Base = (Unit) ItemToBeAdded.BaseUnit, Target = (Unit) u }).ToList();
 
-            while (MenuInput != "Q")
+            ImplicitTranslations.AddRange((from u in UnitSetData
+                                        where (u.Type == ItemToBeAdded.TargetUnit.Type) && (u != ItemToBeAdded.TargetUnit)
+                                        select new { Base = (Unit) ItemToBeAdded.TargetUnit, Target = (Unit) u }).ToList());
+
+            foreach (var i in ImplicitTranslations)
             {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("Edit Selected Unit Translation: {0}\n", SelectedItem);
-                Console.WriteLine("-------------------------------\n");
-                Console.WriteLine();
-                Console.WriteLine("C  Change Field");
-                Console.WriteLine("R  Reset Field");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
+                HelpingUnitTranslation = GetTranslation(i.Base, i.Target);
+                if (HelpingUnitTranslation == null)
                 {
-                    case "C":
-                        string[] FieldsToBeSelected = { "BaseUnitSymbol", "TargetUnitSymbol", "TranslationFactor" };
+                    if (ItemToBeAdded.BaseUnit.Equals(i.Base))
+                    {
+                       HelpingUnitTranslation = GetTranslation(ItemToBeAdded.TargetUnit, i.Target);
+                        if (HelpingUnitTranslation != null)
+                        {
+                            GeneratedUnitTranslation = new UnitTranslation(ItemToBeAdded.BaseUnit, i.Target,
+                                                              ItemToBeAdded.TranslationFactor * HelpingUnitTranslation.TranslationFactor,
+                                                              ItemToBeAdded);
+                            GeneratedUnitTranslation.ID = ++_MaxID;
+                            Add(GeneratedUnitTranslation);
+                        }
+                    }
+                    else  //ItemToBeAdded.TargetUnit.Equals(i.Base)
+                    {
 
-                        InputString = ListHelper.SelectField(FieldsToBeSelected);
-                        if (InputString == "BaseUnitSymbol") SelectedItem.BaseUnit = ListHelper.ChangeUnitField(InputString, UnitSetData);
-                        else if (InputString == "TargetUnitSymbol") SelectedItem.TargetUnit = ListHelper.ChangeUnitField(InputString, UnitSetData);
-                        else if (InputString == "TranslationFactor") SelectedItem.TranslationFactor = ListHelper.ChangeDoubleField(InputString);
-                        break;
+                        /*ItemToBeAdded oz -> dr
+                          i (Missing)   dr -> kg
+                                        dr -> oz -> kg
+                                        Inverse(oz -> dr) -> (oz -> kg)
+                                        ItemToBeAdded.Inverse() * Helping
+                                        ItemToBeAdded.Inverse() * Get (oz -> kg)
+                                        ItemToBeAdded.Inverse() * Get (ItemToBeAdded.Base -> i.Target)
+                          Generated     Inverse(ItemToBeAdded) * ItemToBeAdded.Base
+                                        Inverse(ItemToBeAdded) * Helping
+                          Helping       ItemToBeAdded.Base -> i.Base
+                        */
+                        HelpingUnitTranslation = GetTranslation(ItemToBeAdded.BaseUnit, i.Target);
+                        if (HelpingUnitTranslation != null)
+                        {
+                            GeneratedUnitTranslation = new UnitTranslation(ItemToBeAdded.TargetUnit, i.Target,
+                                                           (1 / ItemToBeAdded.TranslationFactor) * HelpingUnitTranslation.TranslationFactor,
+                                                           ItemToBeAdded);
+                            GeneratedUnitTranslation.ID = ++_MaxID;
+                            Add(GeneratedUnitTranslation);
+                        }
 
-                    default:
-                        Console.WriteLine();
-                        break;
+                    }
                 }
 
 
             }
+      
+        }
+        public int CountSimilarItems(UnitTranslation ItemToCompare)
+        {
+            int ReturnValue = 0;
+
+            var SimilarItems = (from u in this
+                                where ((ItemToCompare.TranslationFlag == u.TranslationFlag) &&
+                                       (ItemToCompare.BaseUnit.Type == u.BaseUnit.Type) &&
+                                       (ItemToCompare.TargetUnit.Type == u.TargetUnit.Type))
+                                select u).ToList();
+            ReturnValue = SimilarItems.Count;
+            return ReturnValue;
+        }
+        public void DeleteSelectedItem()
+        {
+            int NewSelectedIndex;
+
+            if ((Count == 0) || (SelectedItem == null)) return;
+
+            if (Count > 1)
+            {
+                NewSelectedIndex = IndexOf(SelectedItem) - 1;
+                if (NewSelectedIndex < 0) NewSelectedIndex = 0;
+            }
+            else NewSelectedIndex = 1;
+
+            Remove(SelectedItem);
+
+            if (Count > 0) _SelectedItem = this[NewSelectedIndex];
+            else _SelectedItem = null;
+        }
+        public void EvaluateMaxID()
+        {
+            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            if (maxIDFromFile == null) _MaxID = 0;
+            else _MaxID = (long)maxIDFromFile;
+        }
+        public UnitTranslation GetTranslation (Unit Base, Unit Target)
+        {
+            UnitTranslation ReturnObject = null;
+
+            foreach (UnitTranslation ListItem in this)
+            {
+                if (ListItem.BaseUnit.Equals(Base) && (ListItem.TargetUnit.Equals(Target))) 
+                {
+                    ReturnObject = ListItem;
+                    break;
+                }
+
+                if (ListItem.BaseUnit.Equals(Target) && (ListItem.TargetUnit.Equals(Base)))
+                {
+                    ReturnObject = ListItem.Inverse();
+                    break;
+                }
+
+            }
+            return ReturnObject;
         }
         public void Menu()
         {
-            _SelectedItem = this[Count - 1];
+            int HowManyItemsInSet = Count;
+
+            if (HowManyItemsInSet>0) _SelectedItem = this[HowManyItemsInSet - 1];
             string MenuInput = "";
 
             while (MenuInput != "Q")
@@ -304,8 +470,9 @@ namespace Jamie.Model
                 Console.WriteLine("Selected Ingredient {0}\n", _SelectedItem);
                 Console.WriteLine();
                 Console.WriteLine("A  Add Unit Translation");
-                Console.WriteLine("E  Edit Selected Ingredient");
-                Console.WriteLine("S  Select Ingredient");
+                Console.WriteLine("D  Delete Unit Translation");
+                Console.WriteLine("E  Edit Unit Translation");
+                Console.WriteLine("S  Select Unit Translation");
                 Console.WriteLine("V  View Set");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");
@@ -319,11 +486,16 @@ namespace Jamie.Model
                     case "A":
                         AddItem();
                         break;
+                    case "D":
+                        DeleteSelectedItem();
+                        break;
                     case "E":
-                        EditSelectedItem();
+                        //EditSelectedItem();
+                        break;
+                    case "S":
+                        SelectItem();
                         break;
                     case "V":
-                        ViewSet();
                         break;
                     default:
                         Console.WriteLine();
@@ -347,7 +519,7 @@ namespace Jamie.Model
         }
         public void PopulateSetWithDefaults()
         {
-            this.Clear();
+            Clear();
             AddItem(new UnitTranslation("kg", "g", 1000.0, 0, UnitSetData));
             AddItem(new UnitTranslation("g", "mg", 1000.0, 0, UnitSetData));
             AddItem(new UnitTranslation("l", "ml", 1000.0, 0, UnitSetData));
@@ -364,32 +536,51 @@ namespace Jamie.Model
             }
 
         }
-        //public Ingredient SelectItem()
-        //{
-        //    string InputItemText = "";
+        public void SelectItem()
+        {
+            string InputString;
+            int ParsedIntValue;
+            int SelectedID;
 
-        //    Console.WriteLine("Unit suchen:");
-        //    Console.WriteLine("------------");
-        //    Console.WriteLine();
-        //    Console.Write("IngredientName: "); InputItemText = Console.ReadLine();
+            do
+            {
+                Console.Write("Unit Translation ID:"); InputString = Console.ReadLine();
+            } while (!int.TryParse(InputString, out ParsedIntValue));
+            SelectedID = ParsedIntValue;
 
-        //    return SelectItem(InputItemText);
+            foreach (UnitTranslation ListItem in this)
+            {
+                if (ListItem.ID == SelectedID)
+                {
+                    _SelectedItem = ListItem;
+                    break;
+                }
+            }
 
-        //}
-        //public Ingredient SelectItem(string ItemTextToBeSelected)
-        //{
-        //    Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0, UnitSetData);
+        }
+        public bool TypeTranslationExists(UnitType BaseType, UnitType TargetType)
+        {
+            bool ReturnFlag = false;
 
-        //    int IndexOfSelectedUnit = IndexOf(LocalItemToSelect);
-
-        //    if (IndexOfSelectedUnit == -1) return null;
-        //    else return this[IndexOfSelectedUnit];
-        //}
+            if (BaseType != TargetType)
+            {
+                foreach (UnitTranslation Item in this)
+                {
+                    if ((BaseType == Item.BaseUnit.Type && TargetType == Item.TargetUnit.Type)
+                        || (BaseType == Item.TargetUnit.Type && TargetType == Item.BaseUnit.Type)) 
+                    {
+                        ReturnFlag = true;
+                        break;
+                    }
+                }
+            }
+            return ReturnFlag;
+        }
         public override string ToString()
         {
             string ReturnString = "";
 
-            ReturnString += "\nListe der Unit Umrechnungen:\n";
+            ReturnString += string.Format("\nListe der Unit Umrechnungen: MaxID {0}\n",_MaxID);
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {

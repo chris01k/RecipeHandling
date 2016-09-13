@@ -50,11 +50,16 @@
  * Version 0.26 - 2016-09-07: UnitTranslation überarbeitet
  *                            - EditSelectedItem hinzu
  *                            - Umbau: BaseUnitSymbol --> BaseUnit, TargetUnitSymbol --> TargetUnit                         
+ * Version 0.27 - 2016-09-13: UnitTranslations und div. Sets überarbeitet
+ *                            - UnitTranslations: Einhaltung Regel "1. Es sollte alle Umrechnungen geben vom Typ "Immer gültig""
+ *                              --> Immer gültig = Fall 0 = "Unabhängig von der Zutat, UnitTypen sind gleich"
+ *                            - UnitSet, UnitTranslationSet, IngredientSet, RecipeSet: EvaluateMaxID
+ *                              --> MaxID ermitteln nach Deserialize
  *                            
  */
 
-/* Version 0.27 - 2016-09-0x: U
- *                            -
+/* Version 0.28 - 2016-09-xx: x
+ *                            - 
  *                             
  * 
  * Offene Fragen: 

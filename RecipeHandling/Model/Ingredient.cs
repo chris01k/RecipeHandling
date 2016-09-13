@@ -1,7 +1,8 @@
 ﻿
 using System;
-using System.IO;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 
 
@@ -221,9 +222,18 @@ namespace Jamie.Model
 
             }
         }
+        public void EvaluateMaxID()
+        {
+            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            if (maxIDFromFile == null) _MaxID = 0;
+            else _MaxID = (long)maxIDFromFile;
+        }
         public void Menu()
         {
-            _SelectedItem = this[Count - 1];
+            int HowManyItemsInSet = Count;
+
+            if (HowManyItemsInSet > 0) _SelectedItem = this[HowManyItemsInSet - 1];
             string MenuInput = "";
 
             while (MenuInput != "Q")
@@ -322,7 +332,7 @@ namespace Jamie.Model
         {
             string ReturnString = "";
 
-            ReturnString += "\nListe der Zutaten:\n";
+            ReturnString += string.Format("\nListe der Zutaten: MaxID {0}\n", _MaxID);
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
