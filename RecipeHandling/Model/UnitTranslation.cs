@@ -61,12 +61,15 @@ namespace Jamie.Model
      */
     public class UnitTranslation:IEquatable<UnitTranslation>
     {
+        //static Variables
+        private static UnitSet _UnitSetData;
+        private static IngredientSet _IngredientSetData;
+
         //Variables
         private long? _ID;
-        private static UnitSet _UnitSetData;
-
         private Ingredient _AffectedIngredient;
         private Unit _BaseUnit;
+        private IngredientType _IngredientType;
         private Unit _TargetUnit;
         private double _TranslationFactor;
         private TranslationType _TranslationFlag;
@@ -79,7 +82,7 @@ namespace Jamie.Model
         public UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
         {
             _UnitSetData = UnitSetData;
-            if (ToBePopulated) PopulateObject(UnitSetData);
+            if (ToBePopulated) PopulateObject(UnitSetData, IngredientSetData);
         }
         public UnitTranslation(Unit Base, Unit Target, double TranslationFactor, UnitTranslation Template)
         {
@@ -114,14 +117,6 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
-        public UnitSet UnitSetData
-        {
-            get
-            {
-                return _UnitSetData;
-            }
-        } //ReadOnly
-
         public Ingredient AffectedIngredient
         {
             get
@@ -139,6 +134,25 @@ namespace Jamie.Model
             get { return _BaseUnit; }
             set { _BaseUnit = value; }
         }
+        public IngredientSet IngredientSetData
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+        } //ReadOnly
+        public IngredientType IngredientType
+        {
+            get
+            {
+                return _IngredientType;
+            }
+
+            set
+            {
+                _IngredientType = value;
+            }
+        }
         public Unit TargetUnit
         {
             get { return _TargetUnit; }
@@ -154,7 +168,13 @@ namespace Jamie.Model
             get { return _TranslationFlag; }
             set { _TranslationFlag = value; }
         }
-
+        public UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+        } //ReadOnly
 
         //Methods
         public bool Equals(UnitTranslation ItemToCompare)
@@ -163,8 +183,10 @@ namespace Jamie.Model
         }       
         public bool EqualKey(UnitTranslation ItemToCompare)
         {
-            return (BaseUnit.Equals(ItemToCompare.BaseUnit) && TargetUnit.Equals(ItemToCompare.TargetUnit)) || 
-                    (BaseUnit.Equals(ItemToCompare.TargetUnit) && TargetUnit.Equals(ItemToCompare.BaseUnit));
+            return (BaseUnit.Equals(ItemToCompare.BaseUnit) && TargetUnit.Equals(ItemToCompare.TargetUnit)) ||
+                    (BaseUnit.Equals(ItemToCompare.TargetUnit) && TargetUnit.Equals(ItemToCompare.BaseUnit)) &&
+                    IngredientType.Equals(ItemToCompare.IngredientType) && 
+                    AffectedIngredient.Equals(ItemToCompare.AffectedIngredient);
         }
         public UnitTranslation Inverse()
         {
@@ -179,10 +201,11 @@ namespace Jamie.Model
 
             return ReturnItem;
         }
-        public void PopulateObject(UnitSet UnitSetData)
+        public void PopulateObject(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
             string InputString;
             double ParsedDoubleValue;
+            Ingredient ProcessedIngredient;
             Unit ProcessedUnit;
 
             
@@ -208,36 +231,63 @@ namespace Jamie.Model
             } while (!double.TryParse(InputString, out ParsedDoubleValue));
             TranslationFactor = ParsedDoubleValue;
 
-            if (BaseUnit.Type != TargetUnit.Type) TranslationFlag |= TranslationType.IsTypeChange;
-
-            Console.Write("IsIngredientDependent:"); InputString = Console.ReadLine();
-            if (InputString.Length > 0)
+            if (BaseUnit.Type != TargetUnit.Type)
             {
-                TranslationFlag |= TranslationType.IsIngredientDependent;
-                    
+                TranslationFlag |= TranslationType.IsTypeChange;
+                Console.Write("IsIngredientDependent:"); InputString = Console.ReadLine();
+                if (InputString.Length > 0) //Flag setzen, Ingredient eingeben
+                {
+                    TranslationFlag |= TranslationType.IsIngredientDependent;
+                    do
+                    {
+                        Console.Write("  Affeced Ingredient  : "); ProcessedIngredient = IngredientSetData.SelectItem(Console.ReadLine());
+                    } while (ProcessedIngredient == null);
+                    AffectedIngredient = ProcessedIngredient;
+                }
+                else //IngredientType eingeben
+                {
+                    do
+                    {
+                        Console.Write("Ingredient Type  : "); InputString = Console.ReadLine();
+                        try
+                        {
+                            IngredientType = (IngredientType)Enum.Parse(typeof(IngredientType), InputString);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                        break;
+                    } while (true);
+
+                }
+
             }
-
-
         }
-        public void SetDataReference(UnitSet UnitSetData)
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
+            _IngredientSetData = IngredientSetData;
             _UnitSetData = UnitSetData;
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,10:F3} {3,-5} {4}", ID, BaseUnit, TranslationFactor, TargetUnit,
-                                  TranslationFlag);
+            return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,15:F6} {3,-5} {4}", ID, BaseUnit, TranslationFactor, TargetUnit,
+                                  (TranslationFlag==0? "NoTypeChange, IngredientIndepedant" : string.Format("{0}",TranslationFlag)));
         }
         
     }
 
     public class UnitTranslationSet : ObservableCollection<UnitTranslation>
     {
+        //static Variables
+        private static IngredientSet _IngredientSetData;
+        private static UnitTranslation _SelectedItem;
+        private static UnitSet _UnitSetData;
+
         //Variables
         private const string FileExtension = ".tran";
         private static long _MaxID = 0;
-        private static UnitTranslation _SelectedItem;
-        private static UnitSet _UnitSetData;
+
 
         //Constructors
         public UnitTranslationSet(UnitSet UnitSetData)
@@ -246,6 +296,14 @@ namespace Jamie.Model
         }
 
         //Properties
+        public static IngredientSet IngredientSetData //Readonly
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+
+        }
         public static long MaxID
         {
             get
@@ -273,15 +331,16 @@ namespace Jamie.Model
             //}
         } //Readonly
 
+
         //Methods
         public void AddItem()
         {
             UnitTranslation NewUnitTranslation = new UnitTranslation();
-            NewUnitTranslation.PopulateObject(UnitSetData);
+            NewUnitTranslation.PopulateObject(UnitSetData, IngredientSetData);
                                    
             if (Count == 0)
             {
-                NewUnitTranslation.SetDataReference(_UnitSetData);
+                NewUnitTranslation.SetDataReference(IngredientSetData ,UnitSetData);
             }
             AddItem(NewUnitTranslation);
         }
@@ -315,7 +374,8 @@ namespace Jamie.Model
                     if ((ItemToBeAdded.TranslationFlag & TranslationType.IsTypeChange) == TranslationType.IsTypeChange)
                     // Fall 1: von Zutat UNABHÄNGIG - MIT Wechsel des UnitTyps
                     {
-
+                        ItemToBeAdded.ID = ++_MaxID;
+                        Add(ItemToBeAdded);
                     }
                     else
                     // Fall 0: von Zutat UNABHÄNGIG - OHNE Wechsel des UnitTyps
@@ -403,9 +463,16 @@ namespace Jamie.Model
             var SimilarItems = (from u in this
                                 where ((ItemToCompare.TranslationFlag == u.TranslationFlag) &&
                                        (ItemToCompare.BaseUnit.Type == u.BaseUnit.Type) &&
-                                       (ItemToCompare.TargetUnit.Type == u.TargetUnit.Type))
+                                       (ItemToCompare.TargetUnit.Type == u.TargetUnit.Type) &&
+                                       (ItemToCompare.AffectedIngredient)==u.AffectedIngredient) select u).ToList();
+            ReturnValue += SimilarItems.Count;
+            SimilarItems = (from u in this
+                                where ((ItemToCompare.TranslationFlag == u.TranslationFlag) &&
+                                       (ItemToCompare.TargetUnit.Type == u.BaseUnit.Type) &&
+                                       (ItemToCompare.BaseUnit.Type == u.TargetUnit.Type) &&
+                                       (ItemToCompare.AffectedIngredient) == u.AffectedIngredient)
                                 select u).ToList();
-            ReturnValue = SimilarItems.Count;
+            ReturnValue += SimilarItems.Count;
             return ReturnValue;
         }
         public void DeleteSelectedItem()
@@ -428,7 +495,10 @@ namespace Jamie.Model
         }
         public void EvaluateMaxID()
         {
-            var maxIDFromFile = (from s in this select s.ID).Max();
+            //            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            var maxIDFromFile = this
+                                .Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -557,6 +627,11 @@ namespace Jamie.Model
                 }
             }
 
+        }
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
+        {
+            _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
         }
         public bool TypeTranslationExists(UnitType BaseType, UnitType TargetType)
         {

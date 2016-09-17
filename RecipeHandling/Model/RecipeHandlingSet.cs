@@ -17,6 +17,7 @@ namespace Jamie.Model
             _UnitTranslations = new UnitTranslationSet(_Units);
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
+            SetDataReference();
         }
         public RecipeDataSets(bool ToBePopulatedWithDefaults)
         {
@@ -24,7 +25,7 @@ namespace Jamie.Model
             _UnitTranslations = new UnitTranslationSet(_Units);
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
-
+            SetDataReference();
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
         }
@@ -112,6 +113,12 @@ namespace Jamie.Model
             else Console.WriteLine("UnitSymbol {0} konnte nicht gefunden werden", UnitSymbolToBeRemoved);
                        
 
+        }
+        public void SetDataReference()
+        {
+            _UnitTranslations.SetDataReference(_Ingredients, _Units);
+            _Ingredients.SetDataReference(_Units);
+            _Recipes.SetDataReference(_Ingredients, _Units);
         }
         public void SaveSet(string FileName)
         {

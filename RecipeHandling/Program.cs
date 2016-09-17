@@ -55,11 +55,18 @@
  *                              --> Immer gültig = Fall 0 = "Unabhängig von der Zutat, UnitTypen sind gleich"
  *                            - UnitSet, UnitTranslationSet, IngredientSet, RecipeSet: EvaluateMaxID
  *                              --> MaxID ermitteln nach Deserialize
+ * Version 0.28 - 2016-09-17: Verweis auf IngredientSet implementiert (Zur Auswahl von AffectdIngredient)
+ *                            - bei UnitTranslations: SetDataReference Methode hinzu, 
+ *                            - Ingredients: Type hinzu
  *                            
  */
 
-/* Version 0.28 - 2016-09-xx: x
+/* Version 0.28 - 2016-09-xx: x 
  *                            - 
+ *                            
+ *                            
+ *                            - offen: 
+ *                              --> Null Pointer Assignment bei Eingabe Unit Translation l->kg Speiseöl
  *                             
  * 
  * Offene Fragen: 

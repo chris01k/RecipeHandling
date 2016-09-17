@@ -24,6 +24,34 @@ namespace Jamie.Model
 
             return FieldToBeChanged;
         }
+        public static IngredientType ChangeIngredientTypeField(string DisplayFieldToBeChanged)
+        {
+            IngredientType FieldToBeChanged;
+            IngredientType ReturnTypeValue;
+            string InputString;
+
+            do
+            {
+                Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
+                InputString = Console.ReadLine();
+                try
+                {
+                    ReturnTypeValue = (IngredientType)Enum.Parse(typeof(IngredientType), InputString);
+                }
+                catch
+                {
+                    continue;
+                }
+                break;
+            } while (true);
+
+
+            FieldToBeChanged = ReturnTypeValue;
+
+
+
+            return FieldToBeChanged;
+        }
         public static double ChangeDoubleField(string DisplayFieldToBeChanged)
         {
             string InputString;

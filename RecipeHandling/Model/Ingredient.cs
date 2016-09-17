@@ -8,26 +8,32 @@ using System.Linq;
 
 namespace Jamie.Model
 {
+
+    /* IngredientFlags, IngredientType im namespace:
+     * können von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
+     */
     [Flags]
-    //IngredientFlags im namespace kann von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
     public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
+    public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb }
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
      * länderspezifische Zuordnung?
      */
+
     public class Ingredient : IEquatable<Ingredient> //: ObservableObject
     {
-
         //Constants
         public const byte maxIngredientFlag = 15;
 
-        //Variables
-        private long? _ID;
+        //static Variables
         private static UnitSet _UnitSetData;
 
-        private IngredientFlags _IngredientType;
+        //Variables
+        private long? _ID;
+        private IngredientFlags _Flags;
+        private IngredientType _Type;
         private string _Name;
         private Unit _TargetUnit;  
 
@@ -49,7 +55,7 @@ namespace Jamie.Model
         {
             _UnitSetData = UnitSetData;
             _Name = Name;
-            _IngredientType = IngredientType;
+            _Flags = IngredientType;
         }
 
         //Properties
@@ -65,16 +71,16 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
-        public IngredientFlags IngredientType
+        public IngredientFlags Flags
         {
             get
             {
-                return _IngredientType;
+                return _Flags;
             }
 
             set
             {
-                _IngredientType = value;
+                _Flags = value;
             }
         }
         public string Name
@@ -101,6 +107,28 @@ namespace Jamie.Model
                 _TargetUnit = value;
             }
         }
+        public IngredientType Type
+        {
+            get
+            {
+                return _Type;
+            }
+
+            set
+            {
+                _Type = value;
+            }
+        }
+        public UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+        } //ReadOnly
+
+
+        // Methods
         public bool Equals(Ingredient ItemToCompare)
         {
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
@@ -112,13 +140,34 @@ namespace Jamie.Model
         public void PopulateObject()
         {
             IngredientFlags FlagValue=0;
+            
             string InputString;
+            Unit ProcessedUnit;
 
             Console.WriteLine("Eingabe neue Zutat:");
             Console.WriteLine("-------------------");
             Console.WriteLine();
             Console.Write("         Name  : "); Name = Console.ReadLine();
             Console.Write("  Target Unit  : "); InputString = Console.ReadLine();
+            do
+            {
+                Console.Write("  Target Unit  : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
+            } while (ProcessedUnit == null);
+            TargetUnit = ProcessedUnit;
+            do
+            {
+                Console.Write("Ingredient Type  : "); InputString = Console.ReadLine();
+                try
+                {
+                    Type = (IngredientType)Enum.Parse(typeof(IngredientType), InputString);
+                }
+                catch
+                {
+                    continue;
+                }
+                break;
+            } while (true);
+
 
 
             for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
@@ -126,15 +175,15 @@ namespace Jamie.Model
                 Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
                 if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
             }
-            IngredientType = FlagValue;
+            Flags = FlagValue;
 
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-Name: {1,15} Type: {2}\n\t TargetUnit{3,5}", ID, Name, IngredientType, TargetUnit);
+            return string.Format("{0,6}-Name: {1,15} Type: {2} Flags: {3}\n\t TargetUnit{4,5}", ID, Name, Type, Flags, TargetUnit);
         }
-
     }
+
 
     public class IngredientSet : ObservableCollection<Ingredient>
     {
@@ -196,7 +245,7 @@ namespace Jamie.Model
                 Console.WriteLine("-------------------------\n");
                 Console.WriteLine();
                 Console.WriteLine("C  Change Field");
-                Console.WriteLine("R  Reset Field");
+                //Console.WriteLine("R  Reset Field");
                 Console.WriteLine("--------------------");
                 Console.WriteLine("Q  Quit");
                 Console.WriteLine();
@@ -206,12 +255,13 @@ namespace Jamie.Model
                 switch (MenuInput)
                 {
                     case "C":
-                        string[] FieldsToBeSelected = { "Name", "IngredientType", "TargetUnit" };
+                        string[] FieldsToBeSelected = { "Name", "Flags", "TargetUnit", "Type" };
 
                         InputString = ListHelper.SelectField(FieldsToBeSelected);
                         if (InputString == "Name") SelectedItem.Name = ListHelper.ChangeStringField(InputString);
-                        else if (InputString == "IngredientType") SelectedItem.IngredientType = ListHelper.ChangeIngredientFlagField(InputString);
+                        else if (InputString == "Flags") SelectedItem.Flags = ListHelper.ChangeIngredientFlagField(InputString);
                         else if (InputString == "TargetUnit") SelectedItem.TargetUnit = ListHelper.ChangeUnitField(InputString, _UnitSetData);
+                        else if (InputString == "Type") SelectedItem.Type = ListHelper.ChangeIngredientTypeField(InputString);
                         break;
 
                     default:
@@ -224,7 +274,10 @@ namespace Jamie.Model
         }
         public void EvaluateMaxID()
         {
-            var maxIDFromFile = (from s in this select s.ID).Max();
+            //            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            var maxIDFromFile = this
+                                .Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -302,6 +355,10 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
+        }
+        public void SetDataReference(UnitSet UnitSetData)
+        {
+            _UnitSetData = UnitSetData;
         }
         public Ingredient SelectItem()
         {
@@ -676,4 +733,15 @@ namespace Jamie.Model
 
     }
 
+/*    public class IngredientType
+    {
+
+    }
+
+    public class IngredientTypeSet
+    {
+
+    }
+*/
 }
+

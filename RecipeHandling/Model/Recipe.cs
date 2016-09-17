@@ -5,217 +5,11 @@ using System.Linq;
 
 namespace Jamie.Model
 {
-    public class RecipeSet: ObservableCollection<Recipe>
-    {
-        //Constants
-        private const string FileExtension = ".recp";
-
-        //Variables
-        private static long _MaxID = 0;
-        private static UnitSet _UnitSetData;
-        private static IngredientSet _IngredientSetData;
-        private static Recipe _SelectedRecipe;
-
-        //Constructors
-        public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
-        {
-            _UnitSetData = UnitSetData;
-            _IngredientSetData = IngredientSetData;
-        }
-
-        //Properties
-        public static UnitSet UnitSetData
-        {
-            get
-            {
-                return _UnitSetData;
-            }
-            //set
-            //{
-            //    _UnitSetData = value;
-            //}
-        } //Readonly
-        public static IngredientSet IngredientSetData
-        {
-            get
-            {
-                return _IngredientSetData;
-            }
-
-            //set
-            //{
-            //    _IngredientSetData = value;
-            //}
-        } //Readonly
-
-
-        //Methods
-        public void AddItem()
-        {
-            Recipe NewRecipe = new Recipe(true);
-
-            if (Count == 0)
-            {
-                NewRecipe.SetDataReference(_UnitSetData, _IngredientSetData);
-            }
-            AddItem(NewRecipe);
-        }
-        public void AddItem(Recipe ItemToBeAdded)
-        {
-            if (!Contains(ItemToBeAdded))
-            {
-                Add(ItemToBeAdded);
-                ItemToBeAdded.ID = ++_MaxID;
-            }
-            else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
-            _SelectedRecipe = SelectItem(ItemToBeAdded);
-        }
-        public void EvaluateMaxID()
-        {
-            var maxIDFromFile = (from s in this select s.ID).Max();
-
-            if (maxIDFromFile == null) _MaxID = 0;
-            else _MaxID = (long)maxIDFromFile;
-        }
-        public bool IsEmpty()
-        {
-            return (Count == 0);
-        }
-        public void Menu()
-        {
-            string MenuInput = "";
-
-            _SelectedRecipe = SelectItem(false);
-            while (MenuInput != "Q")
-            {
-
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nRecipe Menü");
-                Console.WriteLine(_SelectedRecipe);
-                Console.WriteLine("---------------");
-                Console.WriteLine("A  Add Recipe");
-                Console.WriteLine("I  Add Ingredient");
-                Console.WriteLine("R  View Recipe");
-                Console.WriteLine("S  Select Recipe");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "I":
-                        _SelectedRecipe.Ingredients.AddItem();
-                        Console.WriteLine(_SelectedRecipe.ToString());
-                        break;
-                    case "R":
-                        Console.WriteLine(_SelectedRecipe.ToString());
-                        break;
-                    case "S":
-                        _SelectedRecipe = SelectItem(true);
-                        break;
-                    case "V":
-                        ViewSet();
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }
-        public RecipeSet OpenSet(string FileName)
-        {
-            RecipeSet ReturnSet = this;
-            ReturnSet.Clear();
-            FileName += FileExtension;
-            using (Stream fs = new FileStream(FileName, FileMode.Open))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
-                ReturnSet = (RecipeSet)x.Deserialize(fs);
-            }
-            EvaluateMaxID();
-            return ReturnSet;
-
-        }
-        public void SaveSet(string BaseFileName)
-        {
-            string FileName = BaseFileName + FileExtension;
-            using (FileStream fs = new FileStream(FileName, FileMode.Create))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
-                x.Serialize(fs, this);
-            }
-
-            foreach (Recipe Rcp in this)
-            {
-                FileName = BaseFileName + "." + Rcp.Name;
-                Rcp.Ingredients.SaveSet(FileName);
-            }
-
-        }
-
-        public Recipe SelectItem(bool ByRequest)
-        {
-            Recipe ReturnValue = null;
-
-            if (ByRequest)
-            {
-                Recipe RequestedItem = new Recipe();
-
-                Console.WriteLine("Recipe suchen:");
-                Console.WriteLine("--------------");
-                Console.WriteLine();
-                Console.Write("Recipe Name: "); RequestedItem.Name = Console.ReadLine();
-
-                ReturnValue = SelectItem(RequestedItem);
-            }
-            else if (Count != 0) ReturnValue = this[0];
-
-            return ReturnValue;
-
-        }
-        public Recipe SelectItem(Recipe ItemToBeSelected)
-        {
-            Recipe ReturnValue = null;
-
-            int IndexOfSelectedItem = IndexOf(ItemToBeSelected);
-            if (IndexOfSelectedItem != -1) ReturnValue = this[IndexOfSelectedItem];
-            return ReturnValue;
-        }
-
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        }
-        public override string ToString()
-        {
-            string ReturnString;
-
-            ReturnString = string.Format("\nListe der Rezepte: MaxID {0}\n", _MaxID);
-            if (Count == 0) ReturnString += "-------> leer <-------\n";
-            else
-            {
-                foreach (Recipe ListItem in this)
-                {
-                    ReturnString += ListItem.ToString() + "\n";
-                    ReturnString += ListItem.Ingredients.ToString() + "\n";
-                }
-            }
-            ReturnString += "\n";
-            return ReturnString;
-        }
-    }
 
     /* Ein Rezept ist für eine Portionsanzahl ausgelegt.
      * Rezepte generieren ein Gesamtmerkmal aus den einzelnen Merkmalen von allen Zutaten
      */
-    public class Recipe:IEquatable<Recipe>
+    public class Recipe : IEquatable<Recipe>
     {
         //Variables
         private static UnitSet _UnitSetData;
@@ -229,9 +23,9 @@ namespace Jamie.Model
         private string _SourceISBN;
         private string _SourcePage; // Page the recipe is found in the cookbook
         private string _Summary; // Summary
-        //private bool _ToTakeAway;
+                                 //private bool _ToTakeAway;
 
-        
+
         //Constructors
         public Recipe()
         {
@@ -281,7 +75,7 @@ namespace Jamie.Model
             //}
         }
 
-        public IngredientItemSet Ingredients  
+        public IngredientItemSet Ingredients
         {
             get { return _Ingredients; }
             set { _Ingredients = value; }
@@ -397,4 +191,219 @@ namespace Jamie.Model
         }
 
     }
+
+    public class RecipeSet: ObservableCollection<Recipe>
+    {
+        //Constants
+        private const string FileExtension = ".recp";
+
+        //Variables
+        private static long _MaxID = 0;
+        private static UnitSet _UnitSetData;
+        private static IngredientSet _IngredientSetData;
+        private static Recipe _SelectedRecipe;
+
+        //Constructors
+        public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
+        {
+            _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
+        }
+
+        //Properties
+        public static UnitSet UnitSetData
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+            //set
+            //{
+            //    _UnitSetData = value;
+            //}
+        } //Readonly
+        public static IngredientSet IngredientSetData
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+
+            //set
+            //{
+            //    _IngredientSetData = value;
+            //}
+        } //Readonly
+
+
+        //Methods
+        public void AddItem()
+        {
+            Recipe NewRecipe = new Recipe(true);
+
+            if (Count == 0)
+            {
+                NewRecipe.SetDataReference(_UnitSetData, _IngredientSetData);
+            }
+            AddItem(NewRecipe);
+        }
+        public void AddItem(Recipe ItemToBeAdded)
+        {
+            if (!Contains(ItemToBeAdded))
+            {
+                Add(ItemToBeAdded);
+                ItemToBeAdded.ID = ++_MaxID;
+            }
+            else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
+            _SelectedRecipe = SelectItem(ItemToBeAdded);
+        }
+        public void EvaluateMaxID()
+        {
+//            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            var maxIDFromFile = this
+                                .Select(s => s.ID).Max();
+
+            if (maxIDFromFile == null) _MaxID = 0;
+            else _MaxID = (long)maxIDFromFile;
+        }
+        public bool IsEmpty()
+        {
+            return (Count == 0);
+        }
+        public void Menu()
+        {
+            string MenuInput = "";
+
+            _SelectedRecipe = SelectItem(false);
+            while (MenuInput != "Q")
+            {
+
+                ViewSet();
+                Console.WriteLine();
+                Console.WriteLine("\nRecipe Menü");
+                Console.WriteLine(_SelectedRecipe);
+                Console.WriteLine("---------------");
+                Console.WriteLine("A  Add Recipe");
+                Console.WriteLine("I  Add Ingredient");
+                Console.WriteLine("R  View Recipe");
+                Console.WriteLine("S  Select Recipe");
+                Console.WriteLine("V  View Set");
+                Console.WriteLine("--------------------");
+                Console.WriteLine("Q  Quit");
+                Console.WriteLine();
+                Console.Write("Ihre Eingabe:");
+                MenuInput = Console.ReadLine().ToUpper();
+                switch (MenuInput)
+                {
+                    case "A":
+                        AddItem();
+                        break;
+                    case "I":
+                        _SelectedRecipe.Ingredients.AddItem();
+                        Console.WriteLine(_SelectedRecipe.ToString());
+                        break;
+                    case "R":
+                        Console.WriteLine(_SelectedRecipe.ToString());
+                        break;
+                    case "S":
+                        _SelectedRecipe = SelectItem(true);
+                        break;
+                    case "V":
+                        ViewSet();
+                        break;
+                    default:
+                        Console.WriteLine();
+                        break;
+                }
+
+            }
+        }
+        public RecipeSet OpenSet(string FileName)
+        {
+            RecipeSet ReturnSet = this;
+            ReturnSet.Clear();
+            FileName += FileExtension;
+            using (Stream fs = new FileStream(FileName, FileMode.Open))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
+                ReturnSet = (RecipeSet)x.Deserialize(fs);
+            }
+            EvaluateMaxID();
+            return ReturnSet;
+
+        }
+        public void SaveSet(string BaseFileName)
+        {
+            string FileName = BaseFileName + FileExtension;
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
+                x.Serialize(fs, this);
+            }
+
+            foreach (Recipe Rcp in this)
+            {
+                FileName = BaseFileName + "." + Rcp.Name;
+                Rcp.Ingredients.SaveSet(FileName);
+            }
+
+        }
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
+        {
+            _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+        }
+        public Recipe SelectItem(bool ByRequest)
+        {
+            Recipe ReturnValue = null;
+
+            if (ByRequest)
+            {
+                Recipe RequestedItem = new Recipe();
+
+                Console.WriteLine("Recipe suchen:");
+                Console.WriteLine("--------------");
+                Console.WriteLine();
+                Console.Write("Recipe Name: "); RequestedItem.Name = Console.ReadLine();
+
+                ReturnValue = SelectItem(RequestedItem);
+            }
+            else if (Count != 0) ReturnValue = this[0];
+
+            return ReturnValue;
+
+        }
+        public Recipe SelectItem(Recipe ItemToBeSelected)
+        {
+            Recipe ReturnValue = null;
+
+            int IndexOfSelectedItem = IndexOf(ItemToBeSelected);
+            if (IndexOfSelectedItem != -1) ReturnValue = this[IndexOfSelectedItem];
+            return ReturnValue;
+        }
+
+        public void ViewSet()
+        {
+            Console.WriteLine(ToString());
+        }
+        public override string ToString()
+        {
+            string ReturnString;
+
+            ReturnString = string.Format("\nListe der Rezepte: MaxID {0}\n", _MaxID);
+            if (Count == 0) ReturnString += "-------> leer <-------\n";
+            else
+            {
+                foreach (Recipe ListItem in this)
+                {
+                    ReturnString += ListItem.ToString() + "\n";
+                    ReturnString += ListItem.Ingredients.ToString() + "\n";
+                }
+            }
+            ReturnString += "\n";
+            return ReturnString;
+        }
+    }
+
 }

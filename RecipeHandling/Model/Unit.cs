@@ -106,11 +106,14 @@ namespace Jamie.Model
 
     public class UnitSet: ObservableCollection<Unit>
     {
-        //Variables
-        private static long _MaxID = 0;
+        //Constants
         private const string FileExtension = ".unit";
+
+        //static Variables
+        private static long _MaxID = 0;
         private static Unit _SelectedItem;
 
+        //Variables
 
         //Constructors
         public UnitSet()
@@ -172,7 +175,10 @@ namespace Jamie.Model
         }
         public void EvaluateMaxID()
         {
-            var maxIDFromFile = (from s in this select s.ID).Max();
+            //            var maxIDFromFile = (from s in this select s.ID).Max();
+
+            var maxIDFromFile = this
+                                .Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
