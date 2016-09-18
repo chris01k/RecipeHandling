@@ -183,10 +183,25 @@ namespace Jamie.Model
         }       
         public bool EqualKey(UnitTranslation ItemToCompare)
         {
-            return (BaseUnit.Equals(ItemToCompare.BaseUnit) && TargetUnit.Equals(ItemToCompare.TargetUnit)) ||
-                    (BaseUnit.Equals(ItemToCompare.TargetUnit) && TargetUnit.Equals(ItemToCompare.BaseUnit)) &&
-                    IngredientType.Equals(ItemToCompare.IngredientType) && 
-                    AffectedIngredient.Equals(ItemToCompare.AffectedIngredient);
+            bool ReturnValue;
+
+            ReturnValue = (BaseUnit.Equals(ItemToCompare.BaseUnit) && TargetUnit.Equals(ItemToCompare.TargetUnit)) ||
+                          (BaseUnit.Equals(ItemToCompare.TargetUnit) && TargetUnit.Equals(ItemToCompare.BaseUnit)) &&
+                           TranslationFlag.Equals(ItemToCompare.TranslationFlag);
+
+            /* Wenn TranslationFlag: IsIngredientDependent
+             *      Wenn
+             * 
+             * 
+             */
+
+            if (TranslationFlag.HasFlag(TranslationType.IsIngredientDependent))
+            {
+                if (AffectedIngredient != null) ReturnValue &= AffectedIngredient.Equals(ItemToCompare.AffectedIngredient);
+                else ReturnValue &= (ItemToCompare.AffectedIngredient == null);
+            }
+
+            return ReturnValue;
         }
         public UnitTranslation Inverse()
         {
@@ -346,6 +361,8 @@ namespace Jamie.Model
         }
         public void AddItem(UnitTranslation ItemToBeAdded)
         {
+            //Fälle können reduziert werden
+
             //ItemToBeAdded und der Kehrwert nicht vorhanden
             if (!Contains(ItemToBeAdded))
             {
@@ -358,7 +375,6 @@ namespace Jamie.Model
                     if ((ItemToBeAdded.TranslationFlag & TranslationType.IsTypeChange) == TranslationType.IsTypeChange)
                     // Fall 3: von Zutat ABHÄNGIG - MIT Wechsel des UnitTyps
                     {
-
                     }
                     else
                     // Fall 2: von Zutat ABHÄNGIG - OHNE Wechsel des UnitTyps
@@ -374,19 +390,17 @@ namespace Jamie.Model
                     if ((ItemToBeAdded.TranslationFlag & TranslationType.IsTypeChange) == TranslationType.IsTypeChange)
                     // Fall 1: von Zutat UNABHÄNGIG - MIT Wechsel des UnitTyps
                     {
-                        ItemToBeAdded.ID = ++_MaxID;
-                        Add(ItemToBeAdded);
                     }
                     else
                     // Fall 0: von Zutat UNABHÄNGIG - OHNE Wechsel des UnitTyps
                     {
-                        ItemToBeAdded.ID = ++_MaxID;
-                        Add(ItemToBeAdded);
                         AddAllItemsWithSameType(ItemToBeAdded);
                         _SelectedItem = ItemToBeAdded;
                     }
 
                 }
+                ItemToBeAdded.ID = ++_MaxID;
+                Add(ItemToBeAdded);
             }
 
             else

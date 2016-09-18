@@ -58,15 +58,16 @@
  * Version 0.28 - 2016-09-17: Verweis auf IngredientSet implementiert (Zur Auswahl von AffectdIngredient)
  *                            - bei UnitTranslations: SetDataReference Methode hinzu, 
  *                            - Ingredients: Type hinzu
+ * Version 0.29 - 2016-09-18: UnitTranslationSet: Eingabe aller UnitTranslation-Fälle implementiert
  *                            
  */
 
-/* Version 0.28 - 2016-09-xx: x 
+/* Version 0.30 - 2016-09-xx: x
  *                            - 
  *                            
  *                            
  *                            - offen: 
- *                              --> Null Pointer Assignment bei Eingabe Unit Translation l->kg Speiseöl
+ *                              --> UnitTranslationSet.AddItem(UnitTranslation ItemToBeAdded): Reduzierung der Fälle
  *                             
  * 
  * Offene Fragen: 
