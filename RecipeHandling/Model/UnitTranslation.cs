@@ -286,8 +286,8 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,15:F6} {3,-5} {4}", ID, BaseUnit, TranslationFactor, TargetUnit,
-                                  (TranslationFlag==0? "NoTypeChange, IngredientIndepedant" : string.Format("{0}",TranslationFlag)));
+            return string.Format("{0,6}-UnitTranslation: {1,5} =  {2,15:F6} {3,-5} {4}\n  {5}", ID, BaseUnit, TranslationFactor, TargetUnit, 
+                                  (TranslationFlag==0? "NoTypeChange, IngredientIndepedant" : string.Format("{0}",TranslationFlag)),AffectedIngredient);
         }
         
     }
@@ -340,12 +340,7 @@ namespace Jamie.Model
             {
                 return _UnitSetData;
             }
-            //set
-            //{
-            //    _UnitSetData = value;
-            //}
         } //Readonly
-
 
         //Methods
         public void AddItem()
@@ -644,8 +639,8 @@ namespace Jamie.Model
         }
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
-            _IngredientSetData = IngredientSetData;
-            _UnitSetData = UnitSetData;
+            if (_IngredientSetData ==null) _IngredientSetData = IngredientSetData;
+            if (_UnitSetData  == null) _UnitSetData = UnitSetData;
         }
         public bool TypeTranslationExists(UnitType BaseType, UnitType TargetType)
         {

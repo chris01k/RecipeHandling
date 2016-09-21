@@ -8,14 +8,14 @@ namespace Jamie.Model
         private static string filename = "DATA\\ObservedUnits.rds";
 
         //Constructors
-        internal RecipeHandlingSetHandler()
+        public RecipeHandlingSetHandler()
         {
             JamieDataSet = new RecipeDataSets();
             OpenLists();
             JamieDataSet.ViewSet();
 
         }
-        internal RecipeHandlingSetHandler(bool ToBePopulatedWithDefaults)
+        public RecipeHandlingSetHandler(bool ToBePopulatedWithDefaults)
         {
             JamieDataSet = new RecipeDataSets(ToBePopulatedWithDefaults);
 
@@ -48,7 +48,9 @@ namespace Jamie.Model
                 JamieDataSet = (RecipeDataSets)x.Deserialize(fs);
             }
 
+
             JamieDataSet.EvaluateMaxIDs();
+            JamieDataSet.SetDataReference();
 
         }
         public void SaveLists()

@@ -358,7 +358,7 @@ namespace Jamie.Model
         }
         public void SetDataReference(UnitSet UnitSetData)
         {
-            _UnitSetData = UnitSetData;
+            if (_UnitSetData == null) _UnitSetData = UnitSetData;
         }
         public Ingredient SelectItem()
         {

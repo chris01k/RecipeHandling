@@ -5,10 +5,13 @@ namespace Jamie.Model
 {
     public class RecipeDataSets
     {
+        private FoodPlanItemSet _FoodPlanItems; //related to Recipes
         private IngredientSet _Ingredients; //related to <no other Set>
-        private RecipeSet _Recipes; // related to IngredientSet, UnitSet
+        private RecipeSet _Recipes; // related to Ingredients, Units
+        private ShoppingListItemSet _ShoppingListItems; //related to Ingredients, Units
         private UnitSet _Units; // related to <no other Set>
-        private UnitTranslationSet _UnitTranslations; //related to UnitSet
+        private UnitTranslationSet _UnitTranslations; //related to Units
+
 
         //Constructors
         public RecipeDataSets()
@@ -17,6 +20,8 @@ namespace Jamie.Model
             _UnitTranslations = new UnitTranslationSet(_Units);
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
+            _FoodPlanItems = new FoodPlanItemSet();
+            _ShoppingListItems = new ShoppingListItemSet();
             SetDataReference();
         }
         public RecipeDataSets(bool ToBePopulatedWithDefaults)
@@ -25,12 +30,25 @@ namespace Jamie.Model
             _UnitTranslations = new UnitTranslationSet(_Units);
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
+            _FoodPlanItems = new FoodPlanItemSet();
             SetDataReference();
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
         }
 
         //Properties
+        public FoodPlanItemSet FoodPlanItems
+        {
+            get
+            {
+                return _FoodPlanItems;
+            }
+
+            set
+            {
+                _FoodPlanItems = value;
+            }
+        }
         public IngredientSet Ingredients
         {
             get
@@ -48,6 +66,19 @@ namespace Jamie.Model
             get { return _Recipes; }
             set { _Recipes = value; }
         }
+        public ShoppingListItemSet ShoppingListItems
+        {
+            get
+            {
+                return _ShoppingListItems;
+            }
+
+            set
+            {
+                _ShoppingListItems = value;
+            }
+
+        }
         public UnitSet Units
         {
             get { return _Units; }
@@ -58,6 +89,7 @@ namespace Jamie.Model
             get { return _UnitTranslations; }
             set { _UnitTranslations = value; }
         }
+
 
         //Methods
         public void ClearList()
@@ -81,6 +113,7 @@ namespace Jamie.Model
         public void EvaluateMaxIDs()
         {
             Ingredients.EvaluateMaxID();
+            FoodPlanItems.EvaluateMaxID();
             Recipes.EvaluateMaxID();
             Units.EvaluateMaxID();
             UnitTranslations.EvaluateMaxID();
@@ -119,6 +152,8 @@ namespace Jamie.Model
             _UnitTranslations.SetDataReference(_Ingredients, _Units);
             _Ingredients.SetDataReference(_Units);
             _Recipes.SetDataReference(_Ingredients, _Units);
+            _FoodPlanItems.SetDataReference(_Recipes);
+            _ShoppingListItems.SetDataReference(_Ingredients, _Units);
         }
         public void SaveSet(string FileName)
         {
@@ -136,10 +171,13 @@ namespace Jamie.Model
         {
             string ReturnString = "";
 
+            ReturnString += FoodPlanItems.ToString();
             ReturnString += Ingredients.ToString();
             ReturnString += Recipes.ToString();
             ReturnString += Units.ToString();
             ReturnString += UnitTranslations.ToString();
+            ReturnString += ShoppingListItems.ToString();
+
             return ReturnString;
 
         }      

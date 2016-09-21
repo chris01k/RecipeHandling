@@ -20,14 +20,14 @@ namespace Jamie.Model
 
 
         // Constructors
-        internal Unit()
+        public Unit()
         {
         }
-        internal Unit(bool ToBePopulated)
+        public Unit(bool ToBePopulated)
         {
             if (ToBePopulated) PopulateObject();
         }
-        internal Unit(string Symbol, string Name, UnitType Type)
+        public Unit(string Symbol, string Name, UnitType Type)
         {
             _Symbol = Symbol;
             _Name = Name;
@@ -121,7 +121,7 @@ namespace Jamie.Model
         }
 
         //Properties
-        public static long MaxID
+        public static long MaxID //Readonly
         {
             get
             {

@@ -59,15 +59,23 @@
  *                            - bei UnitTranslations: SetDataReference Methode hinzu, 
  *                            - Ingredients: Type hinzu
  * Version 0.29 - 2016-09-18: UnitTranslationSet: Eingabe aller UnitTranslation-Fälle implementiert
+ * Version 0.30 - 2016-09-21: Klassen FoodPlanItem, FoodPlanItemSet, ShoppingListItem, ShoppingListItemSet hinzu
  *                            
  */
 
-/* Version 0.30 - 2016-09-xx: x
+/* Version 0.31 - 2016-09-xx: x
  *                            - 
  *                            
  *                            
  *                            - offen: 
+ *                              --> ShoppingListItemSet: UnitSetData und IngredientSetData bleiben bei Programmstart leer (Count == 0)
+ *                              --> checken, ob SelecedItem static sein muss
+ *                              
+ *                              
  *                              --> UnitTranslationSet.AddItem(UnitTranslation ItemToBeAdded): Reduzierung der Fälle
+ *                              --> ShoppingList hinzu
+ *                              --> Berechnung der Bedarfe in der Shopping List
+ *                              
  *                             
  * 
  * Offene Fragen: 
@@ -106,9 +114,11 @@ namespace Jamie.Main
                 Console.WriteLine();
 
                 Console.WriteLine("I   Ingredient");
+                Console.WriteLine("FP  FoodPlanItem");
                 Console.WriteLine("R   Recipe");
                 Console.WriteLine("U   Unit");
                 Console.WriteLine("UT  Unit Translation");
+                Console.WriteLine("SL  Shopping List");
                 Console.WriteLine();
                 Console.WriteLine("V  View Lists");
                 Console.WriteLine("X  View XML File");
@@ -133,6 +143,9 @@ namespace Jamie.Main
                     case "I":
                         JamieData.JamieDataSet.Ingredients.Menu();
                         break;
+                    case "FP":
+                        JamieData.JamieDataSet.FoodPlanItems.Menu();
+                        break;
                     case "R":
                         JamieData.JamieDataSet.Recipes.Menu();
                         break;
@@ -142,13 +155,10 @@ namespace Jamie.Main
                     case "UT":
                         JamieData.JamieDataSet.UnitTranslations.Menu();
                         break;
-/*                    case "UR":
-                        JamieSetHandler.JamieDataSet.RemoveUnit();
+                    case "SL":
+                        JamieData.JamieDataSet.ShoppingListItems.Menu();
                         break;
-                    case "US":
-                        Console.WriteLine(JamieSetHandler.JamieDataSet.SelectUnit());
-                        break;
-*/                    case "V":
+                    case "V":
                         JamieData.JamieDataSet.ViewSet();
                         break;
                     case "X":

@@ -56,11 +56,6 @@ namespace Jamie.Model
             {
                 return _UnitSetData;
             }
-
-            //set
-            //{
-            //    _UnitSetData = value;
-            //}
         }
         public static IngredientSet IngredientSetData //Readonly
         {
@@ -68,13 +63,7 @@ namespace Jamie.Model
             {
                 return _IngredientSetData;
             }
-
-            //set
-            //{
-            //    _IngredientSetData = value;
-            //}
         }
-
         public IngredientItemSet Ingredients
         {
             get { return _Ingredients; }
@@ -178,6 +167,7 @@ namespace Jamie.Model
             Console.Write("Source          : "); Source = Console.ReadLine();
             Console.Write("SourcePage      : "); SourcePage = Console.ReadLine();
             Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
+
         }
         public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
         {
@@ -351,8 +341,8 @@ namespace Jamie.Model
         }
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
-            _IngredientSetData = IngredientSetData;
-            _UnitSetData = UnitSetData;
+            if (_IngredientSetData == null) _IngredientSetData = IngredientSetData;
+            if (_UnitSetData == null) _UnitSetData = UnitSetData;
         }
         public Recipe SelectItem(bool ByRequest)
         {
