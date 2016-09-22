@@ -400,6 +400,23 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
+        public void TransferToShoppingList(ShoppingListItemSet ShoppingListItems)
+        {
+            ShoppingListItem newItem;
+
+            foreach (FoodPlanItem ListItem in this)
+            {
+                foreach (IngredientItem RecipeIngredient in ListItem.PlannedRecipe.Ingredients)
+                {
+                    newItem = new ShoppingListItem();
+                    newItem.Quantity = RecipeIngredient.Quantity;
+                    newItem.Unit = RecipeIngredient.Unit;
+                    newItem.Ingredient = RecipeIngredient.Ingredient;
+                    newItem.ReferredFoodPlanItem = ListItem;
+                    ShoppingListItems.AddItem(newItem);
+                }
+            }
+        }
     }
 
 }

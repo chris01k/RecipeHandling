@@ -80,6 +80,18 @@ namespace Jamie.Model
                 _Quantity = value;
             }
         }
+        public FoodPlanItem ReferredFoodPlanItem
+        {
+            get
+            {
+                return _ReferredFoodPlanItem;
+            }
+
+            set
+            {
+                _ReferredFoodPlanItem = value;
+            }
+        }
         public Unit Unit
         {
             get
@@ -99,7 +111,8 @@ namespace Jamie.Model
                 return _UnitSetData;
             }
         } //Readonly
-        
+
+
         //Methods
         public bool Equals(ShoppingListItem ItemToCompare)
         {
@@ -148,7 +161,12 @@ namespace Jamie.Model
         }
         public override string ToString()
         {
-            return string.Format("{0,6} {1} {2} {3,10}", ID, Quantity, Unit.Name, Ingredient.Name);
+            string ReturnString;
+
+            ReturnString = string.Format("{0,6} {1,10} {2,10} {3,15}", ID, Quantity, Unit.Symbol, Ingredient.Name);
+            if (ReferredFoodPlanItem != null) ReturnString += " Recipe: " +ReferredFoodPlanItem.PlannedRecipe.Name;
+
+            return ReturnString;
         }
     }
 
@@ -433,9 +451,6 @@ namespace Jamie.Model
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-
-            Console.WriteLine(_UnitSetData.ToString());
-            Console.WriteLine(_IngredientSetData.ToString());
         }
         public override string ToString()
         {

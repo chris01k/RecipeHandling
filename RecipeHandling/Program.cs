@@ -61,10 +61,11 @@
  * Version 0.29 - 2016-09-18: UnitTranslationSet: Eingabe aller UnitTranslation-Fälle implementiert
  * Version 0.30 - 2016-09-21: Klassen FoodPlanItem, FoodPlanItemSet, ShoppingListItem, ShoppingListItemSet hinzu
  * Version 0.31 - 2016-09-22: Bugfix: ShoppingListItemSet: UnitSetData und IngredientSetData bleiben bei Programmstart leer (Count == 0)
+ * Version 0.32 - 2016-09-22: Foodplan.TransferToShoppingList(ShoppingListItemSet ShoppingListItems) hinzu
  *                            
  */
 
-/* Version 0.32 - 2016-09-xx: x
+/* Version 0.33 - 2016-09-xx: x
  *                            - 
  *                            
  *                            
@@ -121,6 +122,7 @@ namespace Jamie.Main
                 Console.WriteLine("UT  Unit Translation");
                 Console.WriteLine("SL  Shopping List");
                 Console.WriteLine();
+                Console.WriteLine("T  Transfer to Foodplan to Shopping List");
                 Console.WriteLine("V  View Lists");
                 Console.WriteLine("X  View XML File");
                 Console.WriteLine("--------------------");
@@ -157,6 +159,10 @@ namespace Jamie.Main
                         JamieData.JamieDataSet.UnitTranslations.Menu();
                         break;
                     case "SL":
+                        JamieData.JamieDataSet.ShoppingListItems.Menu();
+                        break;
+                    case "T":
+                        JamieData.JamieDataSet.FoodPlanItems.TransferToShoppingList(JamieData.JamieDataSet.ShoppingListItems);
                         JamieData.JamieDataSet.ShoppingListItems.Menu();
                         break;
                     case "V":
