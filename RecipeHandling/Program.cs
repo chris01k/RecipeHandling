@@ -60,15 +60,16 @@
  *                            - Ingredients: Type hinzu
  * Version 0.29 - 2016-09-18: UnitTranslationSet: Eingabe aller UnitTranslation-Fälle implementiert
  * Version 0.30 - 2016-09-21: Klassen FoodPlanItem, FoodPlanItemSet, ShoppingListItem, ShoppingListItemSet hinzu
+ * Version 0.31 - 2016-09-22: Bugfix: ShoppingListItemSet: UnitSetData und IngredientSetData bleiben bei Programmstart leer (Count == 0)
  *                            
  */
 
-/* Version 0.31 - 2016-09-xx: x
+/* Version 0.32 - 2016-09-xx: x
  *                            - 
  *                            
  *                            
  *                            - offen: 
- *                              --> ShoppingListItemSet: UnitSetData und IngredientSetData bleiben bei Programmstart leer (Count == 0)
+ *                              
  *                              --> checken, ob SelecedItem static sein muss
  *                              
  *                              

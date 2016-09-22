@@ -138,10 +138,12 @@ namespace Jamie.Model
             Ingredient = ProcessedIngredient;
 
         }
-        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetDatas)
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
-            if (_IngredientSetData == null) _IngredientSetData = IngredientSetData;
-            if (_UnitSetData == null) _UnitSetData = UnitSetData;
+            //if (_IngredientSetData == null)
+                _IngredientSetData = IngredientSetData;
+            //if (_UnitSetData == null) 
+                _UnitSetData = UnitSetData;
 
         }
         public override string ToString()
@@ -421,8 +423,11 @@ namespace Jamie.Model
         }
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
-            if (_IngredientSetData == null) _IngredientSetData = IngredientSetData;
-            if (_UnitSetData == null) _UnitSetData = UnitSetData;
+            //if (_IngredientSetData == null)
+            _IngredientSetData = IngredientSetData;
+            //if (_UnitSetData == null) 
+            _UnitSetData = UnitSetData;
+
             if (this.Count() != 0) this[0].SetDataReference(IngredientSetData,UnitSetData);
         }
         public void ViewSet()
