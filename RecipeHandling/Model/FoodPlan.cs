@@ -403,13 +403,16 @@ namespace Jamie.Model
         public void TransferToShoppingList(ShoppingListItemSet ShoppingListItems)
         {
             ShoppingListItem newItem;
+            double quantityFactor;
 
             foreach (FoodPlanItem ListItem in this)
             {
+                quantityFactor = ListItem.TotalPortions / ListItem.PlannedRecipe.PortionQuantity;
+
                 foreach (IngredientItem RecipeIngredient in ListItem.PlannedRecipe.Ingredients)
                 {
                     newItem = new ShoppingListItem();
-                    newItem.Quantity = RecipeIngredient.Quantity;
+                    newItem.Quantity = quantityFactor * RecipeIngredient.Quantity;
                     newItem.Unit = RecipeIngredient.Unit;
                     newItem.Ingredient = RecipeIngredient.Ingredient;
                     newItem.ReferredFoodPlanItem = ListItem;

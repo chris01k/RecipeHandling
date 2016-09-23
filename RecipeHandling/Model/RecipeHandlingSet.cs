@@ -117,6 +117,7 @@ namespace Jamie.Model
             Recipes.EvaluateMaxID();
             Units.EvaluateMaxID();
             UnitTranslations.EvaluateMaxID();
+            ShoppingListItems.EvaluateMaxID();
         }
         public void PopulateSetWithDefaults()
         {

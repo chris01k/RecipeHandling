@@ -65,12 +65,13 @@
  *                            
  */
 
-/* Version 0.33 - 2016-09-xx: x
- *                            - 
+/* Version 0.33 - 2016-09-23: TransferToShoppingList - Kalkulation Quantity = f(Rezept Portionszahl, geplante Portionszahl) hinzu
+ *                            - ShoppingListItems.EvaluateMaxID() hinzu
+ *                            - ShoppingListItems.ToString --> sortierte Ausgabe hinzu
+
  *                            
  *                            
  *                            - offen: 
- *                              
  *                              --> checken, ob SelecedItem static sein muss
  *                              
  *                              

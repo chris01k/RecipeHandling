@@ -163,9 +163,8 @@ namespace Jamie.Model
         {
             string ReturnString;
 
-            ReturnString = string.Format("{0,6} {1,10} {2,10} {3,15}", ID, Quantity, Unit.Symbol, Ingredient.Name);
-            if (ReferredFoodPlanItem != null) ReturnString += " Recipe: " +ReferredFoodPlanItem.PlannedRecipe.Name;
-
+            ReturnString = string.Format("{0,6} {1,10:N2} {2,10} {3,15}", ID, Quantity, Unit.Symbol, Ingredient.Name);
+            if (ReferredFoodPlanItem != null) ReturnString += string.Format(" Recipe: {0,20} - {1:d}, {2}",ReferredFoodPlanItem.PlannedRecipe.Name, ReferredFoodPlanItem.DateToConsume, ReferredFoodPlanItem.DateToConsume.DayOfWeek);
             return ReturnString;
         }
     }
@@ -460,7 +459,9 @@ namespace Jamie.Model
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
-                foreach (ShoppingListItem ListItem in this)
+                var SortedShoppingList = this.Select(s=>s).OrderBy(s=>s.Ingredient.Name);
+
+                foreach (ShoppingListItem ListItem in SortedShoppingList)
                     ReturnString += ListItem.ToString() + "\n";
             }
             ReturnString += "\n";
