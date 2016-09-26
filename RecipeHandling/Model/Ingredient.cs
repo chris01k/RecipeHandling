@@ -15,7 +15,7 @@ namespace Jamie.Model
     [Flags]
     public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
-    public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb }
+    public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb, IsGranular }
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
@@ -148,7 +148,7 @@ namespace Jamie.Model
             Console.WriteLine("-------------------");
             Console.WriteLine();
             Console.Write("         Name  : "); Name = Console.ReadLine();
-            Console.Write("  Target Unit  : "); InputString = Console.ReadLine();
+//            Console.Write("  Target Unit  : "); InputString = Console.ReadLine();
             do
             {
                 Console.Write("  Target Unit  : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
@@ -232,6 +232,24 @@ namespace Jamie.Model
             }
             else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
         }
+        public void DeleteSelectedItem()
+        {
+            int NewSelectedIndex;
+
+            if ((Count == 0) || (SelectedItem == null)) return;
+
+            if (Count > 1)
+            {
+                NewSelectedIndex = IndexOf(SelectedItem) - 1;
+                if (NewSelectedIndex < 0) NewSelectedIndex = 0;
+            }
+            else NewSelectedIndex = 1;
+
+            Remove(SelectedItem);
+
+            if (Count > 0) _SelectedItem = this[NewSelectedIndex];
+            else _SelectedItem = null;
+        }
         public void EditSelectedItem()
         {
             string InputString = "";
@@ -298,6 +316,7 @@ namespace Jamie.Model
                 Console.WriteLine("Selected Ingredient {0}\n", _SelectedItem);
                 Console.WriteLine();
                 Console.WriteLine("A  Add Ingredient");
+                Console.WriteLine("D  Delete Ingredient");
                 Console.WriteLine("E  Edit Selected Ingredient");
                 Console.WriteLine("S  Select Ingredient");
                 Console.WriteLine("V  View Set");
@@ -311,6 +330,9 @@ namespace Jamie.Model
                 {
                     case "A":
                         AddItem();
+                        break;
+                    case "D":
+                        DeleteSelectedItem();
                         break;
                     case "E":
                         EditSelectedItem();

@@ -62,14 +62,16 @@
  * Version 0.30 - 2016-09-21: Klassen FoodPlanItem, FoodPlanItemSet, ShoppingListItem, ShoppingListItemSet hinzu
  * Version 0.31 - 2016-09-22: Bugfix: ShoppingListItemSet: UnitSetData und IngredientSetData bleiben bei Programmstart leer (Count == 0)
  * Version 0.32 - 2016-09-22: Foodplan.TransferToShoppingList(ShoppingListItemSet ShoppingListItems) hinzu
- *                            
+ * Version 0.33 - 2016-09-23: TransferToShoppingList - Kalkulation Quantity = f(Rezept Portionszahl, geplante Portionszahl) hinzu
+ *                            - ShoppingListItems.EvaluateMaxID() hinzu
+ *                            - ShoppingListItems.ToString --> sortierte Ausgabe hinzu                           
+ * Version 0.34 - 2016-09-25: ShoppingListItem: Umrechnung zur TargetUnit hinzu
+ *                            - muss noch ausgiebig getestet werden.
  */
 
-/* Version 0.33 - 2016-09-23: TransferToShoppingList - Kalkulation Quantity = f(Rezept Portionszahl, geplante Portionszahl) hinzu
- *                            - ShoppingListItems.EvaluateMaxID() hinzu
- *                            - ShoppingListItems.ToString --> sortierte Ausgabe hinzu
-
- *                            
+/* 
+ * Version 0.35 - 2016-09-xx: x
+ *                            - 
  *                            
  *                            - offen: 
  *                              --> checken, ob SelecedItem static sein muss
@@ -81,7 +83,7 @@
  *                              
  *                             
  * 
- * Offene Fragen: 
+ * Offene Fragen: - SubTotals Property in ShoppingListItemSet --> Gefahr der unbeabsichtigten Rekursion
  *
  * 
  * Checklisten : 1. Neue Objektliste einfügen....

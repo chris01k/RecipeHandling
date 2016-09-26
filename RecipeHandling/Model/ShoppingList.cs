@@ -21,13 +21,16 @@ namespace Jamie.Model
         //static Variables
         private static IngredientSet _IngredientSetData;
         private static UnitSet _UnitSetData;
+        private static UnitTranslationSet _UnitTranslationSetData;
 
         //Variables
         private long? _ID;
         private Ingredient _Ingredient;
+        private double _IngredientUnitQuantity;
         private double _Quantity;
         private Unit _Unit;
         private FoodPlanItem _ReferredFoodPlanItem;
+        
 
 
         //Constructors
@@ -111,9 +114,20 @@ namespace Jamie.Model
                 return _UnitSetData;
             }
         } //Readonly
+        public static UnitTranslationSet UnitTranslationSetData
+        {
+            get
+            {
+                return _UnitTranslationSetData;
+            }
+        }//Readonly
 
 
         //Methods
+        public void CalculateTargetUnit()
+        {
+            _IngredientUnitQuantity = Quantity * UnitTranslationSetData.GetTranslationFactor(Unit, Ingredient.TargetUnit, Ingredient);
+        }
         public bool Equals(ShoppingListItem ItemToCompare)
         {
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
@@ -151,19 +165,21 @@ namespace Jamie.Model
             Ingredient = ProcessedIngredient;
 
         }
-        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, UnitTranslationSet UnitTranslationSetData)
         {
             //if (_IngredientSetData == null)
-                _IngredientSetData = IngredientSetData;
+            _IngredientSetData = IngredientSetData;
             //if (_UnitSetData == null) 
-                _UnitSetData = UnitSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
+
 
         }
         public override string ToString()
         {
             string ReturnString;
 
-            ReturnString = string.Format("{0,6} {1,10:N2} {2,10} {3,15}", ID, Quantity, Unit.Symbol, Ingredient.Name);
+            ReturnString = string.Format("{0,6} {1,10:N2} {2,10} {3,15} {4,10:N2} {5,10}", ID, Quantity, Unit.Symbol, Ingredient.Name, _IngredientUnitQuantity, Ingredient.TargetUnit.Symbol);
             if (ReferredFoodPlanItem != null) ReturnString += string.Format(" Recipe: {0,20} - {1:d}, {2}",ReferredFoodPlanItem.PlannedRecipe.Name, ReferredFoodPlanItem.DateToConsume, ReferredFoodPlanItem.DateToConsume.DayOfWeek);
             return ReturnString;
         }
@@ -179,6 +195,7 @@ namespace Jamie.Model
         private static IngredientSet _IngredientSetData;
         private static ShoppingListItem _SelectedItem;
         private static UnitSet _UnitSetData;
+        private static UnitTranslationSet _UnitTranslationSetData;
 
 
         //Variables
@@ -190,7 +207,7 @@ namespace Jamie.Model
         //Constructors
         public ShoppingListItemSet()
         {
-
+            
         }
 
         //Properties
@@ -275,6 +292,13 @@ namespace Jamie.Model
                 return _UnitSetData;
             }
         } //Readonly
+        public static UnitTranslationSet UnitTranslationSetData
+        {
+            get
+            {
+                return _UnitTranslationSetData;
+            }
+        } //Readonly
 
         //Methods
         public bool AddItem()
@@ -282,7 +306,7 @@ namespace Jamie.Model
             ShoppingListItem newItem;
 
             newItem = new ShoppingListItem();
-            if (Count == 0) newItem.SetDataReference(IngredientSetData, UnitSetData);
+            if (Count == 0) newItem.SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
             newItem.PopulateObject();
             return AddItem(newItem);
         }
@@ -291,6 +315,7 @@ namespace Jamie.Model
             if (!Contains(ItemToBeAdded))
             {
                 ItemToBeAdded.ID = ++_MaxID;
+                ItemToBeAdded.CalculateTargetUnit();
                 Add(ItemToBeAdded);
                 SelectedItem = ItemToBeAdded;
                 return true;
@@ -403,6 +428,10 @@ namespace Jamie.Model
 
 
         }
+        public void RecalculateTargetUnitEntries()
+        {
+            foreach (ShoppingListItem SLI in this) SLI.CalculateTargetUnit();
+        }
         public void SaveSet(string FileName)
         {
             FileName += FileExtension;
@@ -438,14 +467,28 @@ namespace Jamie.Model
             else return this[IndexOfSelectedItem];
 
         }
-        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
+        public ShoppingListItem SelectItemByIngredient(Ingredient IngredientToBeSearched)
         {
-            //if (_IngredientSetData == null)
-            _IngredientSetData = IngredientSetData;
-            //if (_UnitSetData == null) 
-            _UnitSetData = UnitSetData;
 
-            if (this.Count() != 0) this[0].SetDataReference(IngredientSetData,UnitSetData);
+            foreach (ShoppingListItem Item in this)
+            {
+                if (Item.Ingredient.Equals(IngredientToBeSearched)) return Item;
+            }
+            return null;
+
+        }
+            
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, UnitTranslationSet UnitTranslationSetData)
+        {
+            _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
+
+            if (this.Count() != 0)
+            {
+                this[0].SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
+                //RecalculateTargetUnitEntries();
+            }
         }
         public void ViewSet()
         {
@@ -459,7 +502,7 @@ namespace Jamie.Model
             if (Count == 0) ReturnString += "-------> leer <-------\n";
             else
             {
-                var SortedShoppingList = this.Select(s=>s).OrderBy(s=>s.Ingredient.Name);
+                var SortedShoppingList = this.OrderBy(s=>s.Ingredient.Name);
 
                 foreach (ShoppingListItem ListItem in SortedShoppingList)
                     ReturnString += ListItem.ToString() + "\n";

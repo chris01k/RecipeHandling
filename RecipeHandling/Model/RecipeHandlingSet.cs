@@ -31,6 +31,7 @@ namespace Jamie.Model
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
             _FoodPlanItems = new FoodPlanItemSet();
+            _ShoppingListItems = new ShoppingListItemSet();
             SetDataReference();
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
@@ -94,10 +95,14 @@ namespace Jamie.Model
         //Methods
         public void ClearList()
         {
+            FoodPlanItems.Clear();
             Ingredients.Clear();
             Recipes.Clear();
+            ShoppingListItems.Clear();
             Units.Clear();
             UnitTranslations.Clear();
+            EvaluateMaxIDs();
+
         }
         public int Count()
         {
@@ -154,7 +159,7 @@ namespace Jamie.Model
             _Ingredients.SetDataReference(_Units);
             _Recipes.SetDataReference(_Ingredients, _Units);
             _FoodPlanItems.SetDataReference(_Recipes);
-            _ShoppingListItems.SetDataReference(_Ingredients, _Units);
+            _ShoppingListItems.SetDataReference(_Ingredients, _Units, _UnitTranslations);
         }
         public void SaveSet(string FileName)
         {

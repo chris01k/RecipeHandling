@@ -191,7 +191,7 @@ namespace Jamie.Model
         private static long _MaxID = 0;
         private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
-        private static Recipe _SelectedRecipe;
+        private static Recipe _SelectedItem;
 
         //Constructors
         public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
@@ -224,6 +224,13 @@ namespace Jamie.Model
             //    _IngredientSetData = value;
             //}
         } //Readonly
+        public static Recipe SelectedItem
+        {
+            get
+            {
+                return _SelectedItem;
+            }
+        } //Readonly
 
 
         //Methods
@@ -245,7 +252,25 @@ namespace Jamie.Model
                 ItemToBeAdded.ID = ++_MaxID;
             }
             else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
-            _SelectedRecipe = SelectItem(ItemToBeAdded);
+            _SelectedItem = SelectItem(ItemToBeAdded);
+        }
+        public void DeleteSelectedItem()
+        {
+            int NewSelectedIndex;
+
+            if ((Count == 0) || (SelectedItem == null)) return;
+
+            if (Count > 1)
+            {
+                NewSelectedIndex = IndexOf(SelectedItem) - 1;
+                if (NewSelectedIndex < 0) NewSelectedIndex = 0;
+            }
+            else NewSelectedIndex = 1;
+
+            Remove(SelectedItem);
+
+            if (Count > 0) _SelectedItem = this[NewSelectedIndex];
+            else _SelectedItem = null;
         }
         public void EvaluateMaxID()
         {
@@ -265,16 +290,17 @@ namespace Jamie.Model
         {
             string MenuInput = "";
 
-            _SelectedRecipe = SelectItem(false);
+            _SelectedItem = SelectItem(false);
             while (MenuInput != "Q")
             {
 
                 ViewSet();
                 Console.WriteLine();
                 Console.WriteLine("\nRecipe Menü");
-                Console.WriteLine(_SelectedRecipe);
+                Console.WriteLine(SelectedItem);
                 Console.WriteLine("---------------");
                 Console.WriteLine("A  Add Recipe");
+                Console.WriteLine("D  Delete Selected Recipe");
                 Console.WriteLine("I  Add Ingredient");
                 Console.WriteLine("R  View Recipe");
                 Console.WriteLine("S  Select Recipe");
@@ -289,15 +315,18 @@ namespace Jamie.Model
                     case "A":
                         AddItem();
                         break;
+                    case "D":
+                        DeleteSelectedItem();
+                        break;
                     case "I":
-                        _SelectedRecipe.Ingredients.AddItem();
-                        Console.WriteLine(_SelectedRecipe.ToString());
+                        SelectedItem.Ingredients.AddItem();
+                        Console.WriteLine(SelectedItem.ToString());
                         break;
                     case "R":
-                        Console.WriteLine(_SelectedRecipe.ToString());
+                        Console.WriteLine(SelectedItem.ToString());
                         break;
                     case "S":
-                        _SelectedRecipe = SelectItem(true);
+                        _SelectedItem = SelectItem(true);
                         break;
                     case "V":
                         ViewSet();
