@@ -47,11 +47,8 @@ namespace Jamie.Model
                 System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(JamieDataSet.GetType());
                 JamieDataSet = (RecipeDataSets)x.Deserialize(fs);
             }
-
-
             JamieDataSet.EvaluateMaxIDs();
             JamieDataSet.SetDataReference();
-
         }
         public void SaveLists()
         {

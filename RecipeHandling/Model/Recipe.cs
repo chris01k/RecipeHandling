@@ -12,8 +12,11 @@ namespace Jamie.Model
     public class Recipe : IEquatable<Recipe>
     {
         //Variables
-        private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
+        private static UnitSet _UnitSetData;
+        private static UnitTranslationSet _UnitTranslationSetData;
+
+
         private long? _ID;
 
         private IngredientItemSet _Ingredients;
@@ -29,15 +32,36 @@ namespace Jamie.Model
         //Constructors
         public Recipe()
         {
-            _Ingredients = new IngredientItemSet(UnitSetData, IngredientSetData, this);
+            _Ingredients = new IngredientItemSet(IngredientSetData, UnitSetData, UnitTranslationSetData, this);
         }
         public Recipe(bool ToBePopulated)
         {
-            _Ingredients = new IngredientItemSet(UnitSetData, IngredientSetData, this);
+            _Ingredients = new IngredientItemSet(IngredientSetData, UnitSetData, UnitTranslationSetData, this);
             if (ToBePopulated) PopulateObject();
         }
 
         //Properties
+        public static IngredientSet IngredientSetData //Readonly
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+        }
+        public static UnitSet UnitSetData //Readonly
+        {
+            get
+            {
+                return _UnitSetData;
+            }
+        }
+        public static UnitTranslationSet UnitTranslationSetData
+        {
+            get
+            {
+                return _UnitTranslationSetData;
+            }
+        } //Readonly
         public long? ID
         {
             get
@@ -48,20 +72,6 @@ namespace Jamie.Model
             {
                 if (_ID == null) _ID = value;
                 //                else throw exception;
-            }
-        }
-        public static UnitSet UnitSetData //Readonly
-        {
-            get
-            {
-                return _UnitSetData;
-            }
-        }
-        public static IngredientSet IngredientSetData //Readonly
-        {
-            get
-            {
-                return _IngredientSetData;
             }
         }
         public IngredientItemSet Ingredients
@@ -146,6 +156,7 @@ namespace Jamie.Model
         //Methods
         public bool Equals(Recipe ItemToCompare)
         {
+            if (ItemToCompare == null) return false;
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
         }
         public bool EqualKey(Recipe ItemToCompare)
@@ -169,11 +180,13 @@ namespace Jamie.Model
             Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
 
         }
-        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, 
+                                     UnitTranslationSet UnitTranslationSetData)
         {
-            _UnitSetData = UnitSetData;
-            _Ingredients.SetDataReference(UnitSetData, IngredientSetData);
             _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
+            _Ingredients.SetDataReference(UnitSetData, IngredientSetData, UnitTranslationSetData);
         }
         public override string ToString()
         {
@@ -189,8 +202,9 @@ namespace Jamie.Model
 
         //Variables
         private static long _MaxID = 0;
-        private static UnitSet _UnitSetData;
         private static IngredientSet _IngredientSetData;
+        private static UnitSet _UnitSetData;
+        private static UnitTranslationSet _UnitTranslationSetData;
         private static Recipe _SelectedItem;
 
         //Constructors
@@ -231,6 +245,13 @@ namespace Jamie.Model
                 return _SelectedItem;
             }
         } //Readonly
+        public static UnitTranslationSet UnitTranslationSetData
+        {
+            get
+            {
+                return _UnitTranslationSetData;
+            }
+        } //Readonly
 
 
         //Methods
@@ -240,7 +261,7 @@ namespace Jamie.Model
 
             if (Count == 0)
             {
-                NewRecipe.SetDataReference(_UnitSetData, _IngredientSetData);
+                NewRecipe.SetDataReference(_IngredientSetData, _UnitSetData, _UnitTranslationSetData);
             }
             AddItem(NewRecipe);
         }
@@ -281,10 +302,6 @@ namespace Jamie.Model
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
-        }
-        public bool IsEmpty()
-        {
-            return (Count == 0);
         }
         public void Menu()
         {
@@ -368,10 +385,13 @@ namespace Jamie.Model
             }
 
         }
-        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
+        public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, 
+                                     UnitTranslationSet UnitTranslationSetData)
         {
-            if (_IngredientSetData == null) _IngredientSetData = IngredientSetData;
-            if (_UnitSetData == null) _UnitSetData = UnitSetData;
+            _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
+            if (Count > 0) this.ElementAt(0).SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
         }
         public Recipe SelectItem(bool ByRequest)
         {

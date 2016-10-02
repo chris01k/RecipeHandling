@@ -10,7 +10,7 @@
   <Class Name="Jamie.Model.UnitTranslation" Collapsed="true">
     <Position X="8.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAIBBAgAAEgABAAAAogAAAAABAAAAEQAAEAAM=</HashCode>
+      <HashCode>AAEIAAAAIBBAgAAEgBJAQAE4gAAAAABAAACAQAAEAQM=</HashCode>
       <FileName>Model\UnitTranslation.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -21,7 +21,7 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>QAAIAAAAAABAgAAEgAAAIAQIgAAAAABAAAAAAAAEAAE=</HashCode>
+      <HashCode>QAAABAAAIABAgAAEgAAAIASIgAAAAABAAQAAAAAEBAE=</HashCode>
       <FileName>Model\Ingredient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -29,14 +29,14 @@
   <Class Name="Jamie.Model.RecipeSet" Collapsed="true">
     <Position X="2" Y="3" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAhAAQAAIAIAAAAEAAAAQAAYgABIQAAAAAUAAAAAAAA=</HashCode>
+      <HashCode>AAgAAAAAIQIQAAAEAAAAQAA8gABIQABAABUAAAAAAAA=</HashCode>
       <FileName>Model\Recipe.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Jamie.Model.Recipe" Collapsed="true">
+  <Class Name="Jamie.Model.Recipe">
     <Position X="0.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BACACAAAIgBAgAAEgAAAYKQ4gEQAAgBAAAAAAACEAAA=</HashCode>
+      <HashCode>BACACAAAIgBAgAAEgAAAYKQ8gEQIAgBAAAAAAACEAAA=</HashCode>
       <FileName>Model\Recipe.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -44,7 +44,7 @@
   <Class Name="Jamie.Model.RecipeDataSets" Collapsed="true">
     <Position X="3.75" Y="1.75" Width="5" />
     <TypeIdentifier>
-      <HashCode>gAgAAAAAACAAAAAEgAAAICSEAARAAgAAEBAAAAAABAA=</HashCode>
+      <HashCode>gAgAAAAAACQAAAAEgAAAICSkYERAAgAAEBAAAAAABAA=</HashCode>
       <FileName>Model\RecipeHandlingSet.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -58,7 +58,7 @@
   <Class Name="Jamie.Model.IngredientSet" Collapsed="true">
     <Position X="11" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAgAAAAAIQIAAAAEAAAAAAAIgABIAgAAABUAAAAAAAA=</HashCode>
+      <HashCode>QAgAAAAAIQIQAAAEAAAAAAAogABIAgBAABUAAAAAAAA=</HashCode>
       <FileName>Model\Ingredient.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -79,14 +79,14 @@
   <Class Name="Jamie.Model.UnitSet" Collapsed="true">
     <Position X="5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgAAAAAAAIAAACEAAAAAAAAgABIQgAEAAUAAAAAAAA=</HashCode>
+      <HashCode>AAgAAAAAAQIQAACEAAAAAAAAgABIQgBEABUAAAAAAAA=</HashCode>
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Jamie.Model.FoodPlanItemSet">
     <Position X="5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAgAAAAAAQIQAACEAAAAABAggABIUABAABUAAAAAAAg=</HashCode>
       <FileName>Model\FoodPlan.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -107,14 +107,14 @@
   <Class Name="Jamie.Model.FoodPlanItem">
     <Position X="5" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAQAAAAAAhAgIAkgAAAARAggAAIEAAAAAAEAAAEQAA=</HashCode>
       <FileName>Model\FoodPlan.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Jamie.Model.ListHelper">
     <Position X="8.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAgAAEAAAAAAAAAAAACAAAAQCAAAAEAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAgAAEAAAAAAAAAAAACAAAAQCAAAAEIAAAAAA=</HashCode>
       <FileName>Model\ListHelper.cs</FileName>
     </TypeIdentifier>
   </Class>

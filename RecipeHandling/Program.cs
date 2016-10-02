@@ -67,11 +67,14 @@
  *                            - ShoppingListItems.ToString --> sortierte Ausgabe hinzu                           
  * Version 0.34 - 2016-09-25: ShoppingListItem: Umrechnung zur TargetUnit hinzu
  *                            - muss noch ausgiebig getestet werden.
+ * Version 0.35 - 2016-10-02: UnitTranslationSet.GetTranslation überarbeitet
+ *                            - AddInactiveItem hinzu (Automatische Vor-Anlage der notwendigen Translations bei Eingabe der Rezepte)
+ *                            
  */
 
-/* 
- * Version 0.35 - 2016-09-xx: x
+/* Version 0.36 - 2016-10-xx: x
  *                            - 
+ *                            
  *                            
  *                            - offen: 
  *                              --> checken, ob SelecedItem static sein muss

@@ -2,6 +2,9 @@
 
 namespace Jamie.Model
 {
+    public enum ListEntryStatus
+    { IsOK = 0x1, IsCalculated, IsNotConfirmed }
+
     public static class ListHelper
     {
 

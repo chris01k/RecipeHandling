@@ -12,10 +12,9 @@ namespace Jamie.Model
     /* IngredientFlags, IngredientType im namespace:
      * können von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
      */
-    [Flags]
-    public enum IngredientFlags : int
+    [Flags] public enum IngredientFlags : int
     { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
-    public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb, IsGranular }
+    public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb, IsGranular, NotInitialized = 999 }
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
      * Hat Eigenschaften: x kcal/100g, Ernährungsampel (rot, gelb, grün)
@@ -131,6 +130,7 @@ namespace Jamie.Model
         // Methods
         public bool Equals(Ingredient ItemToCompare)
         {
+            if (ItemToCompare == null) return false;
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
         }
         public bool EqualKey(Ingredient ItemToCompare)
@@ -576,19 +576,30 @@ namespace Jamie.Model
         //Variables
         private static long _MaxID;
 
+        private static IngredientSet _IngredientSetData;
         private Recipe _RelatedRecipe;
         private static UnitSet _UnitSetData;
-        private static IngredientSet _IngredientSetData;
+        private static UnitTranslationSet _UnitTranslationSetData;
+        
 
         //Constructors
-        public IngredientItemSet(UnitSet UnitSetData, IngredientSet IngredientSetData, Recipe RelatedRecipe)
+        public IngredientItemSet(IngredientSet IngredientSetData, UnitSet UnitSetData, 
+                                 UnitTranslationSet UnitTranslationSetData, Recipe RelatedRecipe)
         {
-            _UnitSetData = UnitSetData;
             _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
             _RelatedRecipe = RelatedRecipe;
         }
 
         //Properties
+        public static IngredientSet IngredientSetData
+        {
+            get
+            {
+                return _IngredientSetData;
+            }
+        }//Readonly
         public static long MaxID
         {
             get
@@ -602,31 +613,21 @@ namespace Jamie.Model
             {
                 return _RelatedRecipe;
             }
-        }
+        }//Readonly
         public static UnitSet UnitSetData
         {
             get
             {
                 return _UnitSetData;
             }
-
-            set
-            {
-                _UnitSetData = value;
-            }
-        }
-        public static IngredientSet IngredientSetData
+        }//Readonly
+        public static UnitTranslationSet UnitTranslationSetData
         {
             get
             {
-                return _IngredientSetData;
+                return _UnitTranslationSetData;
             }
-
-            set
-            {
-                _IngredientSetData = value;
-            }
-        }
+        }//Readonly
 
         //Methods
         public void AddItem()
@@ -656,8 +657,9 @@ namespace Jamie.Model
                 InputIngredient = IngredientSetData.SelectItem(InputString);
             } while (InputIngredient == null);
 
-
             NewIngredientItem.Ingredient = InputIngredient;
+
+           UnitTranslation Test = UnitTranslationSetData.GetTranslation(NewIngredientItem.Unit, NewIngredientItem.Ingredient.TargetUnit, NewIngredientItem.Ingredient);
 
             AddItem(NewIngredientItem);
         }
@@ -728,10 +730,12 @@ namespace Jamie.Model
             }
 
         }
-        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData)
+        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData, 
+                                     UnitTranslationSet UnitTranslationSetData)
         {
-            _UnitSetData = UnitSetData;
             _IngredientSetData = IngredientSetData;
+            _UnitSetData = UnitSetData;
+            _UnitTranslationSetData = UnitTranslationSetData;
         }
         public override string ToString()
         {

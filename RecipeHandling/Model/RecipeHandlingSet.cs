@@ -157,7 +157,7 @@ namespace Jamie.Model
         {
             _UnitTranslations.SetDataReference(_Ingredients, _Units);
             _Ingredients.SetDataReference(_Units);
-            _Recipes.SetDataReference(_Ingredients, _Units);
+            _Recipes.SetDataReference(_Ingredients, _Units, _UnitTranslations);
             _FoodPlanItems.SetDataReference(_Recipes);
             _ShoppingListItems.SetDataReference(_Ingredients, _Units, _UnitTranslations);
         }

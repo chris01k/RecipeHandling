@@ -67,6 +67,7 @@ namespace Jamie.Model
         //Methods
         public bool Equals(Unit ItemToCompare)
         {
+            if (ItemToCompare == null) return false;
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
         }
         public bool EqualKey(Unit ItemToCompare)

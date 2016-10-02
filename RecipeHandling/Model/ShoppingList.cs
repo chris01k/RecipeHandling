@@ -126,10 +126,12 @@ namespace Jamie.Model
         //Methods
         public void CalculateTargetUnit()
         {
-            _IngredientUnitQuantity = Quantity * UnitTranslationSetData.GetTranslationFactor(Unit, Ingredient.TargetUnit, Ingredient);
+            _IngredientUnitQuantity = Quantity * UnitTranslationSetData.GetTranslation(Unit, Ingredient.TargetUnit, Ingredient).TranslationFactor;
+            // hier könnte von GetTranslation auch null zurückgeliefert werden... ????
         }
         public bool Equals(ShoppingListItem ItemToCompare)
         {
+            if (ItemToCompare == null) return false;
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
         }
         public bool EqualKey(ShoppingListItem ItemToCompare)

@@ -109,6 +109,7 @@ namespace Jamie.Model
         //Methods
         public bool Equals(FoodPlanItem ItemToCompare)
         {
+            if (ItemToCompare == null) return false;
             return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
         }
         public bool EqualKey(FoodPlanItem ItemToCompare)
