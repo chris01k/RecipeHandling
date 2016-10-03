@@ -153,7 +153,7 @@ namespace Jamie.Model
 
             do
             {
-                UnitSetData.ViewSet();
+//                UnitSetData.ViewSet();
                 Console.Write("Unit      : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
             } while (ProcessedUnit == null);
             Unit = ProcessedUnit;

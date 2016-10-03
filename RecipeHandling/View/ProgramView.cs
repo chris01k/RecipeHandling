@@ -1,19 +1,21 @@
 ﻿using Jamie.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Jamie.View
 {
     public class ProgramView
     {
         private EmbeddedDataSet _EmbeddedSetData;
+        private UnitTranslationView _UnitTranslationUI;
+        private UnitView _UnitUI;
 
         public ProgramView()
         {
             _EmbeddedSetData = new EmbeddedDataSet();
-            //_FullSetHandler = new RecipeHandlingSetHandler(true);
+            //_EmbeddedSetData = new EmbeddedDataSet(true);
+            _UnitUI = new UnitView(_EmbeddedSetData.AllSetData.Units);
+            _UnitTranslationUI = new UnitTranslationView(_EmbeddedSetData.AllSetData.UnitTranslations, 
+                                                         _EmbeddedSetData.AllSetData.Units);
         }
 
         public void ShowMainMenu()
@@ -70,10 +72,10 @@ namespace Jamie.View
                             _EmbeddedSetData.AllSetData.Recipes.Menu();
                             break;
                         case "U":
-                            _EmbeddedSetData.AllSetData.Units.Menu();
+                            _UnitUI.Menu();
                             break;
                         case "UT":
-                            _EmbeddedSetData.AllSetData.UnitTranslations.Menu();
+                            _UnitTranslationUI.Menu();
                             break;
                         case "SL":
                             _EmbeddedSetData.AllSetData.ShoppingListItems.Menu();

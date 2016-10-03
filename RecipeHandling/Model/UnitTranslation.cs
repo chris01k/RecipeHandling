@@ -80,11 +80,6 @@ namespace Jamie.Model
             TranslationFlag = (TranslationType) 0;
             TranslationStatus = ListEntryStatus.IsOK;
         }
-        public UnitTranslation(bool ToBePopulated, UnitSet UnitSetData)
-        {
-            _UnitSetData = UnitSetData;
-            if (ToBePopulated) PopulateObject(UnitSetData, IngredientSetData);
-        }
         public UnitTranslation(Unit Base, Unit Target, double TranslationFactor, UnitTranslation Template)
         {
             // auf der Basis einer Vorlage (Ingredient und TranslationFlag werden übernommen),
@@ -119,7 +114,6 @@ namespace Jamie.Model
             _TranslationStatus = ListEntryStatus.IsOK;
             _UnitSetData = UnitSetData;
         }
-       
 
         // Properties
         public long? ID
@@ -252,69 +246,6 @@ namespace Jamie.Model
 
             return ReturnItem;
         }
-        public void PopulateObject(UnitSet UnitSetData, IngredientSet IngredientSetData)
-        {
-            string InputString;
-            double ParsedDoubleValue;
-            Ingredient ProcessedIngredient;
-            Unit ProcessedUnit;
-
-            
-            Console.WriteLine();
-            Console.WriteLine("Eingabe neue Einheit:" );
-            Console.WriteLine("---------------------");
-            Console.WriteLine();
-            UnitSetData.ViewSet();
-            do
-            {
-                Console.Write("BaseUnitSymbol   : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
-            } while (ProcessedUnit==null);
-            BaseUnit  = ProcessedUnit;
-            do
-            {
-                Console.Write("TargetUnitSymbol   : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
-            } while (ProcessedUnit == null);
-            TargetUnit = ProcessedUnit;
-
-            do
-            {
-                Console.Write("TranslationFactor: "); InputString = Console.ReadLine();
-            } while (!double.TryParse(InputString, out ParsedDoubleValue));
-            TranslationFactor = ParsedDoubleValue;
-
-            if (BaseUnit.Type != TargetUnit.Type)
-            {
-                TranslationFlag |= TranslationType.IsTypeChange;
-                Console.Write("IsIngredientDependent:"); InputString = Console.ReadLine();
-                if (InputString.Length > 0) //Flag setzen, Ingredient eingeben
-                {
-                    TranslationFlag |= TranslationType.IsIngredientDependent;
-                    do
-                    {
-                        Console.Write("  Affeced Ingredient  : "); ProcessedIngredient = IngredientSetData.SelectItem(Console.ReadLine());
-                    } while (ProcessedIngredient == null);
-                    AffectedIngredient = ProcessedIngredient;
-                }
-                else //IngredientType eingeben
-                {
-                    do
-                    {
-                        Console.Write("Ingredient Type  : "); InputString = Console.ReadLine();
-                        try
-                        {
-                            IngredientType = (IngredientType)Enum.Parse(typeof(IngredientType), InputString);
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                        break;
-                    } while (true);
-
-                }
-
-            }
-        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -431,23 +362,18 @@ namespace Jamie.Model
             AddItem(NewUnitTranslation);
         }
 
-        public void AddItem()
+        public bool AddItem(UnitTranslation ItemToBeAdded)
         {
-            UnitTranslation NewUnitTranslation = new UnitTranslation();
-            NewUnitTranslation.PopulateObject(UnitSetData, IngredientSetData);
-            AddItem(NewUnitTranslation);
-        }
-        public void AddItem(UnitTranslation ItemToBeAdded)
-        {
+            bool ReturnValue = true;
 
             if (Count == 0) ItemToBeAdded.SetDataReference(IngredientSetData, UnitSetData);
-            
+
             //Fälle können reduziert werden
 
             //ItemToBeAdded und der Kehrwert nicht vorhanden
             if (!Contains(ItemToBeAdded))
             {
-                if ((ItemToBeAdded.TranslationFlag & TranslationType.IsIngredientDependent)==TranslationType.IsIngredientDependent)
+                if ((ItemToBeAdded.TranslationFlag & TranslationType.IsIngredientDependent) == TranslationType.IsIngredientDependent)
                 // von Zutat ABHÄNGIG   
 
                 {
@@ -460,7 +386,7 @@ namespace Jamie.Model
                     {
                         //trow Exception --> Fall 2 kommt nicht vor
                     }
-                                        
+
                 }
 
                 else
@@ -482,12 +408,10 @@ namespace Jamie.Model
                 Add(ItemToBeAdded);
             }
 
-            else
-            {
-                int ExistingIndex = IndexOf(ItemToBeAdded);
-                Console.WriteLine("Die Unit Translation\n{0} ......ist bereits vorhanden als\n{1}", ItemToBeAdded, this[ExistingIndex]);
-            }
-        } // teilweise (if contains....) --> View
+            else ReturnValue = false;
+
+            return ReturnValue;
+        }
         public void AddAllItemsWithSameType(UnitTranslation ItemToBeAdded)
         {
             UnitTranslation GeneratedUnitTranslation;
@@ -709,56 +633,6 @@ namespace Jamie.Model
 
             return ReturnObject;
         }       
-        public void Menu()
-        {
-            int HowManyItemsInSet = Count;
-
-            if (HowManyItemsInSet>0) _SelectedItem = this[HowManyItemsInSet - 1];
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nUnit Translation Menü");
-                Console.WriteLine("----------------------");
-                Console.WriteLine("Selected Ingredient {0}\n", _SelectedItem);
-                Console.WriteLine();
-                Console.WriteLine("A  Add Unit Translation");
-                Console.WriteLine("D  Delete Unit Translation");
-                Console.WriteLine("E  Edit Unit Translation");
-                Console.WriteLine("S  Select Unit Translation");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "D":
-                        DeleteSelectedItem();
-                        break;
-                    case "E":
-                        //EditSelectedItem();
-                        break;
-                    case "S":
-                        SelectItem();
-                        break;
-                    case "V":
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }// --> View
         public UnitTranslationSet OpenSet(string FileName)
         {
             UnitTranslationSet ReturnSet = this;
@@ -849,28 +723,26 @@ namespace Jamie.Model
             }
 
         }
-        public void SelectItem()
+        public UnitTranslation SelectItem(int ItemPos)
         {
-            string InputString;
-            int ParsedIntValue;
-            int SelectedID;
-
-            do
+            UnitTranslation ReturnItem = null;
+            if ((ItemPos > -1) && (ItemPos <= Count - 1))
             {
-                Console.Write("Unit Translation ID:"); InputString = Console.ReadLine();
-            } while (!int.TryParse(InputString, out ParsedIntValue));
-            SelectedID = ParsedIntValue;
-
-            foreach (UnitTranslation ListItem in this)
-            {
-                if (ListItem.ID == SelectedID)
-                {
-                    _SelectedItem = ListItem;
-                    break;
-                }
+                ReturnItem = this[ItemPos];
+                _SelectedItem = ReturnItem;
             }
+            return ReturnItem;
 
-        }// --> Data
+        }
+        public UnitTranslation SelectItem(UnitTranslation ItemToBeSelected)
+        {
+            UnitTranslation ReturnItem = null;
+
+            int IndexOfSelectedUnit = IndexOf(ItemToBeSelected);
+            if (IndexOfSelectedUnit >= -1) ReturnItem = SelectItem(IndexOfSelectedUnit);
+
+            return ReturnItem;
+        }
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -890,10 +762,6 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        }// --> View
     }
 
 }

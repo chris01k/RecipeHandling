@@ -71,9 +71,10 @@
  *                            - AddInactiveItem hinzu (Automatische Vor-Anlage der notwendigen Translations bei Eingabe der Rezepte)
  * Version 0.36 - 2016-10-03: Codepflege und Zuordnung, welche Teile nach Jamie.View bzw. Jamie.Data verschoben werden sollten
  *                            
+ * Version 0.37 - 2016-10-03: UnitView, UnitTranslationView Klasse in Jamie.View erzeugt
  */
 
-/* Version 0.37 - 2016-10-xx: Herauslösen von Jamie.View 
+/* Version 0.38 - 2016-10-xx: Herauslösen von Jamie.View 
  *                            - 
  *                            
  *                            
@@ -81,6 +82,7 @@
  *                              --> checken, ob SelecedItem static sein muss
  *                              --> setzen der ID prüfen ...if ID!=null .... für alle Klassen mit ID (Unit, UnitTranslation....)
  *                              --> anpassen EqualKey für diverse Klassen
+ *                              --> in Listenklassen hinzu: GetItem (Key)
  *                              
  *                              
  *                              

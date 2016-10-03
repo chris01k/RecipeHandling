@@ -23,10 +23,6 @@ namespace Jamie.Model
         public Unit()
         {
         }
-        public Unit(bool ToBePopulated)
-        {
-            if (ToBePopulated) PopulateObject();
-        } //checken, ob Anwendungsfall
         public Unit(string Symbol, string Name, UnitType Type)
         {
             _Symbol = Symbol;
@@ -72,31 +68,6 @@ namespace Jamie.Model
         {
             return Symbol.Equals(ItemToCompare.Symbol);
         }
-        public void PopulateObject() 
-        {
-            string InputString;
-
-            Console.WriteLine("Eingabe neue Einheit:");
-            Console.WriteLine("---------------------");
-            Console.WriteLine();
-            Console.Write("UnitName  : "); Name = Console.ReadLine();
-            Console.Write("UnitSymbol: "); Symbol = Console.ReadLine();
-            do
-            {
-                Console.Write("UnitType  : "); InputString = Console.ReadLine();
-                try
-                {
-                    Type = (UnitType)Enum.Parse(typeof(UnitType), InputString);
-                }
-                catch
-                {
-                    continue;
-                }
-                break;
-            } while (true);
-
-
-        } // -> View
         public override string ToString()
         {
             return string.Format("{0,6} {1,5} - Name: {2,10}   Type: {3,10}", ID, Symbol, Name, Type);
@@ -112,9 +83,9 @@ namespace Jamie.Model
         private static long _MaxID = 0;
         private static Unit _SelectedItem;
 
-        //Variables
+            //Variables
 
-        //Constructors
+            //Constructors
         public UnitSet()
         {
         }
@@ -133,32 +104,20 @@ namespace Jamie.Model
             {
                 return _SelectedItem;
             }
-
-            set
-            {
-                _SelectedItem = value;
-            }
-        }
+        } //Readonly
 
         //Methods
-        public bool AddItem()
-        {
-            Unit newItem = new Unit();
-            newItem.PopulateObject();
-            return AddItem(newItem);
-        }
         public bool AddItem(Unit ItemToBeAdded)
         {
             if (!Contains(ItemToBeAdded)) 
             {
                 ItemToBeAdded.ID = ++_MaxID;
                 Add(ItemToBeAdded);
-                SelectedItem = ItemToBeAdded;
+                _SelectedItem = ItemToBeAdded;
                 return true;
             }
-            else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
-            return false;
-        } // teilweise --> View
+            else return false;
+        } 
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -188,50 +147,6 @@ namespace Jamie.Model
         {
             return (IndexOf(KeyUnit) != -1);
         }
-        public void Menu()
-        {
-            int HowManyItemsInSet = Count;
-
-            if (HowManyItemsInSet > 0) _SelectedItem = this[HowManyItemsInSet - 1];
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nUnit Menü");
-                Console.WriteLine("---------\nSelected Unit: {0}\n", _SelectedItem);
-                Console.WriteLine("A  Add Unit");
-                Console.WriteLine("D  Delete Selected Unit");
-                Console.WriteLine("S  Select Unit");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "D":
-                        DeleteSelectedItem();
-                        break;
-                    case "S":
-                        SelectItem();
-                        break;
-                    case "V":
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        } // --> View
         public UnitSet OpenSet(string FileName)
         {
             UnitSet ReturnUnitSet = this;
@@ -257,26 +172,24 @@ namespace Jamie.Model
             }
 
         } // --> Data
-        public Unit SelectItem()
+        public Unit SelectItem(int ItemPos)
         {
-            string LocalUnitSymbol = "";
-
-            Console.WriteLine("Unit suchen:");
-            Console.WriteLine("------------");
-            Console.WriteLine();
-            Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
-
-            return SelectItem(LocalUnitSymbol);
-
-        } // --> View
+            Unit ReturnItem = null;
+            if ((ItemPos>-1) && (ItemPos <= Count - 1))
+            {
+                ReturnItem = this[ItemPos];
+                _SelectedItem = ReturnItem;
+            }
+            return ReturnItem;
+        }
         public Unit SelectItem(string ItemTextToBeSelected)
         {
-            Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", (UnitType)0);
+            Unit ReturnItem = null;
+            Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", 0);
 
             int IndexOfSelectedUnit = IndexOf(LocalUnitToSelect);
-            if (IndexOfSelectedUnit == -1)  return null;
-            else return this[IndexOfSelectedUnit];
-
+            if (IndexOfSelectedUnit > -1)  ReturnItem = SelectItem(IndexOfSelectedUnit);
+            return ReturnItem;
         }
         public void PopulateSetWithDefaults()
         {
@@ -288,10 +201,6 @@ namespace Jamie.Model
             AddItem(new Unit("ml", "Milliliter", UnitType.IsVolume));
             AddItem(new Unit("m", "Meter", UnitType.IsLength));
         }
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        } // --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -307,8 +216,6 @@ namespace Jamie.Model
             return ReturnString;
         }
     }
-
-
 }
 
 

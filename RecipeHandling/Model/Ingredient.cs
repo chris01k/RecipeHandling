@@ -294,6 +294,16 @@ namespace Jamie.Model
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
         }
+        public Ingredient GetItem(string ItemTextToBeSelected)
+        {
+            Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0, UnitSetData);
+
+            int IndexOfSelectedUnit = IndexOf(LocalItemToSelect);
+
+            if (IndexOfSelectedUnit == -1) return null;
+            else return this[IndexOfSelectedUnit];
+        }
+
         public void Menu()
         {
             int HowManyItemsInSet = Count;
@@ -390,12 +400,13 @@ namespace Jamie.Model
         }// --> View
         public Ingredient SelectItem(string ItemTextToBeSelected)
         {
+            Ingredient ReturnItem = null;
             Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0,UnitSetData);
 
             int IndexOfSelectedUnit = IndexOf(LocalItemToSelect);
+            if (IndexOfSelectedUnit > -1) ReturnItem = this[IndexOfSelectedUnit];
 
-            if (IndexOfSelectedUnit == -1) return null;
-            else return this[IndexOfSelectedUnit];
+            return ReturnItem;
         }
         public void ViewSet()
         {
@@ -631,7 +642,7 @@ namespace Jamie.Model
             NewIngredientItem.Quantity = ParsedDoubleValue;
             do
             {
-                if (UnitSetData != null) UnitSetData.ViewSet();
+//                if (UnitSetData != null) UnitSetData.ViewSet();
                 Console.WriteLine("Unit      : "); InputString = Console.ReadLine();
                 InputUnit = UnitSetData.SelectItem(InputString);
             } while (InputUnit == null);
