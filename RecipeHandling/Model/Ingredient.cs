@@ -39,7 +39,6 @@ namespace Jamie.Model
         //Constructors
         public Ingredient()
         {
-
         }
         public Ingredient(UnitSet UnitSetData)
         {
@@ -177,18 +176,16 @@ namespace Jamie.Model
             }
             Flags = FlagValue;
 
-        }
+        }// --> View
         public override string ToString()
         {
             return string.Format("{0,6}-Name: {1,15} Type: {2} Flags: {3}\n\t TargetUnit{4,5}", ID, Name, Type, Flags, TargetUnit);
         }
     }
-
-
     public class IngredientSet : ObservableCollection<Ingredient>
     {
         //Constants
-        private const string FileExtension = ".ingr";
+        private const string FileExtension = ".ingr"; // --> Data
 
         //Variables
         private static long _MaxID = 0;
@@ -222,7 +219,7 @@ namespace Jamie.Model
         {
             AddItem(new Ingredient(true, UnitSetData));
         }
-        public void AddItem(Ingredient ItemToBeAdded)
+        public void AddItem(Ingredient ItemToBeAdded) 
         {
             if (!Contains(ItemToBeAdded))
             {
@@ -231,7 +228,7 @@ namespace Jamie.Model
                 _SelectedItem = SelectItem(ItemToBeAdded.Name);
             }
             else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
-        }
+        }// teilweise Contains --> View
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -289,13 +286,10 @@ namespace Jamie.Model
 
 
             }
-        }
+        }// --> View
         public void EvaluateMaxID()
         {
-            //            var maxIDFromFile = (from s in this select s.ID).Max();
-
-            var maxIDFromFile = this
-                                .Select(s => s.ID).Max();
+            var maxIDFromFile = this.Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -348,7 +342,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public void PopulateSetWithDefaults()
         {
             IngredientFlags FlagsTobeSet;
@@ -377,10 +371,10 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
-        }
+        } // --> Data
         public void SetDataReference(UnitSet UnitSetData)
         {
-            if (_UnitSetData == null) _UnitSetData = UnitSetData;
+            _UnitSetData = UnitSetData;
         }
         public Ingredient SelectItem()
         {
@@ -393,7 +387,7 @@ namespace Jamie.Model
 
             return SelectItem(InputItemText);
 
-        }
+        }// --> View
         public Ingredient SelectItem(string ItemTextToBeSelected)
         {
             Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0,UnitSetData);
@@ -406,7 +400,7 @@ namespace Jamie.Model
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -438,9 +432,6 @@ namespace Jamie.Model
         //Constructors
         public IngredientItem()
         {
-
-//            _Ingredient = new Ingredient(null);
-
         }
         public IngredientItem(double Quantity, Unit Unit, Ingredient Ingredient)
         {
@@ -448,10 +439,8 @@ namespace Jamie.Model
             _Unit = Unit;
             _Ingredient = Ingredient;
         }
-
         public IngredientItem(bool ToBePopulated)
         {
-//            _Ingredient = new Ingredient(null);
             if (ToBePopulated) PopulateObject();
         }
 
@@ -552,7 +541,7 @@ namespace Jamie.Model
             //}
             //IngredientType = FlagValue;
 
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString = string.Format(" {0,8} {1} {2}", Quantity, Unit, Ingredient.Name);
@@ -560,18 +549,16 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
-
-
     }
 
-    /* IngredientRecipeSet ist eine Liste IngredientItems (Menge, Ingredient):
- * Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die 
- * erforderliche Menge beschreibt.
- */
+ /* IngredientItemSet ist eine Liste IngredientItems (Menge, Unit, Ingredient):
+  * Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die 
+  * erforderliche Menge beschreibt.
+  */
     public class IngredientItemSet : ObservableCollection<IngredientItem>
     {
         //Constants
-        private const string FileExtension = ".rcig";
+        private const string FileExtension = ".rcig"; // --> Data
 
         //Variables
         private static long _MaxID;
@@ -662,7 +649,7 @@ namespace Jamie.Model
            UnitTranslation Test = UnitTranslationSetData.GetTranslation(NewIngredientItem.Unit, NewIngredientItem.Ingredient.TargetUnit, NewIngredientItem.Ingredient);
 
             AddItem(NewIngredientItem);
-        }
+        }// --> View
         public void AddItem(IngredientItem ItemToBeAdded)
         {
             if (!Contains(ItemToBeAdded))
@@ -706,7 +693,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public IngredientItemSet OpenSet(string FileName)
         {
             IngredientItemSet ReturnSet = this;
@@ -719,7 +706,7 @@ namespace Jamie.Model
             }
             return ReturnSet;
 
-        }
+        }// --> Data
         public void SaveSet(string FileName)
         {
             FileName += "." + RelatedRecipe.Name + FileExtension;
@@ -729,7 +716,7 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
-        }
+        }// --> Data
         public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData, 
                                      UnitTranslationSet UnitTranslationSetData)
         {
@@ -740,7 +727,6 @@ namespace Jamie.Model
         public override string ToString()
         {
             string ReturnString = "";
-//                string.Format("{0,8} Zutaten im Rezept: {1} \n", MaxID, RelatedRecipe);
 
             if (Count == 0) ReturnString += "         -------> leer <-------\n         ";
             else
@@ -755,19 +741,8 @@ namespace Jamie.Model
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
 
     }
-
-/*    public class IngredientType
-    {
-
-    }
-
-    public class IngredientTypeSet
-    {
-
-    }
-*/
 }
 

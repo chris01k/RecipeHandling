@@ -69,15 +69,19 @@
  *                            - muss noch ausgiebig getestet werden.
  * Version 0.35 - 2016-10-02: UnitTranslationSet.GetTranslation überarbeitet
  *                            - AddInactiveItem hinzu (Automatische Vor-Anlage der notwendigen Translations bei Eingabe der Rezepte)
+ * Version 0.36 - 2016-10-03: Codepflege und Zuordnung, welche Teile nach Jamie.View bzw. Jamie.Data verschoben werden sollten
  *                            
  */
 
-/* Version 0.36 - 2016-10-xx: x
+/* Version 0.37 - 2016-10-xx: Herauslösen von Jamie.View 
  *                            - 
  *                            
  *                            
  *                            - offen: 
  *                              --> checken, ob SelecedItem static sein muss
+ *                              --> setzen der ID prüfen ...if ID!=null .... für alle Klassen mit ID (Unit, UnitTranslation....)
+ *                              --> anpassen EqualKey für diverse Klassen
+ *                              
  *                              
  *                              
  *                              --> UnitTranslationSet.AddItem(UnitTranslation ItemToBeAdded): Reduzierung der Fälle
@@ -95,7 +99,8 @@
  *                  - Reihenfolge: <Object>ToString, <Set>ToString, <Set>ViewSet, <Set>Menu
  */
 
-using Jamie.Model;
+//using Jamie.Model;
+using Jamie.View;
 using System;
 
 
@@ -106,85 +111,8 @@ namespace Jamie.Main
     {
         static void Main(string[] args)
         {
-            string MenuInput = "";
-            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler();
-//            RecipeHandlingSetHandler JamieData = new RecipeHandlingSetHandler(true);
-
-            while (MenuInput!="Q")
-            {
-                Console.WriteLine();
-                Console.WriteLine("\nMenü");
-                Console.WriteLine("----");
-
-                Console.WriteLine("C  Clear Lists");
-                Console.WriteLine("O  Open Lists");
-                Console.WriteLine("S  Save Lists");
-                Console.WriteLine();
-
-                Console.WriteLine("I   Ingredient");
-                Console.WriteLine("FP  FoodPlanItem");
-                Console.WriteLine("R   Recipe");
-                Console.WriteLine("U   Unit");
-                Console.WriteLine("UT  Unit Translation");
-                Console.WriteLine("SL  Shopping List");
-                Console.WriteLine();
-                Console.WriteLine("T  Transfer to Foodplan to Shopping List");
-                Console.WriteLine("V  View Lists");
-                Console.WriteLine("X  View XML File");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "C":
-                        JamieData.ClearLists();
-                        break;
-                    case "O":
-                        JamieData.OpenLists();
-                        break;
-                    case "S":
-                        JamieData.SaveLists();
-                        break;
-                    case "I":
-                        JamieData.JamieDataSet.Ingredients.Menu();
-                        break;
-                    case "FP":
-                        JamieData.JamieDataSet.FoodPlanItems.Menu();
-                        break;
-                    case "R":
-                        JamieData.JamieDataSet.Recipes.Menu();
-                        break;
-                    case "U":
-                        JamieData.JamieDataSet.Units.Menu();
-                        break;
-                    case "UT":
-                        JamieData.JamieDataSet.UnitTranslations.Menu();
-                        break;
-                    case "SL":
-                        JamieData.JamieDataSet.ShoppingListItems.Menu();
-                        break;
-                    case "T":
-                        JamieData.JamieDataSet.FoodPlanItems.TransferToShoppingList(JamieData.JamieDataSet.ShoppingListItems);
-                        JamieData.JamieDataSet.ShoppingListItems.Menu();
-                        break;
-                    case "V":
-                        JamieData.JamieDataSet.ViewSet();
-                        break;
-                    case "X":
-                        JamieData.JamieDataSet.ViewXML();
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-                
-            }
-
-
+            ProgramView MainView = new ProgramView();
+            MainView.ShowMainMenu();
         }
 
     }

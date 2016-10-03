@@ -26,11 +26,6 @@ namespace Jamie.Model
         //Constructors
         public FoodPlanItem()
         {
-
-        }
-        public FoodPlanItem(RecipeSet RecipeSetData)
-        {
-            if (_RecipeSetData == null) _RecipeSetData = RecipeSetData;
         }
         public FoodPlanItem(bool ToBePopulated)
         {
@@ -172,10 +167,10 @@ namespace Jamie.Model
             } while (ProcessedRecipe == null);
             PlannedRecipe = ProcessedRecipe;
 
-        }
+        }// --> View
         public void SetDataReference(RecipeSet RecipeSetData)
         {
-            if (_RecipeSetData == null) _RecipeSetData = RecipeSetData;
+            _RecipeSetData = RecipeSetData;
         }
         public override string ToString()
         {
@@ -186,7 +181,7 @@ namespace Jamie.Model
     public class FoodPlanItemSet : ObservableCollection<FoodPlanItem>
     {
         //Constants
-        private const string FileExtension = ".fpitm";
+        private const string FileExtension = ".fpitm";// --> Data
 
         //static Variables
         private static long _MaxID = 0;
@@ -199,11 +194,6 @@ namespace Jamie.Model
         public FoodPlanItemSet()
         {
         }
-        //public FoodPlanItemSet(long ID)
-        //{
-
-        //}
-
 
         //Properties
         public static long MaxID //Readonly
@@ -238,16 +228,8 @@ namespace Jamie.Model
         //Methods
         public bool AddItem()
         {
-
             FoodPlanItem newItem = new FoodPlanItem();
             if (Count == 0) newItem.SetDataReference(RecipeSetData);
-
-            // Code oben ersetzt folgendes.... nach Test Kommentar löschen
-            //            FoodPlanItem newItem;
-            //if (Count != 0) newItem = new FoodPlanItem();
-            //else newItem = new FoodPlanItem(RecipeSetData);
-
-
             newItem.PopulateObject();
             return AddItem(newItem);
         }
@@ -262,7 +244,7 @@ namespace Jamie.Model
             }
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
             return false;
-        }
+        }// teilweise Contains--> View
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -273,13 +255,10 @@ namespace Jamie.Model
             Remove(SelectedItem);
             if (Count > 0) _SelectedItem = this[NewSelectedIndex];
             else _SelectedItem = null;
-
-
         }
         public void EvaluateMaxID()
         {
-            var maxIDFromFile = this
-                                .Select(s => s.ID).Max();
+            var maxIDFromFile = this.Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -327,7 +306,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public FoodPlanItemSet OpenSet(string FileName)
         {
             FoodPlanItemSet ReturnUnitSet = this;
@@ -342,7 +321,7 @@ namespace Jamie.Model
             EvaluateMaxID();
             return ReturnUnitSet;
 
-        }
+        }// --> Data
         public void SaveSet(string FileName)
         {
             FileName += FileExtension;
@@ -352,7 +331,7 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
-        }
+        }// --> Data
         public FoodPlanItem SelectItem()
         {
             int ParsedIntValue;
@@ -367,7 +346,7 @@ namespace Jamie.Model
 
             return SelectItem(SelectedID);
 
-        }
+        }// --> View
         public FoodPlanItem SelectItem(long IDToSelect)
         {
             FoodPlanItem LocalItemToSelect = new FoodPlanItem();
@@ -380,13 +359,13 @@ namespace Jamie.Model
         }
         public void SetDataReference(RecipeSet RecipeSetData)
         {
-            if (_RecipeSetData == null) _RecipeSetData = RecipeSetData;
+            _RecipeSetData = RecipeSetData;
             if (this.Count() != 0) this[0].SetDataReference(RecipeSetData);
         }
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString = "";

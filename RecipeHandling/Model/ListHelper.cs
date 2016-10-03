@@ -26,7 +26,7 @@ namespace Jamie.Model
 
 
             return FieldToBeChanged;
-        }
+        }// --> View
         public static IngredientType ChangeIngredientTypeField(string DisplayFieldToBeChanged)
         {
             IngredientType FieldToBeChanged;
@@ -54,7 +54,7 @@ namespace Jamie.Model
 
 
             return FieldToBeChanged;
-        }
+        }// --> View
         public static double ChangeDoubleField(string DisplayFieldToBeChanged)
         {
             string InputString;
@@ -67,14 +67,14 @@ namespace Jamie.Model
 
 
             return FieldToBeChanged;
-        }
+        }// --> View
         public static string ChangeStringField(string DisplayFieldToBeChanged)
         {
             string FieldToBeChanged;
             Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
             FieldToBeChanged = Console.ReadLine();
             return FieldToBeChanged;
-        }
+        }// --> View
         public static Unit ChangeUnitField(string DisplayFieldToBeChanged, UnitSet UnitSelection)
         {
             Unit ReturnValueUnit = null;
@@ -87,7 +87,7 @@ namespace Jamie.Model
                 ReturnValueUnit = UnitSelection.SelectItem(InputString);
             };
             return ReturnValueUnit;
-        }
+        }// --> View
         public static string SelectField(string[] Fields)
         {
             string InputString ="";
@@ -108,11 +108,11 @@ namespace Jamie.Model
                 if (str == InputString) return InputString;
             }
             return "";
-        }
+        }// --> View
         public static void ResetString(string DisplayFieldToBeChanged)
         {
             DisplayFieldToBeChanged = "";
             Console.Write("{0} ist leer: ", DisplayFieldToBeChanged);
-        }
+        }// --> View
     }
 }

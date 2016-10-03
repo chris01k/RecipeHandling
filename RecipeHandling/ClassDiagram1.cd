@@ -41,18 +41,18 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Jamie.Model.RecipeDataSets" Collapsed="true">
+  <Class Name="Jamie.Model.AllDataSets" Collapsed="true">
     <Position X="3.75" Y="1.75" Width="5" />
     <TypeIdentifier>
       <HashCode>gAgAAAAAACQAAAAEgAAAICSkYERAAgAAEBAAAAAABAA=</HashCode>
-      <FileName>Model\RecipeHandlingSet.cs</FileName>
+      <FileName>Model\AllDataSet.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Jamie.Model.RecipeHandlingSetHandler" Collapsed="true">
+  <Class Name="Jamie.Model.EmbeddedDataSet" Collapsed="true">
     <Position X="5" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABBQAAAAAAAAAABAAQAAAAAgAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\RecipeHandlingSetHandler.cs</FileName>
+      <HashCode>AAAAAABQAAAAAAAAAAAAARAAAAAgEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\EmbeddedDataSet.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Jamie.Model.IngredientSet" Collapsed="true">
@@ -125,6 +125,13 @@
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Jamie.View.ProgramView">
+    <Position X="0.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>View\ProgramView.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Enum Name="Jamie.Model.IngredientFlags" Collapsed="true">
     <Position X="10.25" Y="0.5" Width="1.75" />

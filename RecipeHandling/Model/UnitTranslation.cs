@@ -314,7 +314,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -338,7 +338,7 @@ namespace Jamie.Model
         private static UnitSet _UnitSetData;
 
         //Variables
-        private const string FileExtension = ".tran";
+        private const string FileExtension = ".tran"; // --> Data
         private static long _MaxID = 0;
 
 
@@ -487,7 +487,7 @@ namespace Jamie.Model
                 int ExistingIndex = IndexOf(ItemToBeAdded);
                 Console.WriteLine("Die Unit Translation\n{0} ......ist bereits vorhanden als\n{1}", ItemToBeAdded, this[ExistingIndex]);
             }
-        }
+        } // teilweise (if contains....) --> View
         public void AddAllItemsWithSameType(UnitTranslation ItemToBeAdded)
         {
             UnitTranslation GeneratedUnitTranslation;
@@ -548,60 +548,6 @@ namespace Jamie.Model
 
             }
         }
-        public UnitTranslation AnalyzeUnitTranslations(Unit BaseUnit, Unit TargetUnit, Ingredient AffectedIngredient)
-        {
-            UnitTranslation ReturnObject=null;
-            UnitTranslation BaseToTargetTypeTranslation;
-
-            if (BaseUnit.Type == TargetUnit.Type)  // Same Type for BaseUnit and TargetUnit -> Not dependent from Ingredient
-            {
-                ReturnObject = GetTranslation(BaseUnit, TargetUnit);
-                if (ReturnObject == null) AddInactiveItem(BaseUnit, TargetUnit);
-            }
-            else // BaseUnit and TargetUnit have different Types
-            {
-                BaseToTargetTypeTranslation = GetTranslation(BaseUnit, TargetUnit, AffectedIngredient);
-                if (BaseToTargetTypeTranslation == null) //No Translation found for Ingredient.
-                {
-                    AddInactiveItem(BaseUnit, TargetUnit, AffectedIngredient);
-                    BaseToTargetTypeTranslation = GetTranslation(BaseUnit, TargetUnit, AffectedIngredient.Type);
-                    if (BaseToTargetTypeTranslation == null)
-                    {
-                        AddInactiveItem(BaseUnit, TargetUnit, AffectedIngredient.Type);
-                    }
-                    else
-                    {
-                        ReturnObject = BaseToTargetTypeTranslation;
-                    }
-
-                }
-
-                // Get UnitTranslation BaseUnitType -> TargetUnitType for Ingredient
-                // if not existing Get UnitTranslation 
-            }
-
-
-            return ReturnObject;
-        }
-        public int CountSimilarItems(UnitTranslation ItemToCompare)
-        {
-            int ReturnValue = 0;
-
-            var SimilarItems = (from u in this
-                                where ((ItemToCompare.TranslationFlag == u.TranslationFlag) &&
-                                       (ItemToCompare.BaseUnit.Type == u.BaseUnit.Type) &&
-                                       (ItemToCompare.TargetUnit.Type == u.TargetUnit.Type) &&
-                                       (ItemToCompare.AffectedIngredient)==u.AffectedIngredient) select u).ToList();
-            ReturnValue += SimilarItems.Count;
-            SimilarItems = (from u in this
-                                where ((ItemToCompare.TranslationFlag == u.TranslationFlag) &&
-                                       (ItemToCompare.TargetUnit.Type == u.BaseUnit.Type) &&
-                                       (ItemToCompare.BaseUnit.Type == u.TargetUnit.Type) &&
-                                       (ItemToCompare.AffectedIngredient) == u.AffectedIngredient)
-                                select u).ToList();
-            ReturnValue += SimilarItems.Count;
-            return ReturnValue;
-        }
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -650,7 +596,6 @@ namespace Jamie.Model
          * - Creates UnitTranslation Base->Target for Ingredient.Type to be verified.
          * 
          */
-
 
         public UnitTranslation GetTranslation(Unit Base, Unit Target)
         {
@@ -763,25 +708,7 @@ namespace Jamie.Model
             }
 
             return ReturnObject;
-        }
-        public UnitTranslation GetTranslation(UnitType BaseType, UnitType TargetType, IngredientType IType)
-        {
-            UnitTranslation ReturnObject = null;
-
-            var TList = this
-                        .Where(s => (s.AffectedIngredient == null) && (s.IngredientType == IType) &&
-                                    (s.TranslationStatus != ListEntryStatus.IsNotConfirmed) &&
-                                    (((s.BaseUnit.Type == BaseType) && (s.TargetUnit.Type == TargetType)) ||
-                                    ((s.BaseUnit.Type == TargetType) && (s.TargetUnit.Type == BaseType))));
-            if (TList.Count() == 1)
-            {
-                ReturnObject = TList.ElementAt(0);
-                if (ReturnObject.BaseUnit.Type != BaseType) ReturnObject.Inverse();
-            }
-
-            return ReturnObject;
-        }
-        
+        }       
         public void Menu()
         {
             int HowManyItemsInSet = Count;
@@ -831,7 +758,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public UnitTranslationSet OpenSet(string FileName)
         {
             UnitTranslationSet ReturnSet = this;
@@ -844,7 +771,7 @@ namespace Jamie.Model
             }
             return ReturnSet;
 
-        }
+        }// --> Data
         public void PopulateSetWithDefaults()
         {
 
@@ -943,7 +870,7 @@ namespace Jamie.Model
                 }
             }
 
-        }
+        }// --> Data
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -966,7 +893,7 @@ namespace Jamie.Model
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
     }
 
 }

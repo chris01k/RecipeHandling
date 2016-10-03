@@ -26,7 +26,7 @@ namespace Jamie.Model
         public Unit(bool ToBePopulated)
         {
             if (ToBePopulated) PopulateObject();
-        }
+        } //checken, ob Anwendungsfall
         public Unit(string Symbol, string Name, UnitType Type)
         {
             _Symbol = Symbol;
@@ -44,9 +44,8 @@ namespace Jamie.Model
             set
             {
                 if (_ID == null) _ID = value;
-                //                else throw exception;
             }
-        }
+        } 
         public string Symbol
         {
             get { return _Symbol; }
@@ -63,7 +62,6 @@ namespace Jamie.Model
             set { _Type = value; }
         }
 
-
         //Methods
         public bool Equals(Unit ItemToCompare)
         {
@@ -74,7 +72,7 @@ namespace Jamie.Model
         {
             return Symbol.Equals(ItemToCompare.Symbol);
         }
-        public void PopulateObject()
+        public void PopulateObject() 
         {
             string InputString;
 
@@ -98,7 +96,7 @@ namespace Jamie.Model
             } while (true);
 
 
-        }
+        } // -> View
         public override string ToString()
         {
             return string.Format("{0,6} {1,5} - Name: {2,10}   Type: {3,10}", ID, Symbol, Name, Type);
@@ -108,7 +106,7 @@ namespace Jamie.Model
     public class UnitSet: ObservableCollection<Unit>
     {
         //Constants
-        private const string FileExtension = ".unit";
+        private const string FileExtension = ".unit"; // -> Data
 
         //static Variables
         private static long _MaxID = 0;
@@ -160,7 +158,7 @@ namespace Jamie.Model
             }
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
             return false;
-        }
+        } // teilweise --> View
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -176,10 +174,7 @@ namespace Jamie.Model
         }
         public void EvaluateMaxID()
         {
-            //            var maxIDFromFile = (from s in this select s.ID).Max();
-
-            var maxIDFromFile = this
-                                .Select(s => s.ID).Max();
+            var maxIDFromFile = this.Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -236,7 +231,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        } // --> View
         public UnitSet OpenSet(string FileName)
         {
             UnitSet ReturnUnitSet = this;
@@ -251,7 +246,7 @@ namespace Jamie.Model
             EvaluateMaxID();
            return ReturnUnitSet;
 
-        }
+        } // --> Data
         public void SaveSet(string FileName)
         {
             FileName += FileExtension;
@@ -261,7 +256,7 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
-        }
+        } // --> Data
         public Unit SelectItem()
         {
             string LocalUnitSymbol = "";
@@ -273,7 +268,7 @@ namespace Jamie.Model
 
             return SelectItem(LocalUnitSymbol);
 
-        }
+        } // --> View
         public Unit SelectItem(string ItemTextToBeSelected)
         {
             Unit LocalUnitToSelect = new Unit(ItemTextToBeSelected,"", (UnitType)0);
@@ -296,7 +291,7 @@ namespace Jamie.Model
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        } // --> View
         public override string ToString()
         {
             string ReturnString = "";

@@ -46,19 +46,22 @@
     <Compile Include="Model\ListHelper.cs" />
     <Compile Include="Model\FoodPlan.cs" />
     <Compile Include="Model\Ingredient.cs" />
-    <Compile Include="Model\IngredientPortion.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="View\ProgramView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Recipe.cs" />
     <Compile Include="Model\ShoppingList.cs" />
     <Compile Include="Model\Unit.cs" />
-    <Compile Include="Model\RecipeHandlingSet.cs" />
-    <Compile Include="Model\RecipeHandlingSetHandler.cs" />
+    <Compile Include="Model\AllDataSet.cs" />
+    <Compile Include="Model\EmbeddedDataSet.cs" />
     <Compile Include="Model\UnitTranslation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

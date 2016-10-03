@@ -36,7 +36,6 @@ namespace Jamie.Model
         //Constructors
         public ShoppingListItem()
         {
-
         }
 
         //Properties
@@ -166,16 +165,12 @@ namespace Jamie.Model
             } while (ProcessedIngredient == null);
             Ingredient = ProcessedIngredient;
 
-        }
+        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, UnitTranslationSet UnitTranslationSetData)
         {
-            //if (_IngredientSetData == null)
             _IngredientSetData = IngredientSetData;
-            //if (_UnitSetData == null) 
             _UnitSetData = UnitSetData;
             _UnitTranslationSetData = UnitTranslationSetData;
-
-
         }
         public override string ToString()
         {
@@ -190,7 +185,7 @@ namespace Jamie.Model
     public class ShoppingListItemSet : ObservableCollection<ShoppingListItem>
     {
         //Constants
-        private const string FileExtension = ".shli";
+        private const string FileExtension = ".shli";// --> Data
 
         //static Variables
         private static long _MaxID = 0;
@@ -208,8 +203,7 @@ namespace Jamie.Model
 
         //Constructors
         public ShoppingListItemSet()
-        {
-            
+        {         
         }
 
         //Properties
@@ -324,7 +318,7 @@ namespace Jamie.Model
             }
             else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
             return false;
-        }
+        }// teilweise Contains--> View
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -335,13 +329,10 @@ namespace Jamie.Model
             Remove(SelectedItem);
             if (Count > 0) _SelectedItem = this[NewSelectedIndex];
             else _SelectedItem = null;
-
-
         }
         public void EvaluateMaxID()
         {
-            var maxIDFromFile = this
-                                .Select(s => s.ID).Max();
+            var maxIDFromFile = this.Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -389,7 +380,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public ShoppingListItemSet OpenSet(string FileName)
         {
             ShoppingListItemSet ReturnUnitSet = this;
@@ -404,7 +395,7 @@ namespace Jamie.Model
             EvaluateMaxID();
             return ReturnUnitSet;
 
-        }
+        }// --> Data
         public void PopulateObject()
         {
             string InputString;
@@ -429,11 +420,7 @@ namespace Jamie.Model
 
 
 
-        }
-        public void RecalculateTargetUnitEntries()
-        {
-            foreach (ShoppingListItem SLI in this) SLI.CalculateTargetUnit();
-        }
+        }// --> View
         public void SaveSet(string FileName)
         {
             FileName += FileExtension;
@@ -443,7 +430,7 @@ namespace Jamie.Model
                 x.Serialize(fs, this);
             }
 
-        }
+        }// --> Data
         public ShoppingListItem SelectItem()
         {
             int ParsedIntValue;
@@ -458,7 +445,7 @@ namespace Jamie.Model
 
             return SelectItem(SelectedID);
 
-        }
+        }// --> View
         public ShoppingListItem SelectItem(long IDToSelect)
         {
             ShoppingListItem LocalItemToSelect = new ShoppingListItem();
@@ -471,15 +458,12 @@ namespace Jamie.Model
         }
         public ShoppingListItem SelectItemByIngredient(Ingredient IngredientToBeSearched)
         {
-
             foreach (ShoppingListItem Item in this)
             {
                 if (Item.Ingredient.Equals(IngredientToBeSearched)) return Item;
             }
             return null;
-
-        }
-            
+        }            
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, UnitTranslationSet UnitTranslationSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -489,13 +473,12 @@ namespace Jamie.Model
             if (this.Count() != 0)
             {
                 this[0].SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
-                //RecalculateTargetUnitEntries();
             }
         }
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -512,8 +495,6 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
-
-
     }
 
 }

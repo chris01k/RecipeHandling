@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Jamie.Model
 {
-    public class RecipeDataSets
+    public class AllDataSets
     {
         private FoodPlanItemSet _FoodPlanItems; //related to Recipes
         private IngredientSet _Ingredients; //related to <no other Set>
@@ -14,7 +14,7 @@ namespace Jamie.Model
 
 
         //Constructors
-        public RecipeDataSets()
+        public AllDataSets()
         {
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
@@ -24,7 +24,7 @@ namespace Jamie.Model
             _ShoppingListItems = new ShoppingListItemSet();
             SetDataReference();
         }
-        public RecipeDataSets(bool ToBePopulatedWithDefaults)
+        public AllDataSets(bool ToBePopulatedWithDefaults)
         {
             _Units = new UnitSet();
             _UnitTranslations = new UnitTranslationSet(_Units);
@@ -104,17 +104,6 @@ namespace Jamie.Model
             EvaluateMaxIDs();
 
         }
-        public int Count()
-        {
-            int ReturnValue = 0;
-
-            ReturnValue += Ingredients.Count();
-            ReturnValue += Recipes.Count();
-            ReturnValue += Units.Count();
-            ReturnValue += UnitTranslations.Count();
-
-            return ReturnValue;
-        }
         public void EvaluateMaxIDs()
         {
             Ingredients.EvaluateMaxID();
@@ -130,29 +119,6 @@ namespace Jamie.Model
             UnitTranslations.PopulateSetWithDefaults();
             Ingredients.PopulateSetWithDefaults();
         }
-        public void RemoveUnit()
-        {
-            string LocalUnitSymbol = "";
-
-            Console.WriteLine("Unit Entfernen:");
-            Console.WriteLine("---------------");
-            Console.WriteLine();
-            Console.Write("UnitSymbol: "); LocalUnitSymbol = Console.ReadLine();
-
-            RemoveUnit(LocalUnitSymbol);
-
-        }
-        public void RemoveUnit(string UnitSymbolToBeRemoved)
-        {
-
-            Unit UnitToBeRemoved = new Unit();
-            UnitToBeRemoved.Symbol = UnitSymbolToBeRemoved;
-
-            if (Units.Contains(UnitToBeRemoved)) Units.Remove(UnitToBeRemoved);
-            else Console.WriteLine("UnitSymbol {0} konnte nicht gefunden werden", UnitSymbolToBeRemoved);
-                       
-
-        }
         public void SetDataReference()
         {
             _UnitTranslations.SetDataReference(_Ingredients, _Units);
@@ -161,18 +127,18 @@ namespace Jamie.Model
             _FoodPlanItems.SetDataReference(_Recipes);
             _ShoppingListItems.SetDataReference(_Ingredients, _Units, _UnitTranslations);
         }
-        public void SaveSet(string FileName)
+        public void SaveSet(string FileName) 
         {
             Units.SaveSet(FileName);
             UnitTranslations.SaveSet(FileName);
             Ingredients.SaveSet(FileName);
             Recipes.SaveSet(FileName);
-        }
+        }// --> Data
         public void ViewSet()
         {
             Console.WriteLine();
             Console.WriteLine(ToString());
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -198,7 +164,7 @@ namespace Jamie.Model
                 x.Serialize(Console.Out, this);
 
             }
-        }
+        }// --> View
 
     }
 }

@@ -127,7 +127,6 @@ namespace Jamie.Model
                 _SourceISBN = value;
             }
         }
-
         public string SourcePage
         {
             get
@@ -179,7 +178,7 @@ namespace Jamie.Model
             Console.Write("SourcePage      : "); SourcePage = Console.ReadLine();
             Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
 
-        }
+        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, 
                                      UnitTranslationSet UnitTranslationSetData)
         {
@@ -192,13 +191,12 @@ namespace Jamie.Model
         {
             return string.Format("{0,6}-Name: {1,10} Portionen: {2,4} Source: {3,5}  Seite: {4,5}  Summary {5,15}", ID, Name, PortionQuantity, Source, SourcePage, Summary);
         }
-
     }
 
     public class RecipeSet: ObservableCollection<Recipe>
     {
         //Constants
-        private const string FileExtension = ".recp";
+        private const string FileExtension = ".recp";// --> Data
 
         //Variables
         private static long _MaxID = 0;
@@ -221,10 +219,6 @@ namespace Jamie.Model
             {
                 return _UnitSetData;
             }
-            //set
-            //{
-            //    _UnitSetData = value;
-            //}
         } //Readonly
         public static IngredientSet IngredientSetData
         {
@@ -232,11 +226,6 @@ namespace Jamie.Model
             {
                 return _IngredientSetData;
             }
-
-            //set
-            //{
-            //    _IngredientSetData = value;
-            //}
         } //Readonly
         public static Recipe SelectedItem
         {
@@ -252,7 +241,6 @@ namespace Jamie.Model
                 return _UnitTranslationSetData;
             }
         } //Readonly
-
 
         //Methods
         public void AddItem()
@@ -274,7 +262,7 @@ namespace Jamie.Model
             }
             else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
             _SelectedItem = SelectItem(ItemToBeAdded);
-        }
+        }// teilweise contains--> View
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -295,10 +283,7 @@ namespace Jamie.Model
         }
         public void EvaluateMaxID()
         {
-//            var maxIDFromFile = (from s in this select s.ID).Max();
-
-            var maxIDFromFile = this
-                                .Select(s => s.ID).Max();
+            var maxIDFromFile = this.Select(s => s.ID).Max();
 
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
@@ -354,7 +339,7 @@ namespace Jamie.Model
                 }
 
             }
-        }
+        }// --> View
         public RecipeSet OpenSet(string FileName)
         {
             RecipeSet ReturnSet = this;
@@ -368,7 +353,7 @@ namespace Jamie.Model
             EvaluateMaxID();
             return ReturnSet;
 
-        }
+        }// --> Data
         public void SaveSet(string BaseFileName)
         {
             string FileName = BaseFileName + FileExtension;
@@ -384,7 +369,7 @@ namespace Jamie.Model
                 Rcp.Ingredients.SaveSet(FileName);
             }
 
-        }
+        }// --> Data
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, 
                                      UnitTranslationSet UnitTranslationSetData)
         {
@@ -412,7 +397,7 @@ namespace Jamie.Model
 
             return ReturnValue;
 
-        }
+        }// --> View
         public Recipe SelectItem(Recipe ItemToBeSelected)
         {
             Recipe ReturnValue = null;
@@ -421,11 +406,10 @@ namespace Jamie.Model
             if (IndexOfSelectedItem != -1) ReturnValue = this[IndexOfSelectedItem];
             return ReturnValue;
         }
-
         public void ViewSet()
         {
             Console.WriteLine(ToString());
-        }
+        }// --> View
         public override string ToString()
         {
             string ReturnString;
