@@ -19,7 +19,7 @@ namespace Jamie.Model
 
         private long? _ID;
 
-        private IngredientItemSet _Ingredients;
+        private RecipeIngredientSet _Ingredients;
         private string _Name;
         private int _PortionQuantity; // Portion min max berücksichtigen
         private string _Source; // Source: Cookbook the recipe is taken from 
@@ -32,12 +32,7 @@ namespace Jamie.Model
         //Constructors
         public Recipe()
         {
-            _Ingredients = new IngredientItemSet(IngredientSetData, UnitSetData, UnitTranslationSetData, this);
-        }
-        public Recipe(bool ToBePopulated)
-        {
-            _Ingredients = new IngredientItemSet(IngredientSetData, UnitSetData, UnitTranslationSetData, this);
-            if (ToBePopulated) PopulateObject();
+            _Ingredients = new RecipeIngredientSet(IngredientSetData, UnitSetData, UnitTranslationSetData, this);
         }
 
         //Properties
@@ -74,7 +69,7 @@ namespace Jamie.Model
                 //                else throw exception;
             }
         }
-        public IngredientItemSet Ingredients
+        public RecipeIngredientSet Ingredients
         {
             get { return _Ingredients; }
             set { _Ingredients = value; }
@@ -156,29 +151,12 @@ namespace Jamie.Model
         public bool Equals(Recipe ItemToCompare)
         {
             if (ItemToCompare == null) return false;
-            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+            return ID.Equals(ItemToCompare.ID) || EqualKey(ItemToCompare);
         }
         public bool EqualKey(Recipe ItemToCompare)
         {
             return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
         }
-        public void PopulateObject()
-        {
-            string InputString;
-            int ParsedIntValue;
-
-            Console.Write("Name : "); Name = Console.ReadLine();
-            do
-            {
-                Console.Write("PortionQuantity : "); InputString = Console.ReadLine();
-            } while (!int.TryParse(InputString, out ParsedIntValue));
-            PortionQuantity = ParsedIntValue;
-            Console.Write("Summary         : "); Summary = Console.ReadLine();
-            Console.Write("Source          : "); Source = Console.ReadLine();
-            Console.Write("SourcePage      : "); SourcePage = Console.ReadLine();
-            Console.Write("SourceISBN      : "); SourceISBN = Console.ReadLine();
-
-        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, 
                                      UnitTranslationSet UnitTranslationSetData)
         {
@@ -203,7 +181,7 @@ namespace Jamie.Model
         private static IngredientSet _IngredientSetData;
         private static UnitSet _UnitSetData;
         private static UnitTranslationSet _UnitTranslationSetData;
-        private static Recipe _SelectedItem;
+        private Recipe _SelectedItem;
 
         //Constructors
         public RecipeSet(UnitSet UnitSetData, IngredientSet IngredientSetData)
@@ -227,7 +205,7 @@ namespace Jamie.Model
                 return _IngredientSetData;
             }
         } //Readonly
-        public static Recipe SelectedItem
+        public Recipe SelectedItem
         {
             get
             {
@@ -243,26 +221,20 @@ namespace Jamie.Model
         } //Readonly
 
         //Methods
-        public void AddItem()
+        public bool AddItem(Recipe ItemToBeAdded)
         {
-            Recipe NewRecipe = new Recipe(true);
+            bool ReturnValue = true;
 
-            if (Count == 0)
-            {
-                NewRecipe.SetDataReference(_IngredientSetData, _UnitSetData, _UnitTranslationSetData);
-            }
-            AddItem(NewRecipe);
-        }
-        public void AddItem(Recipe ItemToBeAdded)
-        {
             if (!Contains(ItemToBeAdded))
             {
                 Add(ItemToBeAdded);
                 ItemToBeAdded.ID = ++_MaxID;
             }
-            else Console.WriteLine("Das Rezept ist bereits vorhanden: \n {0}", ItemToBeAdded);
-            _SelectedItem = SelectItem(ItemToBeAdded);
-        }// teilweise contains--> View
+            else ReturnValue = false;
+            SelectItem(ItemToBeAdded);
+
+            return ReturnValue;
+        }
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -276,6 +248,7 @@ namespace Jamie.Model
             }
             else NewSelectedIndex = 1;
 
+            SelectedItem.Ingredients.Clear();
             Remove(SelectedItem);
 
             if (Count > 0) _SelectedItem = this[NewSelectedIndex];
@@ -288,58 +261,6 @@ namespace Jamie.Model
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
         }
-        public void Menu()
-        {
-            string MenuInput = "";
-
-            _SelectedItem = SelectItem(false);
-            while (MenuInput != "Q")
-            {
-
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nRecipe Menü");
-                Console.WriteLine(SelectedItem);
-                Console.WriteLine("---------------");
-                Console.WriteLine("A  Add Recipe");
-                Console.WriteLine("D  Delete Selected Recipe");
-                Console.WriteLine("I  Add Ingredient");
-                Console.WriteLine("R  View Recipe");
-                Console.WriteLine("S  Select Recipe");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "D":
-                        DeleteSelectedItem();
-                        break;
-                    case "I":
-                        SelectedItem.Ingredients.AddItem();
-                        Console.WriteLine(SelectedItem.ToString());
-                        break;
-                    case "R":
-                        Console.WriteLine(SelectedItem.ToString());
-                        break;
-                    case "S":
-                        _SelectedItem = SelectItem(true);
-                        break;
-                    case "V":
-                        ViewSet();
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }// --> View
         public RecipeSet OpenSet(string FileName)
         {
             RecipeSet ReturnSet = this;
@@ -378,38 +299,36 @@ namespace Jamie.Model
             _UnitTranslationSetData = UnitTranslationSetData;
             if (Count > 0) this.ElementAt(0).SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
         }
-        public Recipe SelectItem(bool ByRequest)
+        public Recipe SelectItem(int ItemPos)
         {
-            Recipe ReturnValue = null;
-
-            if (ByRequest)
+            Recipe ReturnItem = null;
+            if ((ItemPos > -1) && (ItemPos <= Count - 1))
             {
-                Recipe RequestedItem = new Recipe();
-
-                Console.WriteLine("Recipe suchen:");
-                Console.WriteLine("--------------");
-                Console.WriteLine();
-                Console.Write("Recipe Name: "); RequestedItem.Name = Console.ReadLine();
-
-                ReturnValue = SelectItem(RequestedItem);
+                ReturnItem = this[ItemPos];
+                _SelectedItem = ReturnItem;
             }
-            else if (Count != 0) ReturnValue = this[0];
-
-            return ReturnValue;
-
-        }// --> View
+            return ReturnItem;
+        }
         public Recipe SelectItem(Recipe ItemToBeSelected)
         {
             Recipe ReturnValue = null;
 
             int IndexOfSelectedItem = IndexOf(ItemToBeSelected);
-            if (IndexOfSelectedItem != -1) ReturnValue = this[IndexOfSelectedItem];
+            if (IndexOfSelectedItem != -1) ReturnValue = SelectItem(IndexOfSelectedItem);
             return ReturnValue;
         }
-        public void ViewSet()
+        public Recipe SelectItemByID(long IDToSelect)
         {
-            Console.WriteLine(ToString());
-        }// --> View
+            Recipe LocalItemToSelect = new Recipe();
+            LocalItemToSelect.ID = IDToSelect;
+
+            int IndexOfSelectedItem = IndexOf(LocalItemToSelect);
+            if (IndexOfSelectedItem == -1) return null;
+            else return this[IndexOfSelectedItem];
+
+        }
+
+
         public override string ToString()
         {
             string ReturnString;
@@ -427,6 +346,5 @@ namespace Jamie.Model
             ReturnString += "\n";
             return ReturnString;
         }
-    }
-
+    }      
 }

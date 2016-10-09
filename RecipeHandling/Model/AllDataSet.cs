@@ -3,15 +3,18 @@ using System.Linq;
 
 namespace Jamie.Model
 {
+    public enum ListEntryStatus
+    { IsOK = 0x1, IsCalculated, IsNotConfirmed }
+
     public class AllDataSets
     {
+        //Variables
         private FoodPlanItemSet _FoodPlanItems; //related to Recipes
         private IngredientSet _Ingredients; //related to <no other Set>
         private RecipeSet _Recipes; // related to Ingredients, Units
-        private ShoppingListItemSet _ShoppingListItems; //related to Ingredients, Units
+//        private ShoppingListItemSet _ShoppingListItems; //related to Ingredients, Units
         private UnitSet _Units; // related to <no other Set>
         private UnitTranslationSet _UnitTranslations; //related to Units
-
 
         //Constructors
         public AllDataSets()
@@ -21,21 +24,25 @@ namespace Jamie.Model
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
             _FoodPlanItems = new FoodPlanItemSet();
-            _ShoppingListItems = new ShoppingListItemSet();
+            //            _ShoppingListItems = new ShoppingListItemSet();
             SetDataReference();
         }
         public AllDataSets(bool ToBePopulatedWithDefaults)
         {
             _Units = new UnitSet();
+
             _UnitTranslations = new UnitTranslationSet(_Units);
             _Ingredients = new IngredientSet(_Units);
             _Recipes = new RecipeSet(_Units, _Ingredients);
             _FoodPlanItems = new FoodPlanItemSet();
-            _ShoppingListItems = new ShoppingListItemSet();
+//            _ShoppingListItems = new ShoppingListItemSet();
             SetDataReference();
             if (ToBePopulatedWithDefaults) PopulateSetWithDefaults();
 
+
+
         }
+
 
         //Properties
         public FoodPlanItemSet FoodPlanItems
@@ -67,7 +74,7 @@ namespace Jamie.Model
             get { return _Recipes; }
             set { _Recipes = value; }
         }
-        public ShoppingListItemSet ShoppingListItems
+/*        public ShoppingListItemSet ShoppingListItems
         {
             get
             {
@@ -80,6 +87,7 @@ namespace Jamie.Model
             }
 
         }
+*/
         public UnitSet Units
         {
             get { return _Units; }
@@ -91,14 +99,13 @@ namespace Jamie.Model
             set { _UnitTranslations = value; }
         }
 
-
         //Methods
         public void ClearList()
         {
             FoodPlanItems.Clear();
             Ingredients.Clear();
             Recipes.Clear();
-            ShoppingListItems.Clear();
+//            ShoppingListItems.Clear();
             Units.Clear();
             UnitTranslations.Clear();
             EvaluateMaxIDs();
@@ -111,7 +118,7 @@ namespace Jamie.Model
             Recipes.EvaluateMaxID();
             Units.EvaluateMaxID();
             UnitTranslations.EvaluateMaxID();
-            ShoppingListItems.EvaluateMaxID();
+//            ShoppingListItems.EvaluateMaxID();
         }
         public void PopulateSetWithDefaults()
         {
@@ -125,7 +132,8 @@ namespace Jamie.Model
             _Ingredients.SetDataReference(_Units);
             _Recipes.SetDataReference(_Ingredients, _Units, _UnitTranslations);
             _FoodPlanItems.SetDataReference(_Recipes);
-            _ShoppingListItems.SetDataReference(_Ingredients, _Units, _UnitTranslations);
+            //            _ShoppingListItems.SetDataReference(_Ingredients, _Units, _UnitTranslations);
+            Jamie.View.ListHelper.SetDataReference(_Ingredients, _Recipes, _Units);
         }
         public void SaveSet(string FileName) 
         {
@@ -133,6 +141,7 @@ namespace Jamie.Model
             UnitTranslations.SaveSet(FileName);
             Ingredients.SaveSet(FileName);
             Recipes.SaveSet(FileName);
+            FoodPlanItems.SaveSet(FileName);
         }// --> Data
         public void ViewSet()
         {
@@ -148,7 +157,7 @@ namespace Jamie.Model
             ReturnString += Recipes.ToString();
             ReturnString += Units.ToString();
             ReturnString += UnitTranslations.ToString();
-            ReturnString += ShoppingListItems.ToString();
+//            ReturnString += ShoppingListItems.ToString();
 
             return ReturnString;
 

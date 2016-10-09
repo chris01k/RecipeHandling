@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="View\ShoppingListView.cs" />
+    <Compile Include="View\FoodPlanView.cs" />
+    <Compile Include="Model\RecipeIngredient.cs" />
+    <Compile Include="View\RecipeIngredientView.cs" />
+    <Compile Include="View\RecipeView.cs" />
+    <Compile Include="View\IngredientView.cs" />
     <Compile Include="Model\ListHelper.cs" />
     <Compile Include="Model\FoodPlan.cs" />
     <Compile Include="Model\Ingredient.cs" />
@@ -60,8 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="ViewClasses.cd" />
-    <None Include="ModelClasses.cd" />
+    <None Include="View\ViewClasses.cd" />
+    <None Include="Model\ModelClasses.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

@@ -203,7 +203,7 @@ namespace Jamie.Model
         public bool Equals(UnitTranslation ItemToCompare)
         {
             if (ItemToCompare == null) return false;
-            return _ID.Equals(ItemToCompare._ID) | EqualKey(ItemToCompare);
+            return _ID.Equals(ItemToCompare._ID) || EqualKey(ItemToCompare);
         }       
         public bool EqualKey(UnitTranslation ItemToCompare)
         {
@@ -265,12 +265,12 @@ namespace Jamie.Model
     {
         //static Variables
         private static IngredientSet _IngredientSetData;
-        private static UnitTranslation _SelectedItem;
         private static UnitSet _UnitSetData;
 
         //Variables
         private const string FileExtension = ".tran"; // --> Data
         private static long _MaxID = 0;
+        private UnitTranslation _SelectedItem;
 
 
         //Constructors
@@ -295,7 +295,7 @@ namespace Jamie.Model
                 return _MaxID;
             }
         } //Readonly
-        public static UnitTranslation SelectedItem
+        public UnitTranslation SelectedItem
         {
             get
             {

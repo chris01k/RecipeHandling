@@ -47,7 +47,7 @@ namespace Jamie.View
                 Console.WriteLine();
                 Console.WriteLine("\nUnit Translation Menü");
                 Console.WriteLine("----------------------");
-                Console.WriteLine("Selected Ingredient {0}\n", UnitTranslationSet.SelectedItem);
+                Console.WriteLine("Selected Ingredient {0}\n", UnitTranslations.SelectedItem);
                 Console.WriteLine();
                 Console.WriteLine("A  Add Unit Translation");
                 Console.WriteLine("D  Delete Unit Translation");
@@ -64,10 +64,10 @@ namespace Jamie.View
                 switch (MenuInput)
                 {
                     case "A":
-                        UnitTranslation newItem = PopulateObject();
+                        UnitTranslation newItem = NewPopulatedObject();
                         if ((newItem != null) && !UnitTranslations.AddItem(newItem))
                         {
-                            Console.WriteLine("Fehler: Einheit konnte nicht angelegt werden");
+                            Console.WriteLine("Fehler: Einheitumrechnung konnte nicht angelegt werden");
                             Console.ReadLine();
                         }
                         break;
@@ -75,7 +75,7 @@ namespace Jamie.View
                         UnitTranslations.DeleteSelectedItem();
                         break;
                     case "E":
-                        //EditSelectedItem();
+//                        EditSelectedItem();
                         break;
                     case "S":
                         SelectItem();
@@ -111,7 +111,7 @@ namespace Jamie.View
             }
 
         }
-        public UnitTranslation PopulateObject()
+        public UnitTranslation NewPopulatedObject()
         {
             //UnitTranslation NewUnitTranslation = new UnitTranslation();
 

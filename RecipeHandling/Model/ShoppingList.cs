@@ -131,41 +131,13 @@ namespace Jamie.Model
         public bool Equals(ShoppingListItem ItemToCompare)
         {
             if (ItemToCompare == null) return false;
-            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+            return ID.Equals(ItemToCompare.ID) || EqualKey(ItemToCompare);
         }
         public bool EqualKey(ShoppingListItem ItemToCompare)
         {
             //            return Symbol.Equals(ItemToCompare.Symbol);
             return false; //muss noch angepasst werden.
         }
-        public void PopulateObject()
-        {
-            string InputString;
-            double ParsedDoubleValue;
-            Unit ProcessedUnit;
-            Ingredient ProcessedIngredient;
-
-            do
-            {
-                Console.Write("Quantity  : "); InputString = Console.ReadLine();
-            } while (!double.TryParse(InputString, out ParsedDoubleValue));
-            Quantity = ParsedDoubleValue;
-
-            do
-            {
-//                UnitSetData.ViewSet();
-                Console.Write("Unit      : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
-            } while (ProcessedUnit == null);
-            Unit = ProcessedUnit;
-
-            do
-            {
-                IngredientSetData.ViewSet();
-                Console.Write("Ingredient: "); ProcessedIngredient = IngredientSetData.SelectItem(Console.ReadLine());
-            } while (ProcessedIngredient == null);
-            Ingredient = ProcessedIngredient;
-
-        }// --> View
         public void SetDataReference(IngredientSet IngredientSetData, UnitSet UnitSetData, UnitTranslationSet UnitTranslationSetData)
         {
             _IngredientSetData = IngredientSetData;
@@ -190,7 +162,6 @@ namespace Jamie.Model
         //static Variables
         private static long _MaxID = 0;
         private static IngredientSet _IngredientSetData;
-        private static ShoppingListItem _SelectedItem;
         private static UnitSet _UnitSetData;
         private static UnitTranslationSet _UnitTranslationSetData;
 
@@ -200,6 +171,8 @@ namespace Jamie.Model
         private string _Name;
         private string _Responsible;
         private string _Shop;
+
+        private ShoppingListItem _SelectedItem;
 
         //Constructors
         public ShoppingListItemSet()
@@ -257,18 +230,13 @@ namespace Jamie.Model
                 _Responsible = value;
             }
         }
-        public static ShoppingListItem SelectedItem
+        public ShoppingListItem SelectedItem
         {
             get
             {
                 return _SelectedItem;
             }
-
-            set
-            {
-                _SelectedItem = value;
-            }
-        }
+        } //Readonly
         public string Shop
         {
             get
@@ -297,15 +265,6 @@ namespace Jamie.Model
         } //Readonly
 
         //Methods
-        public bool AddItem()
-        {
-            ShoppingListItem newItem;
-
-            newItem = new ShoppingListItem();
-            if (Count == 0) newItem.SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
-            newItem.PopulateObject();
-            return AddItem(newItem);
-        }
         public bool AddItem(ShoppingListItem ItemToBeAdded)
         {
             if (!Contains(ItemToBeAdded))
@@ -313,11 +272,10 @@ namespace Jamie.Model
                 ItemToBeAdded.ID = ++_MaxID;
                 ItemToBeAdded.CalculateTargetUnit();
                 Add(ItemToBeAdded);
-                SelectedItem = ItemToBeAdded;
+                _SelectedItem = ItemToBeAdded;
                 return true;
             }
-            else Console.WriteLine("Die Unit ist bereits vorhanden: \n {0}", ItemToBeAdded);
-            return false;
+            else return false;
         }// teilweise Contains--> View
         public void DeleteSelectedItem()
         {
@@ -337,50 +295,6 @@ namespace Jamie.Model
             if (maxIDFromFile == null) _MaxID = 0;
             else _MaxID = (long)maxIDFromFile;
         }
-        public void Menu()
-        {
-            int HowManyItemsInSet = Count;
-
-            if (HowManyItemsInSet > 0) _SelectedItem = this[HowManyItemsInSet - 1];
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nShoppingListItem Menü");
-                Console.WriteLine("---------\nSelected ShoppingLisstItem: {0}\n", _SelectedItem);
-                Console.WriteLine("A  Add ShoppingListItem");
-                Console.WriteLine("D  Delete Selected ShoppingListItem");
-                Console.WriteLine("S  Select ShoppingListItem");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "D":
-                        DeleteSelectedItem();
-                        break;
-                    case "S":
-                        SelectItem();
-                        break;
-                    case "V":
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }// --> View
         public ShoppingListItemSet OpenSet(string FileName)
         {
             ShoppingListItemSet ReturnUnitSet = this;
@@ -396,31 +310,6 @@ namespace Jamie.Model
             return ReturnUnitSet;
 
         }// --> Data
-        public void PopulateObject()
-        {
-            string InputString;
-
-            do
-            {
-                Console.Write("Shoppinglist Date: "); InputString = Console.ReadLine();
-                try
-                {
-                    DueDate = DateTime.Parse(InputString);
-                }
-                catch
-                {
-                    continue;
-                }
-                break;
-            } while (true);
-
-            Console.Write("Name            : "); Name = Console.ReadLine();
-            Console.Write("Responsible     : "); Responsible = Console.ReadLine();
-            Console.Write("Shop            : "); Shop = Console.ReadLine();
-
-
-
-        }// --> View
         public void SaveSet(string FileName)
         {
             FileName += FileExtension;
@@ -431,21 +320,6 @@ namespace Jamie.Model
             }
 
         }// --> Data
-        public ShoppingListItem SelectItem()
-        {
-            int ParsedIntValue;
-            long SelectedID;
-            string InputString;
-
-            do
-            {
-                Console.Write("FoodPlan ID:"); InputString = Console.ReadLine();
-            } while (!int.TryParse(InputString, out ParsedIntValue));
-            SelectedID = ParsedIntValue;
-
-            return SelectItem(SelectedID);
-
-        }// --> View
         public ShoppingListItem SelectItem(long IDToSelect)
         {
             ShoppingListItem LocalItemToSelect = new ShoppingListItem();
@@ -475,10 +349,6 @@ namespace Jamie.Model
                 this[0].SetDataReference(IngredientSetData, UnitSetData, UnitTranslationSetData);
             }
         }
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        }// --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -498,3 +368,4 @@ namespace Jamie.Model
     }
 
 }
+

@@ -62,7 +62,7 @@ namespace Jamie.Model
         public bool Equals(Unit ItemToCompare)
         {
             if (ItemToCompare == null) return false;
-            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+            return ID.Equals(ItemToCompare.ID) || EqualKey(ItemToCompare);
         }
         public bool EqualKey(Unit ItemToCompare)
         {
@@ -81,7 +81,7 @@ namespace Jamie.Model
 
         //static Variables
         private static long _MaxID = 0;
-        private static Unit _SelectedItem;
+        private Unit _SelectedItem;
 
             //Variables
 
@@ -98,7 +98,7 @@ namespace Jamie.Model
                 return _MaxID;
             }
         }
-        public static Unit SelectedItem
+        public Unit SelectedItem
         {
             get
             {

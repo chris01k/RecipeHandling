@@ -6,6 +6,9 @@ namespace Jamie.View
     public class ProgramView
     {
         private EmbeddedDataSet _EmbeddedSetData;
+        private FoodPlanView _FoodPlanUI;
+        private IngredientView _IngredientUI;
+        private RecipeView _RecipeUI;
         private UnitTranslationView _UnitTranslationUI;
         private UnitView _UnitUI;
 
@@ -13,6 +16,9 @@ namespace Jamie.View
         {
             _EmbeddedSetData = new EmbeddedDataSet();
             //_EmbeddedSetData = new EmbeddedDataSet(true);
+            _FoodPlanUI = new FoodPlanView(_EmbeddedSetData.AllSetData.FoodPlanItems, _EmbeddedSetData.AllSetData.Recipes);
+            _IngredientUI = new IngredientView(_EmbeddedSetData.AllSetData.Ingredients,_EmbeddedSetData.AllSetData.Units);
+            _RecipeUI = new RecipeView(_EmbeddedSetData.AllSetData.Recipes);
             _UnitUI = new UnitView(_EmbeddedSetData.AllSetData.Units);
             _UnitTranslationUI = new UnitTranslationView(_EmbeddedSetData.AllSetData.UnitTranslations, 
                                                          _EmbeddedSetData.AllSetData.Units);
@@ -63,13 +69,13 @@ namespace Jamie.View
                             _EmbeddedSetData.SaveLists();
                             break;
                         case "I":
-                            _EmbeddedSetData.AllSetData.Ingredients.Menu();
+                            _IngredientUI.Menu();
                             break;
                         case "FP":
-                            _EmbeddedSetData.AllSetData.FoodPlanItems.Menu();
+                            _FoodPlanUI.Menu();
                             break;
                         case "R":
-                            _EmbeddedSetData.AllSetData.Recipes.Menu();
+                            _RecipeUI.Menu();
                             break;
                         case "U":
                             _UnitUI.Menu();
@@ -78,11 +84,11 @@ namespace Jamie.View
                             _UnitTranslationUI.Menu();
                             break;
                         case "SL":
-                            _EmbeddedSetData.AllSetData.ShoppingListItems.Menu();
+//                            _EmbeddedSetData.AllSetData.ShoppingListItems.Menu();
                             break;
                         case "T":
-                            _EmbeddedSetData.AllSetData.FoodPlanItems.TransferToShoppingList(_EmbeddedSetData.AllSetData.ShoppingListItems);
-                            _EmbeddedSetData.AllSetData.ShoppingListItems.Menu();
+//                            _EmbeddedSetData.AllSetData.FoodPlanItems.TransferToShoppingList(_EmbeddedSetData.AllSetData.ShoppingListItems);
+//                            _EmbeddedSetData.AllSetData.ShoppingListItems.Menu();
                             break;
                         case "V":
                             _EmbeddedSetData.AllSetData.ViewSet();

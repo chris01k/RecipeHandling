@@ -1,14 +1,41 @@
-﻿using System;
+﻿using Jamie.Model;
+using System;
 
-namespace Jamie.Model
+namespace Jamie.View
 {
-    public enum ListEntryStatus
-    { IsOK = 0x1, IsCalculated, IsNotConfirmed }
-
     public static class ListHelper
     {
+        //Variables
+        private static IngredientSet _Ingredients;
+        private static RecipeSet _Recipes;
+        private static UnitSet _Units;
 
-        //Mathods
+        //Properties
+        public static IngredientSet Ingredients
+        {
+            get
+            {
+                return _Ingredients;
+            }
+        } //Readonly
+        public static RecipeSet Recipes
+        {
+            get
+            {
+                return _Recipes;
+            }
+        } //Readonly
+        public static UnitSet Units 
+        {
+            get
+            {
+                return _Units;
+            }
+
+        } //Readonly
+
+
+        //Methods
         public static IngredientFlags ChangeIngredientFlagField(string DisplayFieldToBeChanged)
         {
             IngredientFlags FieldToBeChanged;
@@ -16,7 +43,7 @@ namespace Jamie.Model
             string InputString;
 
             Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
-            for (int i = 1; i <= Ingredient.maxIngredientFlag; i = (i * 2))
+            for (int i = 1; i <= Ingredient.GetmaxIngredientFlag(); i = (i * 2))
             {
                 Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
                 if (InputString.Length > 0) ReturnValueFlag = (ReturnValueFlag | (IngredientFlags)i);
@@ -75,19 +102,55 @@ namespace Jamie.Model
             FieldToBeChanged = Console.ReadLine();
             return FieldToBeChanged;
         }// --> View
-        public static Unit ChangeUnitField(string DisplayFieldToBeChanged, UnitSet UnitSelection)
+        public static Ingredient ChangeIngredientField(string DisplayFieldToBeChanged)
+        {
+            Ingredient ReturnValueUnit = null;
+            string InputString;
+
+            while (ReturnValueUnit == null)
+            {
+                Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
+                InputString = Console.ReadLine();
+                ReturnValueUnit = Ingredients.SelectItem(InputString);
+            };
+            return ReturnValueUnit;
+        }
+        public static Recipe ChangeRecipeField(string DisplayFieldToBeChanged)
+        {
+            Recipe ReturnValueUnit = null;
+            string InputString;
+            long InputValue;
+
+            do
+            {
+                Console.Write("Neuer Eintrag für {0}: ", DisplayFieldToBeChanged);
+                InputString = Console.ReadLine();
+            } while(!long.TryParse(InputString, out InputValue));
+
+            ReturnValueUnit = Recipes.SelectItemByID(InputValue);
+
+            return ReturnValueUnit;
+        }
+
+        public static Unit ChangeUnitField(string DisplayFieldToBeChanged)
         {
             Unit ReturnValueUnit = null;
             string InputString;
 
-            Console.Write("Neuer Eintrag für {0} - Symbol: ", DisplayFieldToBeChanged);
-            InputString = Console.ReadLine();
             while (ReturnValueUnit == null)
             {
-                ReturnValueUnit = UnitSelection.SelectItem(InputString);
+                Console.Write("Neuer Eintrag für {0} - Symbol: ", DisplayFieldToBeChanged);
+                InputString = Console.ReadLine();
+                ReturnValueUnit = Units.SelectItem(InputString);
             };
             return ReturnValueUnit;
         }// --> View
+        public static void SetDataReference(IngredientSet Ingredients, RecipeSet Recipes, UnitSet Units)
+        {
+            _Ingredients = Ingredients;
+            _Recipes = Recipes;
+            _Units = Units;
+        }
         public static string SelectField(string[] Fields)
         {
             string InputString ="";

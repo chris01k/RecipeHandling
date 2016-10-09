@@ -36,7 +36,7 @@ namespace Jamie.View
                 ViewSet();
                 Console.WriteLine();
                 Console.WriteLine("\nUnit Menü");
-                Console.WriteLine("---------\nSelected Unit: {0}\n", UnitSet.SelectedItem);
+                Console.WriteLine("---------\nSelected Unit: {0}\n", Units.SelectedItem);
                 Console.WriteLine("A  Add Unit");
                 Console.WriteLine("D  Delete Selected Unit");
                 Console.WriteLine("S  Select Unit");
@@ -51,7 +51,7 @@ namespace Jamie.View
                 switch (MenuInput)
                 {
                     case "A":
-                        Unit newItem = PopulateObject();
+                        Unit newItem = NewPopulatedObject();
                         if ((newItem != null) && !Units.AddItem(newItem))
                         {
                             Console.WriteLine("Fehler: Einheit konnte nicht angelegt werden");
@@ -74,7 +74,7 @@ namespace Jamie.View
 
             }
         }
-        public Unit PopulateObject()
+        public Unit NewPopulatedObject()
         {
             string InputString;
             Unit ObjectToBePopulated = new Unit();

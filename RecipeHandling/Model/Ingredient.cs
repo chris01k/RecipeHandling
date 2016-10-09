@@ -13,7 +13,7 @@ namespace Jamie.Model
      * können von mehreren Klassen verwendet werden (z.B. Ingredient, Recipe)
      */
     [Flags] public enum IngredientFlags : int
-    { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 }
+    { IsVegetarian = 1, IsVegan = 2, IsLowCarb = 4, IsLowFat = 8 } 
     public enum IngredientType : int { IsFluid, IsSolid, IsCrystal, IsPowder, IsHerb, IsGranular, NotInitialized = 999 }
 
     /* Eine Zutat beschreibt ein Produkt, welches in einem Rezept verarbeitet werden kann. Zutaten werden im Gegensatz zu Werkzeugen verbraucht. 
@@ -24,7 +24,6 @@ namespace Jamie.Model
     public class Ingredient : IEquatable<Ingredient> //: ObservableObject
     {
         //Constants
-        public const byte maxIngredientFlag = 15;
 
         //static Variables
         private static UnitSet _UnitSetData;
@@ -43,11 +42,6 @@ namespace Jamie.Model
         public Ingredient(UnitSet UnitSetData)
         {
             _UnitSetData = UnitSetData;
-        }
-        public Ingredient(bool ToBePopulated, UnitSet UnitSetData)
-        {
-            _UnitSetData = UnitSetData;
-            if (ToBePopulated) PopulateObject();
         }
         public Ingredient(string Name, IngredientFlags IngredientType, UnitSet UnitSetData)
         {
@@ -130,53 +124,23 @@ namespace Jamie.Model
         public bool Equals(Ingredient ItemToCompare)
         {
             if (ItemToCompare == null) return false;
-            return ID.Equals(ItemToCompare.ID) | EqualKey(ItemToCompare);
+            return ID.Equals(ItemToCompare.ID) || EqualKey(ItemToCompare);
         }
         public bool EqualKey(Ingredient ItemToCompare)
         {
             return Name.ToUpper().Equals(ItemToCompare.Name.ToUpper());
         }
-        public void PopulateObject()
+        public static byte GetmaxIngredientFlag()
         {
-            IngredientFlags FlagValue=0;
-            
-            string InputString;
-            Unit ProcessedUnit;
+            byte ReturnValue = 0;
 
-            Console.WriteLine("Eingabe neue Zutat:");
-            Console.WriteLine("-------------------");
-            Console.WriteLine();
-            Console.Write("         Name  : "); Name = Console.ReadLine();
-//            Console.Write("  Target Unit  : "); InputString = Console.ReadLine();
-            do
+            foreach (IngredientFlags i in Enum.GetValues(typeof(IngredientFlags)))
             {
-                Console.Write("  Target Unit  : "); ProcessedUnit = UnitSetData.SelectItem(Console.ReadLine());
-            } while (ProcessedUnit == null);
-            TargetUnit = ProcessedUnit;
-            do
-            {
-                Console.Write("Ingredient Type  : "); InputString = Console.ReadLine();
-                try
-                {
-                    Type = (IngredientType)Enum.Parse(typeof(IngredientType), InputString);
-                }
-                catch
-                {
-                    continue;
-                }
-                break;
-            } while (true);
-
-
-
-            for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
-            {
-                Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
-                if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
+                ReturnValue += (byte)i;
             }
-            Flags = FlagValue;
 
-        }// --> View
+            return ReturnValue;
+        }
         public override string ToString()
         {
             return string.Format("{0,6}-Name: {1,15} Type: {2} Flags: {3}\n\t TargetUnit{4,5}", ID, Name, Type, Flags, TargetUnit);
@@ -189,7 +153,7 @@ namespace Jamie.Model
 
         //Variables
         private static long _MaxID = 0;
-        private static Ingredient _SelectedItem; 
+        private Ingredient _SelectedItem; 
         private static UnitSet _UnitSetData; 
 
         //Constructors
@@ -215,20 +179,20 @@ namespace Jamie.Model
         }  //Readonly
 
         //Methods
-        public void AddItem()
+        public bool AddItem(Ingredient ItemToBeAdded) 
         {
-            AddItem(new Ingredient(true, UnitSetData));
-        }
-        public void AddItem(Ingredient ItemToBeAdded) 
-        {
+            bool ReturnValue = true;
+
             if (!Contains(ItemToBeAdded))
             {
                 Add(ItemToBeAdded);
                 ItemToBeAdded.ID = ++_MaxID;
                 _SelectedItem = SelectItem(ItemToBeAdded.Name);
             }
-            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
-        }// teilweise Contains --> View
+            else ReturnValue = false;
+
+            return ReturnValue;
+        }
         public void DeleteSelectedItem()
         {
             int NewSelectedIndex;
@@ -247,46 +211,6 @@ namespace Jamie.Model
             if (Count > 0) _SelectedItem = this[NewSelectedIndex];
             else _SelectedItem = null;
         }
-        public void EditSelectedItem()
-        {
-            string InputString = "";
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("Edit Selected Ingredient: {0}\n", _SelectedItem);
-                Console.WriteLine("-------------------------\n");
-                Console.WriteLine();
-                Console.WriteLine("C  Change Field");
-                //Console.WriteLine("R  Reset Field");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "C":
-                        string[] FieldsToBeSelected = { "Name", "Flags", "TargetUnit", "Type" };
-
-                        InputString = ListHelper.SelectField(FieldsToBeSelected);
-                        if (InputString == "Name") SelectedItem.Name = ListHelper.ChangeStringField(InputString);
-                        else if (InputString == "Flags") SelectedItem.Flags = ListHelper.ChangeIngredientFlagField(InputString);
-                        else if (InputString == "TargetUnit") SelectedItem.TargetUnit = ListHelper.ChangeUnitField(InputString, _UnitSetData);
-                        else if (InputString == "Type") SelectedItem.Type = ListHelper.ChangeIngredientTypeField(InputString);
-                        break;
-
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-
-            }
-        }// --> View
         public void EvaluateMaxID()
         {
             var maxIDFromFile = this.Select(s => s.ID).Max();
@@ -303,56 +227,6 @@ namespace Jamie.Model
             if (IndexOfSelectedUnit == -1) return null;
             else return this[IndexOfSelectedUnit];
         }
-
-        public void Menu()
-        {
-            int HowManyItemsInSet = Count;
-
-            if (HowManyItemsInSet > 0) _SelectedItem = this[HowManyItemsInSet - 1];
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                ViewSet();
-                Console.WriteLine();
-                Console.WriteLine("\nIngredient Menü");
-                Console.WriteLine("------------------------\n");
-                Console.WriteLine("Selected Ingredient {0}\n", _SelectedItem);
-                Console.WriteLine();
-                Console.WriteLine("A  Add Ingredient");
-                Console.WriteLine("D  Delete Ingredient");
-                Console.WriteLine("E  Edit Selected Ingredient");
-                Console.WriteLine("S  Select Ingredient");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("--------------------");
-                Console.WriteLine("Q  Quit");
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "A":
-                        AddItem();
-                        break;
-                    case "D":
-                        DeleteSelectedItem();
-                        break;
-                    case "E":
-                        EditSelectedItem();
-                        break;
-                    case "S":
-                        _SelectedItem = SelectItem();
-                        break;
-                    case "V":
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }// --> View
         public void PopulateSetWithDefaults()
         {
             IngredientFlags FlagsTobeSet;
@@ -386,32 +260,26 @@ namespace Jamie.Model
         {
             _UnitSetData = UnitSetData;
         }
-        public Ingredient SelectItem()
+        public Ingredient SelectItem(int ItemPos)
         {
-            string InputItemText = "";
-
-            Console.WriteLine("Unit suchen:");
-            Console.WriteLine("------------");
-            Console.WriteLine();
-            Console.Write("IngredientName: "); InputItemText = Console.ReadLine();
-
-            return SelectItem(InputItemText);
-
-        }// --> View
+            Ingredient ReturnItem = null;
+            if ((ItemPos > -1) && (ItemPos <= Count - 1))
+            {
+                ReturnItem = this[ItemPos];
+                _SelectedItem = ReturnItem;
+            }
+            return ReturnItem;
+        }
         public Ingredient SelectItem(string ItemTextToBeSelected)
         {
             Ingredient ReturnItem = null;
             Ingredient LocalItemToSelect = new Ingredient(ItemTextToBeSelected, 0,UnitSetData);
 
-            int IndexOfSelectedUnit = IndexOf(LocalItemToSelect);
-            if (IndexOfSelectedUnit > -1) ReturnItem = this[IndexOfSelectedUnit];
+            int IndexOfSelectedItem = IndexOf(LocalItemToSelect);
+            if (IndexOfSelectedItem > -1) ReturnItem = SelectItem(IndexOfSelectedItem);
 
             return ReturnItem;
         }
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        }// --> View
         public override string ToString()
         {
             string ReturnString = "";
@@ -428,332 +296,5 @@ namespace Jamie.Model
         }
     }
 
-    /* IngredientItem ist ein (Quanity, Unit, Ingredient) Triple, welches einem Rezept zugeordnet ist
-     */
-    public class IngredientItem  //: ObservableObject
-    {
-        //Variables
-        private long? _ID;
-
-        private double _Quantity;
-        private Ingredient _Ingredient;
-        private Unit _Unit;
-
-
-        //Constructors
-        public IngredientItem()
-        {
-        }
-        public IngredientItem(double Quantity, Unit Unit, Ingredient Ingredient)
-        {
-            _Quantity = Quantity;
-            _Unit = Unit;
-            _Ingredient = Ingredient;
-        }
-        public IngredientItem(bool ToBePopulated)
-        {
-            if (ToBePopulated) PopulateObject();
-        }
-
-        //Properties
-        public long? ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                if (_ID == null) _ID = value;
-                //                else throw exception;
-            }
-        }
-        public Ingredient Ingredient
-        {
-            get { return _Ingredient; }
-            set
-            {
-                if (_Ingredient == value)
-                    return;
-
-                _Ingredient = value;
-//                RaisePropertyChanged(() => SpecificIngredient);
-            }
-        }
-        public string Name
-        {
-            get { return _Ingredient != null ? _Ingredient.Name : ""; }
-            set
-            {
-                if (_Ingredient.Name == value)
-                    return;
-
-                _Ingredient.Name = value;
-                //RaisePropertyChanged(() => Name);
-            }
-        }
-        public Unit Unit
-        {
-            get { return _Unit; }
-            set
-            {
-                if (_Unit == value)
-                    return;
-
-                _Unit = value;
-//                RaisePropertyChanged(() => Unit);
-
-            }
-        }
-        public double Quantity
-        {
-            get { return _Quantity; }
-            set
-            {
-                if (_Quantity == value)
-                    return;
-
-                _Quantity = value;
-//                RaisePropertyChanged(() => Quantity);
-
-            }
-        }
-
-
-        //Methods
-        public void PopulateObject()
-        {
-            string InputString;
-            float ParsedDoubleValue;
-            //Unit SelectedUnit;
-
-            Console.WriteLine("Eingabe neue Zutat zum Rezept:");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine();
-            do
-            {
-                Console.Write("Menge (Quantity): "); InputString = Console.ReadLine();
-            } while (!float.TryParse(InputString, out ParsedDoubleValue));
-            Quantity = ParsedDoubleValue;
-            Console.Write("Unit: "); InputString = Console.ReadLine();
-            
-
-
-
-
-            Console.Write("         Name  : "); Name = Console.ReadLine();
-
-
-
-            //for (int i = 1; i <= maxIngredientFlag; i = (i * 2))
-            //{
-            //    Console.Write("{0,15}:", (IngredientFlags)i); InputString = Console.ReadLine();
-            //    if (InputString.Length > 0) FlagValue = (FlagValue | (IngredientFlags)i);
-            //}
-            //IngredientType = FlagValue;
-
-        }// --> View
-        public override string ToString()
-        {
-            string ReturnString = string.Format(" {0,8} {1} {2}", Quantity, Unit, Ingredient.Name);
-
-            ReturnString += "\n";
-            return ReturnString;
-        }
-    }
-
- /* IngredientItemSet ist eine Liste IngredientItems (Menge, Unit, Ingredient):
-  * Ein Rezept enthält eine Zutatenliste bestehend aus x Einträgen, wobei jeder Eintrag eine Zutat sowie die 
-  * erforderliche Menge beschreibt.
-  */
-    public class IngredientItemSet : ObservableCollection<IngredientItem>
-    {
-        //Constants
-        private const string FileExtension = ".rcig"; // --> Data
-
-        //Variables
-        private static long _MaxID;
-
-        private static IngredientSet _IngredientSetData;
-        private Recipe _RelatedRecipe;
-        private static UnitSet _UnitSetData;
-        private static UnitTranslationSet _UnitTranslationSetData;
-        
-
-        //Constructors
-        public IngredientItemSet(IngredientSet IngredientSetData, UnitSet UnitSetData, 
-                                 UnitTranslationSet UnitTranslationSetData, Recipe RelatedRecipe)
-        {
-            _IngredientSetData = IngredientSetData;
-            _UnitSetData = UnitSetData;
-            _UnitTranslationSetData = UnitTranslationSetData;
-            _RelatedRecipe = RelatedRecipe;
-        }
-
-        //Properties
-        public static IngredientSet IngredientSetData
-        {
-            get
-            {
-                return _IngredientSetData;
-            }
-        }//Readonly
-        public static long MaxID
-        {
-            get
-            {
-                return _MaxID;
-            }
-        }
-        public Recipe RelatedRecipe
-        {
-            get
-            {
-                return _RelatedRecipe;
-            }
-        }//Readonly
-        public static UnitSet UnitSetData
-        {
-            get
-            {
-                return _UnitSetData;
-            }
-        }//Readonly
-        public static UnitTranslationSet UnitTranslationSetData
-        {
-            get
-            {
-                return _UnitTranslationSetData;
-            }
-        }//Readonly
-
-        //Methods
-        public void AddItem()
-        {
-            string InputString;
-            double ParsedDoubleValue;
-            Unit InputUnit;
-            Ingredient InputIngredient;
-            IngredientItem NewIngredientItem = new IngredientItem();
-            do
-            {
-                Console.Write("Quantity: "); InputString = Console.ReadLine();
-            } while (!double.TryParse(InputString, out ParsedDoubleValue));
-            NewIngredientItem.Quantity = ParsedDoubleValue;
-            do
-            {
-//                if (UnitSetData != null) UnitSetData.ViewSet();
-                Console.WriteLine("Unit      : "); InputString = Console.ReadLine();
-                InputUnit = UnitSetData.SelectItem(InputString);
-            } while (InputUnit == null);
-            NewIngredientItem.Unit = InputUnit;
-
-            do
-            {
-                IngredientSetData.ViewSet();
-                Console.WriteLine("Ingredient: "); InputString = Console.ReadLine();
-                InputIngredient = IngredientSetData.SelectItem(InputString);
-            } while (InputIngredient == null);
-
-            NewIngredientItem.Ingredient = InputIngredient;
-
-           UnitTranslation Test = UnitTranslationSetData.GetTranslation(NewIngredientItem.Unit, NewIngredientItem.Ingredient.TargetUnit, NewIngredientItem.Ingredient);
-
-            AddItem(NewIngredientItem);
-        }// --> View
-        public void AddItem(IngredientItem ItemToBeAdded)
-        {
-            if (!Contains(ItemToBeAdded))
-            {
-                Add(ItemToBeAdded);
-                ItemToBeAdded.ID = ++_MaxID;
-            }
-            else Console.WriteLine("Die Zutat ist bereits vorhanden: \n {0}", ItemToBeAdded);
-        }
-        public void Menu()
-        {
-            string MenuInput = "";
-
-            while (MenuInput != "Q")
-            {
-                Console.WriteLine();
-                Console.WriteLine("\nRezept-Zutaten: {0}",RelatedRecipe);
-                Console.WriteLine("-----------------");
-                Console.WriteLine("A  Add Ingredient");
-                Console.WriteLine("V  View Set");
-                Console.WriteLine("-----------------");
-                Console.WriteLine("Q  Quit");
-
-                Console.WriteLine();
-                Console.Write("Ihre Eingabe:");
-                MenuInput = Console.ReadLine().ToUpper();
-
-                switch (MenuInput)
-                {
-                    case "A":
-                        ViewSet();
-                        AddItem();
-                        ViewSet();
-                        break;
-                    case "V":
-                        ViewSet();
-                        break;
-                    default:
-                        Console.WriteLine();
-                        break;
-                }
-
-            }
-        }// --> View
-        public IngredientItemSet OpenSet(string FileName)
-        {
-            IngredientItemSet ReturnSet = this;
-            ReturnSet.Clear();
-            FileName += "." + RelatedRecipe.Name + FileExtension;
-            using (Stream fs = new FileStream(FileName, FileMode.Open))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(ReturnSet.GetType());
-                ReturnSet = (IngredientItemSet)x.Deserialize(fs);
-            }
-            return ReturnSet;
-
-        }// --> Data
-        public void SaveSet(string FileName)
-        {
-            FileName += "." + RelatedRecipe.Name + FileExtension;
-            using (FileStream fs = new FileStream(FileName, FileMode.Create))
-            {
-                System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(GetType());
-                x.Serialize(fs, this);
-            }
-
-        }// --> Data
-        public void SetDataReference(UnitSet UnitSetData, IngredientSet IngredientSetData, 
-                                     UnitTranslationSet UnitTranslationSetData)
-        {
-            _IngredientSetData = IngredientSetData;
-            _UnitSetData = UnitSetData;
-            _UnitTranslationSetData = UnitTranslationSetData;
-        }
-        public override string ToString()
-        {
-            string ReturnString = "";
-
-            if (Count == 0) ReturnString += "         -------> leer <-------\n         ";
-            else
-            {
-                foreach (IngredientItem ListItem in this)
-                    //                    ReturnString += ListItem.ToString() + "\n      ";
-                    ReturnString += string.Format("{0,6} {1,5} {2,20} {3}  \n", ListItem.Quantity, ListItem.Unit.Symbol, ListItem.Ingredient.Name, RelatedRecipe.Name);
-            }
-            ReturnString += "\n";
-            return ReturnString;
-        }
-        public void ViewSet()
-        {
-            Console.WriteLine(ToString());
-        }// --> View
-
-    }
 }
 
